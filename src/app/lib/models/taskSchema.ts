@@ -2,6 +2,7 @@ import { ITask } from "@/app/types/taskInterface";
 import mongoose, { Schema } from "mongoose";
 
 const TaskSchema: Schema = new Schema({
+    _id: {type: mongoose.Schema.Types.ObjectId, required: true},
     title: { type: String, required: true },
     description: { type: String },
     dueDate: { type: Date },
