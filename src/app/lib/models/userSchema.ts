@@ -2,7 +2,8 @@ import { IUser } from '@/app/types/userInterface';
 import mongoose, { Schema } from 'mongoose';
 
 const UserSchema: Schema = new Schema({
-    name: String,
+    firstName: String,
+    lastName: String,
     birthDate: Date,
     email: String,
     gender: String,
