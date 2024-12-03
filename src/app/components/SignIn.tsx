@@ -2,72 +2,73 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { UserModel } from "../models/userModel";
 
 function SignIn() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState(""); // 'M' or 'F'
-  const [birthDate, setBirthDate] = useState(""); // DATE
+  const [user, setUser] = useState<UserModel>(
+    new UserModel("", "", "", "") // ערכים התחלתיים
+  );
   const [error, setError] = useState("");
 
-  const router= useRouter()
+  const handleInputChange = (field: keyof UserModel, value: any) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    if ( !firstName || !lastName || !email || !password) {
-      setError("ID, First Name, Last Name, Email, and Password are required.");
+    e.preventDefault();
+
+    if (!user.firstName || !user.lastName || !user.email || !user.password) {
+      setError("First Name, Last Name, Email, and Password are required.");
       return;
     }
-    setError(""); 
-    console.log({
-      firstName,
-      lastName,
-      email,
-      password,
-      gender,
-      birthDate,
-    });
-  
+
+    setError("");
+
+    console.log("User data to be submitted:", user);
+
+    // ניתן להוסיף כאן שליחת נתונים לשרת
   };
-  
 
   return (
     <div className="grid place-items-center h-screen bg-gray-50">
       <div className="shadow-lg p-6 rounded-lg border-t-4 border-green-400 max-w-md w-full bg-white">
         <h1 className="text-xl font-bold mb-4 text-center">Sign In</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
+          <input
             type="text"
             placeholder="First Name"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={user.firstName}
+            onChange={(e) => handleInputChange("firstName", e.target.value)}
           />
           <input
             type="text"
             placeholder="Last Name"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={user.lastName}
+            onChange={(e) => handleInputChange("lastName", e.target.value)}
           />
           <input
             type="email"
             placeholder="Email"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={user.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={user.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
           />
-           <select
+          <select
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
+            value={user.gender ?? ""}
+            onChange={(e) => handleInputChange("gender", e.target.value)}
           >
             <option value="">Select Gender</option>
             <option value="M">Male</option>
@@ -76,8 +77,10 @@ function SignIn() {
           <input
             type="date"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
+            value={user.birthDate ? user.birthDate.toISOString().split("T")[0] : ""}
+            onChange={(e) =>
+              handleInputChange("birthDate", new Date(e.target.value))
+            }
           />
           <button
             type="submit"
@@ -102,4 +105,3 @@ function SignIn() {
 }
 
 export default SignIn;
-

@@ -43,12 +43,6 @@ export class UserModel {
       this.sharedWith = sharedWith;
     }
   
-    getFullName(): string {
-      return `${this.firstName} ${this.lastName}`;
-    }
-  
-    updatePassword(newPassword: string): void {
-      this.password = newPassword;
-    }
+
   }
   
