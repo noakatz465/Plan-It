@@ -2,7 +2,7 @@ import { IProject } from "@/app/types/projectInterface";
 import mongoose, { Schema } from "mongoose";
 
 const ProjectSchema: Schema = new Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    // _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
     description: { type: String },
     manager: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -23,6 +23,6 @@ const ProjectSchema: Schema = new Schema({
         default: Date.now,
         required: true
     },
-})
+},{ collection: 'Projects' })
 
 export default mongoose.model<IProject>('User', ProjectSchema);

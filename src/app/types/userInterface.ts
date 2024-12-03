@@ -1,7 +1,7 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IUser extends Document {
-  _id: mongoose.Types.ObjectId;
+export interface IUser {
+  _id?: mongoose.Types.ObjectId;
   firstName: string;
   lastName: string;
   birthDate?: Date;
