@@ -1,4 +1,4 @@
-export class Task {
+export class TaskModel {
     taskId?: string; // מזהה ייחודי למשימה
     title: string; // כותרת המשימה
     description?: string; // תיאור מפורט

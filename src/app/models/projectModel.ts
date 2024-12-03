@@ -1,9 +1,11 @@
-export class Project {
+import { TaskModel } from "./taskModel";
+
+export class ProjectModel {
     _id?: string
     name: string;
     description?: string;
     manager: string;
-    linkedTasks: string[];
+    linkedTasks: TaskModel[];
     members: string[];
     lastModified: Date;
   
@@ -12,7 +14,7 @@ export class Project {
       manager:string,
       lastModified: Date = new Date(),
       description?: string,
-      linkedTasks: string[] = [],
+      linkedTasks: TaskModel[] = [],
       members:string[] = [],
       _id?: string
     ) {

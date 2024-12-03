@@ -1,4 +1,7 @@
-export class User {
+import { ProjectModel } from "./projectModel";
+import { TaskModel } from "./taskModel";
+
+export class UserModel {
     _id?: string;
     firstName: string;
     lastName: string;
@@ -8,8 +11,8 @@ export class User {
     notificationsEnabled: boolean;
     birthDate?: Date;
     gender?: 'M' | 'F' | null;
-    projects: string[];
-    tasks: string[];
+    projects: ProjectModel[];
+    tasks: TaskModel[];
     sharedWith: string[];
   
     constructor(
@@ -19,8 +22,8 @@ export class User {
       password: string,
       joinDate: Date = new Date(),
       notificationsEnabled: boolean = true,
-      projects: string[] = [],
-      tasks: string[] = [],
+      projects: ProjectModel[] = [],
+      tasks: TaskModel[] = [],
       sharedWith: string[] = [],
       _id?: string,
       birthDate?: Date,
@@ -40,12 +43,6 @@ export class User {
       this.sharedWith = sharedWith;
     }
   
-    getFullName(): string {
-      return `${this.firstName} ${this.lastName}`;
-    }
-  
-    updatePassword(newPassword: string): void {
-      this.password = newPassword;
-    }
+
   }
   
