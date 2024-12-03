@@ -16,5 +16,4 @@ const TaskSchema: Schema = new Schema({
     lastModified: { type: Date, default: Date.now, required: true },
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
 })
-
 export default mongoose.model<ITask>('Task', TaskSchema);
