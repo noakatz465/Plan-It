@@ -1,4 +1,3 @@
-import { IUser } from '@/app/types/userInterface';
 import mongoose, { Schema } from 'mongoose';
 
 const UserSchema: Schema = new Schema({
@@ -36,4 +35,5 @@ const UserSchema: Schema = new Schema({
     ],
 },{ collection: 'Users' })
 
-export default mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema); 
+export default User;

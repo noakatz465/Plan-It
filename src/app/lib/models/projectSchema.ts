@@ -1,4 +1,3 @@
-import { IProject } from "@/app/types/projectInterface";
 import mongoose, { Schema } from "mongoose";
 
 const ProjectSchema: Schema = new Schema({
@@ -24,4 +23,5 @@ const ProjectSchema: Schema = new Schema({
     },
 },{ collection: 'Projects' })
 
-export default mongoose.model<IProject>('User', ProjectSchema);
+const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
+export default Project;

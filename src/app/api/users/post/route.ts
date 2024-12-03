@@ -9,7 +9,7 @@ export async function POST(req: Request) {
         const data = await req.json();
         console.log(data);
 
-        const { firstName, lastName, email, password } = data;
+        const { email, password } = data;
         const existingUser = await User.findOne({ email });
         if (existingUser) {
           return NextResponse.json(
@@ -20,10 +20,8 @@ export async function POST(req: Request) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
+           ...data,
+          password: hashedPassword,
         });
 
         await newUser.save();
