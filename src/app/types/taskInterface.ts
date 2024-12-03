@@ -1,7 +1,7 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface ITask extends Document {
-    _id: mongoose.Types.ObjectId;
+export interface ITask {
+    _id?: mongoose.Types.ObjectId;
     title: string;
     description?: string;
     dueDate?: Date;

@@ -2,7 +2,6 @@ import { ITask } from "@/app/types/taskInterface";
 import mongoose, { Schema } from "mongoose";
 
 const TaskSchema: Schema = new Schema({
-    _id: {type: mongoose.Schema.Types.ObjectId, required: true},
     title: { type: String, required: true },
     description: { type: String },
     dueDate: { type: Date },
@@ -15,5 +14,5 @@ const TaskSchema: Schema = new Schema({
     templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
     lastModified: { type: Date, default: Date.now, required: true },
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-})
+},{ collection: 'Tasks' })
 export default mongoose.model<ITask>('Task', TaskSchema);

@@ -1,7 +1,7 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IProject extends Document {
-    _id: mongoose.Types.ObjectId;
+export interface IProject {
+    _id?: mongoose.Types.ObjectId;
     name: string;
     description?: string;
     manager: mongoose.Types.ObjectId;
