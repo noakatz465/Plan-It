@@ -1,14 +1,15 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { UserModel } from "../models/userModel";
+import { addUser } from "../services/authService";
 
 function SignIn() {
   const [user, setUser] = useState<UserModel>(
     new UserModel("", "", "", "") // ערכים התחלתיים
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const handleInputChange = (field: keyof UserModel, value: any) => {
     setUser((prevUser) => ({
@@ -19,18 +20,34 @@ function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
       setError("First Name, Last Name, Email, and Password are required.");
       return;
     }
-
+  
     setError("");
-
-    console.log("User data to be submitted:", user);
-
-    // ניתן להוסיף כאן שליחת נתונים לשרת
+    setSuccessMessage("");
+  
+    try {
+      // העברת כל השדות שנמצאים באובייקט user לשרת
+      const message = await addUser({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        gender: user.gender, // העברת מגדר אם קיים
+        birthDate: user.birthDate, // העברת תאריך לידה אם קיים
+      } as UserModel); // הגדרת הטיפוס כ-UserModel
+      
+      setSuccessMessage(message); // הצגת הודעת הצלחה
+      console.log("User added successfully:", user);
+    } catch (err: any) {
+      console.error("Error adding user:", err);
+      setError(err.message || "Failed to add user. Please try again.");
+    }
   };
+  
 
   return (
     <div className="grid place-items-center h-screen bg-gray-50">
@@ -91,6 +108,11 @@ function SignIn() {
           {error && (
             <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
               {error}
+            </div>
+          )}
+          {successMessage && (
+            <div className="bg-green-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
+              {successMessage}
             </div>
           )}
           <div className="text-right mt-4">
