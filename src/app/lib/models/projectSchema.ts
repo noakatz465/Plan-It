@@ -4,7 +4,7 @@ import mongoose, { Schema } from "mongoose";
 const ProjectSchema: Schema = new Schema({
     name: { type: String, required: true },
     description: { type: String },
-    manager: { type: mongoose.Schema.Types.ObjectId, required: true },
+    managerID: { type: mongoose.Schema.Types.ObjectId, required: true },
     LinkedTasks: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -24,4 +24,5 @@ const ProjectSchema: Schema = new Schema({
     },
 },{ collection: 'Projects' })
 
-export default mongoose.model<IProject>('User', ProjectSchema);
+const Project = mongoose.models.Project || mongoose.model<IProject>('Project', ProjectSchema);
+export default Project;
