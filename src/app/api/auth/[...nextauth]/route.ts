@@ -20,37 +20,59 @@ const handler = NextAuth({
   callbacks: {
     // התחברות: הוספת משתמש חדש אם אינו קיים
     async signIn({ user }) {
-        await connect();
-        try {
-          const existingUser = await User.findOne({ email: user.email });
-          if (!existingUser) {
-            await User.create({
-              name: user.name,
-              email: user.email,
-              isGoogleUser: true,
-            });
-            console.log("New user created:", user);
-          } else {
-            console.log("User already exists:", existingUser);
-          }
-          return true;
-        } catch (error) {
-          console.error("Error during sign-in:", error);
-      
-          if (error instanceof Error) {
-            throw new Error(error.message || "Sign-in failed. Please try again.");
-          } else {
-            throw new Error("Sign-in failed. Please try again.");
-          }
+      await connect();
+      try {
+        const existingUser = await User.findOne({ email: user.email });
+        if (!existingUser) {
+          // יצירת משתמש חדש אם לא קיים
+          await User.create({
+            firstName: user.name?.split(" ")[0] || "First Name", // חלוקה לשם פרטי ומשפחה
+            lastName: user.name?.split(" ")[1] || "Last Name",
+            email: user.email,
+            birthDate: null, // שדה ברירת מחדל
+            gender: null,
+            password: "google-auth-user", // אין סיסמה עבור משתמשים דרך Google
+            joinDate: new Date(),
+            notificationsEnabled: true,
+            projects: [],
+            tasks: [],
+            sharedWith: [],
+          });
+          console.log("New user created:", user);
+        } else {
+          console.log("User already exists:", existingUser);
         }
-      },
-      
+        return true;
+      } catch (error) {
+        console.error("Error during sign-in:", error);
 
-    // ניהול Session: הוספת ID למידע המשתמש
+        if (error instanceof Error) {
+          throw new Error(error.message || "Sign-in failed. Please try again.");
+        } else {
+          throw new Error("Sign-in failed. Please try again.");
+        }
+      }
+    },
+
+    // ניהול Session: הוספת כל השדות של המשתמש
     async session({ session }) {
       if (session.user) {
         const userFromDB = await User.findOne({ email: session.user.email });
-        session.user.id = userFromDB?._id.toString() || "";
+        if (userFromDB) {
+          session.user = {
+            id: userFromDB._id.toString(),
+            firstName: userFromDB.firstName,
+            lastName: userFromDB.lastName,
+            email: userFromDB.email,
+            birthDate: userFromDB.birthDate,
+            gender: userFromDB.gender,
+            notificationsEnabled: userFromDB.notificationsEnabled,
+            projects: userFromDB.projects,
+            tasks: userFromDB.tasks,
+            sharedWith: userFromDB.sharedWith,
+            image: session.user.image || null, // אם קיים תמונה מהגוגל
+          };
+        }
       }
       return session;
     },
@@ -59,13 +81,6 @@ const handler = NextAuth({
     async redirect({ url, baseUrl }) {
       return url.startsWith(baseUrl) ? url : `${baseUrl}/pages/dashboard`;
     },
-  },
-
-  // עמודים מותאמים אישית
-  pages: {
-    signIn: "/auth/signIn", // מסך התחברות מותאם אישית
-    error: "/auth/error", // עמוד שגיאה מותאם אישית
-    signOut: "/auth/signOut", // עמוד התנתקות מותאם
   },
 });
 
