@@ -11,6 +11,8 @@ export const addUser = async (user: UserModel): Promise<string> => {
         lastName: user.lastName,
         email: user.email,
         password: user.password,
+        gender: user.gender, // העברת מגדר לשרת
+        birthDate: user.birthDate ? user.birthDate.toISOString() : undefined, // פורמט תאריך לידה
       });
   
       if (response.status === 200 || response.status === 201) {
@@ -30,4 +32,5 @@ export const addUser = async (user: UserModel): Promise<string> => {
       }
     }
   };
+  
   
