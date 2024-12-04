@@ -1,8 +1,9 @@
 "use client";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { loginUser } from "../services/authService"; // נתיב לפונקציית loginUser
+import { loginUser } from "../services/authService"; // נניח שזה המסלול שבו מוגדרת הפונקציה
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ function Login() {
     try {
       const { message, user } = await loginUser(email, password);
       console.log(message); // "Login successful"
-      console.log(user);    // פרטי המשתמש
+      console.log(user); // פרטי המשתמש
 
       // ניתוב לדשבורד
       router.push("/pages/dashboard");
@@ -32,6 +33,10 @@ function Login() {
       console.error("Login failed:", err.message);
       setError(err.message || "An error occurred. Please try again.");
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    signIn("google", { callbackUrl: "/pages/dashboard" });
   };
 
   return (
@@ -64,6 +69,13 @@ function Login() {
               {error}
             </div>
           )}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="mt-2 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition duration-200"
+          >
+            Sign in with Google
+          </button>
           <div className="text-right">
             <Link
               className="text-sm text-blue-500 hover:underline"
