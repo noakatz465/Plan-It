@@ -1,3 +1,4 @@
+import { ITask } from "@/app/types/taskInterface";
 import mongoose, { Schema } from "mongoose";
 
 const TaskSchema: Schema = new Schema({
@@ -15,5 +16,5 @@ const TaskSchema: Schema = new Schema({
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
 },{ collection: 'Tasks' })
 
-const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
+const Task = mongoose.models.Task || mongoose.model<ITask>('Task', TaskSchema);
 export default Task;
