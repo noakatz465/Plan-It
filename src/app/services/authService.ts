@@ -73,49 +73,16 @@ export const fetchUserDetails = async () => {
 };
 
 
-// export const loginUser = async (
-//     email: string,
-//     password: string
-//   ): Promise<{ message: string; user: Partial<UserModel> }> => {
-//     try {
-//       const response = await axios.post(API_LOGIN_URL, { email, password });
-  
-//       if (response.status === 200) {
-//         const { message, user } = response.data;
-//         return { message, user }; // החזרת הודעת ההצלחה ופרטי המשתמש
-//       } else {
-//         throw new Error(`Unexpected response: ${response.statusText}`);
-//       }
-//     } catch (error: any) {
-//       if (axios.isAxiosError(error)) {
-//         console.error("Axios error:", error.response?.data || error.message);
-//         throw new Error(error.response?.data?.message || "Login failed.");
-//       } else {
-//         console.error("Unknown error:", error);
-//         throw new Error("An unexpected error occurred.");
-//       }
-//     }
-//   };
-// export const loginUser = async (
-//   email: string,
-//   password: string
-// ): Promise<{ message: string; token: string; user: Partial<UserModel> }> => {
-//   try {
-//     const response = await axios.post("/api/login", { email, password });
 
-//     if (response.data.token) {
-//       const { message, token, user } = response.data;
-//       return { message, token, user }; // החזרת ה-Token ופרטי המשתמש
-//     } else {
-//       throw new Error("No token received");
-//     }
-//   } catch (error: any) {
-//     if (axios.isAxiosError(error)) {
-//       console.error("Axios error:", error.response?.data || error.message);
-//       throw new Error(error.response?.data?.message || "Login failed.");
-//     } else {
-//       console.error("Unknown error:", error);
-//       throw new Error("An unexpected error occurred.");
-//     }
-//   }
-// };
+export const logoutUser = async (router: any): Promise<void> => {
+  try {
+    const response = await axios.post("/api/logout", {}, { withCredentials: true });
+    if (response.data.redirectUrl) {
+      router.push(response.data.redirectUrl); // ניתוב לעמוד התחברות
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw new Error("Failed to logout. Please try again.");
+  }
+};
+
