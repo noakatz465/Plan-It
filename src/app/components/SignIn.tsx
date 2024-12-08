@@ -3,8 +3,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { UserModel } from "../models/userModel";
 import { addUser } from "../services/authService";
+import { useRouter } from "next/navigation";
 
 function SignIn() {
+  
+  const router = useRouter();
+
+
   const [user, setUser] = useState<UserModel>(
     new UserModel("", "", "", "") // ערכים התחלתיים
   );
@@ -42,6 +47,8 @@ function SignIn() {
       
       setSuccessMessage(message); // הצגת הודעת הצלחה
       console.log("User added successfully:", user);
+      router.push("/pages/dashboard"); // מעבר לדשבורד
+
     } catch (err: any) {
       console.error("Error adding user:", err);
       setError(err.message || "Failed to add user. Please try again.");
