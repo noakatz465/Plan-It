@@ -23,12 +23,9 @@ function Login() {
     setError(""); // איפוס שגיאות אם הכל תקין
 
     try {
-      const { message, user } = await loginUser(email, password);
-      console.log(message); // "Login successful"
-      console.log(user); // פרטי המשתמש
-
-      // ניתוב לדשבורד
-      router.push("/pages/dashboard");
+      const message = await loginUser(email, password);
+      console.log("Login successful:", message); // הודעת הצלחה
+      router.push("/pages/userProfile"); // מעבר לדשבורד
     } catch (err: any) {
       console.error("Login failed:", err.message);
       setError(err.message || "An error occurred. Please try again.");
