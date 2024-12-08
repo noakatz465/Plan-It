@@ -27,6 +27,9 @@ export async function GET(req: Request) {
 
     // שליפת המשתמש
     const user = await User.findById(decoded.id)
+      .populate("projects") // שליפת כל המידע על projects
+      .populate("tasks") // שליפת כל המידע על tasks
+      .populate("sharedWith"); // שליפת כל המידע על sharedWith
     if (!user) {
       return NextResponse.json({ message: "User not found." }, { status: 404 });
     }

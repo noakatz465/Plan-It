@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { UserModel } from "../models/userModel";
 import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "../services/authService";
+import { log } from "console";
 
 function UserInfo() {
   const { data: session, status } = useSession();
@@ -18,6 +19,8 @@ function UserInfo() {
       console.log("Fetching user details via session:", session.user._id);
       const details = await fetchUserDetailsBySession(session.user._id);
       setUserDetails(details);
+      console.log(userDetails);
+      
     } else {
       console.error("Session does not contain _id.");
     }
@@ -27,6 +30,8 @@ function UserInfo() {
     console.log("Fetching user details via cookie...");
     const userDetails = await fetchUserDetailsByCookie();
     setUserDetails(userDetails);
+    console.log(userDetails);
+
   };
 
   useEffect(() => {
@@ -35,11 +40,15 @@ function UserInfo() {
         if (session?.user?._id) {
           console.log("if", session);
           await fetchBySession();
+          console.log(userDetails);
+
         } else if (session) {
           console.log("else", session);
-          await fetchByCookie();
+          // await fetchByCookie();
         } else {
           console.log("Session is still undefined");
+          await fetchByCookie();
+
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -53,7 +62,7 @@ function UserInfo() {
       // להריץ רק כאשר session לא במצב 'loading'
       loadUserDetails();
     }
-  }, [session, status]);
+  }, [session]);
 
 
   const handleSignOut = async () => {
