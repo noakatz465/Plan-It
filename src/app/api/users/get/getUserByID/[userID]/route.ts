@@ -7,7 +7,7 @@ export async function GET(req: Request) {
         await connect();
 
         const  userId  = req.url.split('/').pop();
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).populate('tasks').populate('projects');
 
         return NextResponse.json({
             message: "User fetched successfully",
