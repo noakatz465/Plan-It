@@ -35,7 +35,7 @@ export async function GET(req: Request) {
     }
 
     // הסרת הסיסמה והחזרת הנתונים
-    const { password, ...userWithoutPassword } = user.toObject();
+    const { password: _, ...userWithoutPassword } = user.toObject();
 
     return NextResponse.json({ user: userWithoutPassword });
   } catch (error) {
