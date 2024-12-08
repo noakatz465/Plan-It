@@ -1,5 +1,6 @@
 import axios from "axios";
 import { UserModel } from "../models/userModel";
+import { useSession } from "next-auth/react";
 
 const API_USERS_URL = '/api/users';
 const API_LOGIN_URL = '/api/login';
@@ -63,16 +64,61 @@ export const loginUser = async (
   }
 };
 
+export const fetchUserDetailsByCookie = async (): Promise<UserModel> => {
+  try {
+    const response = await axios.get(`${API_USERS_URL}/get/getUser`, {
+      withCredentials: true, // מאפשר שליחה וקבלה של עוגיות
+    });
 
-export const fetchUserDetails = async () => {
-  const response = await axios.get(`${API_USERS_URL}/get/getUser`, {
-    withCredentials: true, // מאפשר שליחה וקבלה של עוגיות
-  });
+    const userDetails = response.data.user;
 
-  return response.data.user; // מחזיר את פרטי המשתמש
+    // יצירת אובייקט UserModel
+    return new UserModel(
+      userDetails.firstName,
+      userDetails.lastName,
+      userDetails.email,
+      userDetails.password,
+      new Date(userDetails.joinDate),
+      userDetails.notificationsEnabled,
+      userDetails.projects || [],
+      userDetails.tasks || [],
+      userDetails.sharedWith || [],
+      userDetails._id,
+      userDetails.birthDate ? new Date(userDetails.birthDate) : undefined,
+      userDetails.gender
+    );
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    throw new Error("Failed to fetch user details. Please try again.");
+  }
 };
 
 
+export const fetchUserDetailsBySession = async (userId: string): Promise<UserModel> => {
+  try {
+    const response = await axios.get(`${API_USERS_URL}/get/getUserByID/${userId}`);
+    const userDetails = response.data.user;
+
+    // יצירת אובייקט UserModel
+    return new UserModel(
+      userDetails.firstName,
+      userDetails.lastName,
+      userDetails.email,
+      userDetails.password,
+      new Date(userDetails.joinDate),
+      userDetails.notificationsEnabled,
+      userDetails.projects || [],
+      userDetails.tasks || [],
+      userDetails.sharedWith || [],
+      userDetails._id,
+      userDetails.birthDate ? new Date(userDetails.birthDate) : undefined,
+      userDetails.gender
+    );
+  } catch (error) {
+    console.error("Failed to fetch user details:", error);
+    throw new Error("Unable to fetch user details.");
+  }
+};
 
 export const logoutUser = async (router: any): Promise<void> => {
   try {

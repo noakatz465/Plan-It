@@ -1,72 +1,102 @@
 "use client";
 
-import React from "react";
-import { useSession } from "next-auth/react";
-
-function formatDate(date: Date | null | undefined): string {
-  return date ? new Date(date).toLocaleDateString() : "Not provided";
-}
+import React, { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { UserModel } from "../models/userModel";
+import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "../services/authService";
 
 function UserInfo() {
   const { data: session, status } = useSession();
+  const [userDetails, setUserDetails] = useState<UserModel | null>(null);
+  const [loading, setLoading] = useState(true); // מצב טעינה
+  const router = useRouter();
 
-  if (status === "loading") {
-    return <p>Loading...</p>; // טוען אם המידע עדיין לא נטען
+  const fetchBySession = async () => {
+    if (session?.user?._id) {
+      console.log("Session user object:", session?.user);
+      console.log("Fetching user details via session:", session.user._id);
+      const details = await fetchUserDetailsBySession(session.user._id);
+      setUserDetails(details);
+    } else {
+      console.error("Session does not contain _id.");
+    }
+  };
+
+  const fetchByCookie = async () => {
+    console.log("Fetching user details via cookie...");
+    const userDetails = await fetchUserDetailsByCookie();
+    setUserDetails(userDetails);
+  };
+
+  useEffect(() => {
+    const loadUserDetails = async () => {
+      try {
+        if (session?.user?._id) {
+          console.log("if", session);
+          await fetchBySession();
+        } else if (session) {
+          console.log("else", session);
+          await fetchByCookie();
+        } else {
+          console.log("Session is still undefined");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        router.push("/"); // ניתוב למסך התחברות במקרה של שגיאה
+      } finally {
+        setLoading(false); // סיום טעינה
+      }
+    };
+
+    if (status !== "loading") {
+      // להריץ רק כאשר session לא במצב 'loading'
+      loadUserDetails();
+    }
+  }, [session, status]);
+
+
+  const handleSignOut = async () => {
+    try {
+      console.log("Attempting to sign out...");
+      await signOut(); // התנתקות עם NextAuth
+      console.log("Sign-out successful");
+    } catch (error) {
+      console.error("Error during sign-out:", error);
+    }
+  };
+
+  if (status === "loading" || loading) {
+    return <p>Loading...</p>; // הודעת טעינה
   }
 
-  if (!session?.user) {
-    return <p>No user logged in</p>; // אם אין משתמש מחובר
+  if (!userDetails) {
+    return <p>Failed to load user details</p>; // הודעה במקרה ואין פרטי משתמש
   }
 
   return (
     <div className="p-4 border rounded-lg bg-gray-100 shadow">
-      <h2 className="text-lg font-bold">User Info</h2>
+      <h1>
+        Welcome, {userDetails.firstName} {userDetails.lastName}!
+      </h1>
+      <p>Email: {userDetails.email}</p>
+      <p>Gender: {userDetails.gender || "Not specified"}</p>
       <p>
-        <strong>ID:</strong> {session.user.id}
+        Birth Date:{" "}
+        {userDetails.birthDate
+          ? userDetails.birthDate.toLocaleDateString()
+          : "Not specified"}
       </p>
       <p>
-        <strong>First Name:</strong> {session.user.firstName || "Not provided"}
+        Notifications Enabled:{" "}
+        {userDetails.notificationsEnabled ? "Yes" : "No"}
       </p>
-      <p>
-        <strong>Last Name:</strong> {session.user.lastName || "Not provided"}
-      </p>
-      <p>
-        <strong>Email:</strong> {session.user.email || "Not provided"}
-      </p>
-      <p>
-        <strong>Birth Date:</strong> {formatDate(session.user.birthDate)}
-      </p>
-      <p>
-        <strong>Gender:</strong> {session.user.gender || "Not provided"}
-      </p>
-      <p>
-        <strong>Notifications Enabled:</strong>{" "}
-        {session.user.notificationsEnabled ? "Yes" : "No"}
-      </p>
-      <p>
-        <strong>Projects:</strong>{" "}
-        {session.user.projects?.join(", ") || "No projects assigned"}
-      </p>
-      <p>
-        <strong>Tasks:</strong>{" "}
-        {session.user.tasks?.join(", ") || "No tasks assigned"}
-      </p>
-      <p>
-        <strong>Shared With:</strong>{" "}
-        {session.user.sharedWith?.join(", ") || "No shared users"}
-      </p>
-      <p>
-        <strong>Image:</strong>
-      </p>
-      {session.user.image ? (
-        <img
-          src={session.user.image}
-          alt={session.user.firstName || "User Image"}
-          className="w-16 h-16 rounded-full mt-2"
-        />
-      ) : (
-        <p>No image provided</p>
-      )}
+      <button
+        onClick={handleSignOut}
+        className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+      >
+        Sign Out
+      </button>
     </div>
   );
 }

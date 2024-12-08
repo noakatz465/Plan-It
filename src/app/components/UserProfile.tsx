@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchUserDetails, logoutUser } from "../services/authService";
+import { fetchUserDetailsByCookie, logoutUser } from "../services/authService";
 import { UserModel } from "@/app/models/userModel";
 
 function UserProfile() {
@@ -11,25 +11,11 @@ function UserProfile() {
   useEffect(() => {
     const loadUserDetails = async () => {
       try {
-        const userDetails = await fetchUserDetails();
-        const userInstance = new UserModel(
-          userDetails.firstName,
-          userDetails.lastName,
-          userDetails.email,
-          userDetails.password,
-          new Date(userDetails.joinDate),
-          userDetails.notificationsEnabled,
-          userDetails.projects || [],
-          userDetails.tasks || [],
-          userDetails.sharedWith || [],
-          userDetails._id,
-          userDetails.birthDate ? new Date(userDetails.birthDate) : undefined,
-          userDetails.gender
-        );
-        setUser(userInstance);
+        const userDetails = await fetchUserDetailsByCookie();
+        setUser(userDetails);
       } catch (error) {
         console.error("Failed to fetch user details:", error);
-        router.push("/login"); // ניתוב למסך התחברות אם יש שגיאה
+        router.push("/"); // ניתוב למסך התחברות אם יש שגיאה
       }
     };
 
