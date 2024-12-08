@@ -7,10 +7,8 @@ export async function GET(req: Request) {
         await connect();
 
         const  userId  = req.url.split('/').pop();
-        const user = await User.findById(userId)
-            .populate("projects") // שליפה של אוסף projects
-            .populate("tasks") // שליפה של אוסף tasks
-            .populate("sharedWith"); // שליפה של אוסף sharedWith
+        const user = await User.findById(userId).populate('tasks').populate('projects');
+
         return NextResponse.json({
             message: "User fetched successfully",
             user,

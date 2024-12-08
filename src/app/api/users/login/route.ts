@@ -8,7 +8,7 @@ export async function POST(req: Request) {
         await connect();
         const { email, password } = await req.json();
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate('tasks').populate('projects');;
         if (!user) {
             return NextResponse.json(
                 { message: "User not found" },
