@@ -1,27 +1,29 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation"; // לשימוש בניווט
+import { useRouter } from "next/navigation";
+import { sendVerificationCode } from "../services/passwordService";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter(); // יצירת מופע של router
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post("/api/sendVerificationCode", { email });
-      setMessage("Verification code sent to your email. Please check your inbox.");
+      const successMessage = await sendVerificationCode(email); // קריאה לשירות
+      setMessage(successMessage);
       setError("");
 
-      // מעבר לדף אימות קוד (עם העברת המייל כפרמטר ב-URL)
-      router.push(`/pages/verifyCode?email=${encodeURIComponent(email)}`);
-    } catch (error) {
-      console.error("Error sending verification code:", error);
+      // מעבר לדף אימות קוד
+      setTimeout(() => {
+        router.push(`/pages/verifyCode?email=${encodeURIComponent(email)}`);
+      }, 2000);    } catch (err: any) {
+      console.error("Error in handleSubmit:", err.message);
       setMessage("");
-      setError("Failed to send verification code. Please try again.");
+      setError(err.message || "Failed to send verification code.");
     }
   };
 

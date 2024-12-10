@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
+import { verifyCode } from "../services/passwordService";
 
 function VerifyCode() {
   const [code, setCode] = useState("");
@@ -26,21 +26,18 @@ function VerifyCode() {
     setMessage("");
 
     try {
-      const response = await axios.post("/api/verifyCode", { email, code });
-
-      if (response.status === 200) {
-        setMessage("Code verified successfully!");
-        // מעבר לדף איפוס סיסמה עם העברת המייל
-        router.push(`/pages/resetPassword?email=${encodeURIComponent(email)}`);
-      } else {
-        setError("Invalid or expired verification code.");
-      }
-    } catch (err) {
-      console.error("Error verifying code:", err);
-      setError("Invalid or expired verification code. Please try again.");
-    } finally {
-      setIsLoading(false);
+      const { message: successMessage, resetToken } = await verifyCode(email, code); // קריאה לשירות שמחזיר טוקן
+      setMessage(successMessage);
+    
+      // מעבר לדף איפוס סיסמה עם הטוקן
+      setTimeout(() => {
+        router.push(`/pages/resetPassword?email=${encodeURIComponent(email)}&token=${encodeURIComponent(resetToken)}`);
+      }, 2000);
+    } catch (err: any) {
+      console.error("Error verifying code:", err.message);
+      setError(err.message || "Invalid or expired verification code.");
     }
+    
   };
 
   return (

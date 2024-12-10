@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
+import { resetPassword } from "../services/passwordService";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -10,46 +10,41 @@ function ResetPassword() {
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email"); // שליפת האימייל מה-URL
+  const email = searchParams.get("email"); 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!email) {
-      setError("Email is missing. Please try again.");
+  
+    const token = searchParams.get("token"); // שליפת הטוקן מה-URL
+  
+    if (!email || !token) {
+      setError("Missing email or token. Please try again.");
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-
+  
     try {
-      const response = await axios.post("/api/resetPassword", { email, password });
-      if (response.status === 200) {
-        setMessage("Password updated successfully!");
-        setError("");
-        setTimeout(() => {
-          router.push("/"); // מעבר לדף לוגין לאחר עדכון הסיסמה
-        }, 2000);
-      } else {
-        throw new Error(response.data.message || "Failed to reset password.");
-      }
+      const successMessage = await resetPassword(email, password, token); // העברת הטוקן לשירות
+      setMessage(successMessage);
+      setError("");
+  
+      setTimeout(() => {
+        router.push("/"); // מעבר לדף לוגין לאחר עדכון הסיסמה
+      }, 2000);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("Axios error:", err.response?.data || err.message);
-        setError(err.response?.data?.message || "Failed to reset password.");
-      } else if (err instanceof Error) {
-        console.error("Error updating password:", err.message);
-        setError(err.message || "Failed to reset password.");
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
-        console.error("Unknown error:", err);
-        setError("Failed to reset password.");
+        console.error("Unexpected error type:", err);
+        setError("An unexpected error occurred.");
       }
     }
   };
-
+  
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
