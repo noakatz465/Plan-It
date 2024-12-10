@@ -1,20 +1,32 @@
+
 // import connect from "@/app/lib/db/mongoDB";
 // import { NextResponse } from "next/server";
 // import User from "@/app/lib/models/userSchema";
 // import bcrypt from "bcrypt";
+// import jwt from "jsonwebtoken";
 
 // export async function POST(req: Request) {
 //   try {
 //     await connect();
-//     const { email, password } = await req.json();
+//     const { token, password } = await req.json();
 
-//     if (!email || !password) {
+//     if (!token || !password) {
 //       return NextResponse.json(
-//         { message: "Email and password are required." },
+//         { message: "Token and password are required." },
 //         { status: 400 }
 //       );
 //     }
 
+//     // בדיקת הטוקן
+//     let email: string;
+//     try {
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as { email: string };
+//       email = decoded.email;
+//     } catch (err) {
+//       return NextResponse.json({ message: "Invalid or expired token." }, { status: 401 });
+//     }
+
+//     // חיפוש המשתמש
 //     const user = await User.findOne({ email });
 //     if (!user) {
 //       return NextResponse.json(
@@ -42,6 +54,7 @@
 //     );
 //   }
 // }
+import { cookies } from "next/headers";
 import connect from "@/app/lib/db/mongoDB";
 import { NextResponse } from "next/server";
 import User from "@/app/lib/models/userSchema";
@@ -51,11 +64,15 @@ import jwt from "jsonwebtoken";
 export async function POST(req: Request) {
   try {
     await connect();
-    const { token, password } = await req.json();
+    const { password } = await req.json();
+
+    // שליפת הטוקן מהעוגיה
+    const cookieStore = cookies();
+    const token = cookieStore.get("resetToken")?.value;
 
     if (!token || !password) {
       return NextResponse.json(
-        { message: "Token and password are required." },
+        { message: "Password reset failed." },
         { status: 400 }
       );
     }
@@ -66,15 +83,15 @@ export async function POST(req: Request) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as { email: string };
       email = decoded.email;
     } catch (err) {
-      return NextResponse.json({ message: "Invalid or expired token." }, { status: 401 });
+      return NextResponse.json({ message: "Password reset failed." }, { status: 400 });
     }
 
     // חיפוש המשתמש
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json(
-        { message: "User not found. Please try again." },
-        { status: 404 }
+        { message: "Password reset failed." },
+        { status: 400 }
       );
     }
 
@@ -92,7 +109,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error resetting password:", error);
     return NextResponse.json(
-      { message: "Failed to reset password." },
+      { message: "An unexpected error occurred." },
       { status: 500 }
     );
   }

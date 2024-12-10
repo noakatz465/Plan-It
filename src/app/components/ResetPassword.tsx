@@ -9,39 +9,21 @@ function ResetPassword() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email"); 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    const token = searchParams.get("token"); // שליפת הטוקן מה-URL
-  
-    if (!email || !token) {
-      setError("Missing email or token. Please try again.");
-      return;
-    }
-  
-    if (password !== confirmPassword) {
+    if (!password || password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
   
     try {
-      const successMessage = await resetPassword(email, password, token); // העברת הטוקן לשירות
+      const successMessage = await resetPassword(password); // קריאה לשירות
       setMessage(successMessage);
-      setError("");
-  
-      setTimeout(() => {
-        router.push("/"); // מעבר לדף לוגין לאחר עדכון הסיסמה
-      }, 2000);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        console.error("Unexpected error type:", err);
-        setError("An unexpected error occurred.");
-      }
+      setTimeout(() => router.push("/"), 2000);
+    } catch (err: any) {
+      setError(err.message || "Failed to reset password.");
     }
   };
   

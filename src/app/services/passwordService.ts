@@ -19,15 +19,12 @@ export const sendVerificationCode = async (email: string): Promise<string> => {
 };
 
 
-export const verifyCode = async (email: string, code: string): Promise<{ message: string; resetToken: string }> => {
+export const verifyCode = async (email: string, code: string): Promise<string> => {
     try {
       const response = await axios.post("/api/verifyCode", { email, code });
   
-      if (response.status === 200 && response.data.resetToken) {
-        return {
-          message: "Code verified successfully!",
-          resetToken: response.data.resetToken, // הטוקן שהוחזר מהשרת
-        };
+      if (response.status === 200) {
+        return response.data.message || "Code verified successfully!";
       } else {
         throw new Error("Invalid or expired verification code.");
       }
@@ -41,25 +38,16 @@ export const verifyCode = async (email: string, code: string): Promise<{ message
       }
     }
   };
-  
 
-  export const resetPassword = async (email: string, password: string, token: string): Promise<string> => {
-    try {
-      const response = await axios.post("/api/resetPassword", { email, password, token }); // הוספת הטוקן
   
-      if (response.status === 200) {
-        return "Password updated successfully!";
-      } else {
-        throw new Error(response.data.message || "Failed to reset password.");
-      }
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        console.error("Axios error:", err.response?.data || err.message);
-        throw new Error(err.response?.data?.message || "Failed to reset password.");
-      } else {
-        console.error("Unknown error:", err);
-        throw new Error("Failed to reset password.");
-      }
+  export const resetPassword = async (password: string): Promise<string> => {
+    try {
+      const response = await axios.post("/api/resetPassword", { password }); // הסרת email
+      return response.data.message || "Password updated successfully!";
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || "Failed to reset password.");
     }
   };
+  
+  
   

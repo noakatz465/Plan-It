@@ -15,30 +15,33 @@ function VerifyCode() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!email) {
       setError("Missing email address. Please try again.");
       return;
     }
-
+  
     setIsLoading(true);
     setError("");
     setMessage("");
-
+  
     try {
-      const { message: successMessage, resetToken } = await verifyCode(email, code); // קריאה לשירות שמחזיר טוקן
+      const successMessage = await verifyCode(email, code); // קבל את המחרוזת ישירות
       setMessage(successMessage);
     
-      // מעבר לדף איפוס סיסמה עם הטוקן
+      // מעבר לדף איפוס סיסמה
       setTimeout(() => {
-        router.push(`/pages/resetPassword?email=${encodeURIComponent(email)}&token=${encodeURIComponent(resetToken)}`);
+        router.push(`/pages/resetPassword`); // אין צורך בפרמטרים ב-URL
       }, 2000);
     } catch (err: any) {
       console.error("Error verifying code:", err.message);
-      setError(err.message || "Invalid or expired verification code.");
+      setError(err.message || "Invalid verification code.");
     }
-    
+     finally {
+      setIsLoading(false);
+    }
   };
+  
 
   return (
     <div className="grid place-items-center h-screen bg-gray-50">
