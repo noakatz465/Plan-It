@@ -34,6 +34,8 @@ const UserSchema: Schema = new Schema({
             ref: 'User',
         },
     ],
+    verificationCode: { type: Number, required: false }, // שדה לקוד האימות
+    verificationCodeExpiry: { type: Date, required: false }, // שדה לתוקף הקוד
 },{ collection: 'Users' })
 
 const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema); 

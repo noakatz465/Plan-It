@@ -27,15 +27,17 @@ export async function POST(req: Request) {
 
     // יצירת טוקן
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "default_secret", { expiresIn: "1h" });
+console.log('token',token);
 
     // הגדרת עוגיה
     const cookie = serialize("auth_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // רק ב-production
       sameSite: "strict",
-      path: "/",
+      path: "/", // נגיש לכל הנתיבים
       maxAge: 60 * 60, // שעה
     });
+    
 
     // תגובה
     const response = NextResponse.json({ message: "Login successful" });

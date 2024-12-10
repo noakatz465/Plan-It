@@ -81,6 +81,14 @@ function Login() {
               Don't you have an account? <span className="underline">Sign In</span>
             </Link>
           </div>
+          <div className="text-right mt-2">
+            <Link
+              className="text-sm text-blue-500 hover:underline"
+              href="/pages/forgotPassword"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </form>
       </div>
     </div>

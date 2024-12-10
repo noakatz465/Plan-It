@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { UserModel } from "../models/userModel";
-import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "../services/authService";
+import { fetchUserDetailsByCookie, fetchUserDetailsBySession, logoutUser } from "../services/authService";
 import { log } from "console";
 
 function UserInfo() {
@@ -67,13 +67,21 @@ function UserInfo() {
 
   const handleSignOut = async () => {
     try {
-      console.log("Attempting to sign out...");
-      await signOut(); // התנתקות עם NextAuth
-      console.log("Sign-out successful");
+      if (session) {
+        console.log("User has a valid session. Using NextAuth sign out...");
+        await signOut();
+        console.log("Sign-out successful via NextAuth.");
+      } else {
+        console.log("No session detected. Using manual logout...");
+        await logoutUser(router);
+        console.log("Manual logout successful.");
+      }
     } catch (error) {
-      console.error("Error during sign-out:", error);
+      console.error("Error during logout:", error);
     }
   };
+  
+
 
   if (status === "loading" || loading) {
     return <p>Loading...</p>; // הודעת טעינה

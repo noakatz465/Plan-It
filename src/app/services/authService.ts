@@ -35,7 +35,6 @@ export const addUser = async (user: UserModel): Promise<string> => {
   }
 };
 
-
 // פונקציית התחברות
 export const loginUser = async (
   email: string,
