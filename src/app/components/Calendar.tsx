@@ -4,7 +4,8 @@ import { addDays, addMonths, addYears, endOfMonth, endOfWeek, format, startOfMon
 import { HDate } from '@hebcal/core';
 import { TaskModel } from "../models/taskModel";
 import { UserModel } from '../models/userModel';
-import axios from 'axios';
+import Link from 'next/link';
+import { getUserByID } from '../services/userService';
 
 function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -13,7 +14,7 @@ function Calendar() {
     const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
     const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
     const [user, setUser] = useState<UserModel>(new UserModel("", "", "", ""));
-    const [userId, setUserId] = useState<string>('674ed2c952ef7d7732ebb3e7');
+    const userId = '674ed2c952ef7d7732ebb3e7';
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
@@ -22,24 +23,11 @@ function Calendar() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`/api/users/get/getUserByID/${userId}`);
-                if (response.status === 200) {
-                    const data = response.data.user;
-                    const fetchedUser = new UserModel(
-                        data.firstName,
-                        data.lastName,
-                        data.email,
-                        data.password,
-                        new Date(data.joinDate),
-                        data.notificationsEnabled,
-                        data.projects || [],
-                        data.tasks || [],
-                        data.sharedWith || [],
-                        data._id,
-                        data.birthDate ? new Date(data.birthDate) : undefined,
-                        data.gender || null
-                    );
+                const fetchedUser = await getUserByID(userId);
+                if (fetchedUser) {
                     setUser(fetchedUser);
+                } else {
+                    console.warn("User not found");
                 }
             } catch (error) {
                 console.error("Failed to fetch user:", error);
@@ -49,12 +37,34 @@ function Calendar() {
     }, [userId]);
 
     useEffect(() => {
+        if (user.tasks.length > 0) {
+            mapTasksByDate();
+        }
+    }, [user.tasks]);
+
+    useEffect(() => {
         if (view === 'yearly') {
             setYearlyDates(createYearlyDates());
         } else {
             setCalendarDates(createCalendarDates());
         }
     }, [currentDate, view]);
+
+    const mapTasksByDate = () => {
+        const newTaskMap: { [key: string]: TaskModel[] } = {};
+        user.tasks.forEach((task) => {
+            if (task.dueDate) {
+                const dateString = format(new Date(task.dueDate), "yyyy-MM-dd");
+                if (!newTaskMap[dateString]) {
+                    newTaskMap[dateString] = [];
+                }
+                newTaskMap[dateString].push(task);
+            }
+        });
+        console.log(newTaskMap + "newTaskMap");
+
+        setTaskMap(newTaskMap);
+    };
 
     const createCalendarDates = () => {
         let startDate, endDate;
@@ -190,15 +200,17 @@ function Calendar() {
                                 <div className="mt-2">
                                     {dayTasks.length > 0 ? (
                                         dayTasks.map((task, index) => (
-                                            <div key={index} draggable
+                                            <Link href={`pages/viewTask/${task._id}`} key={index} draggable
                                                 className="text-sm text-blue-600">
                                                 {task.title}
-                                            </div>
+                                            </Link>
                                         ))
                                     ) : (
                                         <div className="text-xs text-gray-400">אין אירועים</div>
+                                        
                                     )}
                                 </div>
+                                <Link href={`pages/addTask/${date.toISOString()}`}>הוספת משימה</Link>
                             </div>
                         );
                     })}
