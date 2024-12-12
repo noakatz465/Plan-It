@@ -15,6 +15,8 @@ export const addUser = async (user: UserModel): Promise<string> => {
       password: user.password,
       gender: user.gender,
       birthDate: user.birthDate ? user.birthDate.toISOString() : undefined,
+    }, {
+      withCredentials: true, // וידוא שכלול עוגיות בבקשה
     });
 
     if (response.status === 200 || response.status === 201) {
