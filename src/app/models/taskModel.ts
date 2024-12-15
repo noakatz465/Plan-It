@@ -1,5 +1,5 @@
 export class TaskModel {
-    taskId?: string; // מזהה ייחודי למשימה
+    _id?: string; // מזהה ייחודי למשימה
     title: string; // כותרת המשימה
     description?: string; // תיאור מפורט
     dueDate?: Date; // תאריך יעד
@@ -26,9 +26,9 @@ export class TaskModel {
       reminderDateTime?: Date,
       templateId?: string,
       projectId?: string,
-      taskId?: string
+      _id?: string
     ) {
-      this.taskId = taskId;
+      this._id = _id;
       this.title = title;
       this.description = description || "";
       this.dueDate = dueDate;
