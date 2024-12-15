@@ -6,8 +6,7 @@ export default function Home() {
   
   return (
     <div>
-      <Calendar />
-      {/* <Login/> */}
+      <Login/>
     </div>
   );
 }
