@@ -6,6 +6,7 @@ import { TaskModel } from "../models/taskModel";
 import { UserModel } from '../models/userModel';
 import Link from 'next/link';
 import { getUserByID } from '../services/userService';
+import AddTask from './AddTask';
 
 function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -19,6 +20,18 @@ function Calendar() {
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
     ];
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+    const handleOpenModal = (date: Date) => {
+        setSelectedDate(date);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedDate(null);
+    };
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -207,15 +220,29 @@ function Calendar() {
                                         ))
                                     ) : (
                                         <div className="text-xs text-gray-400">אין אירועים</div>
-                                        
+
                                     )}
                                 </div>
-                                <Link href={`pages/addTask/${date.toISOString()}`}>הוספת משימה</Link>
+                                {/* <Link href={`pages/addTask/${date.toISOString()}`}>הוספת משימה</Link> */}
+                                <button
+                                    onClick={() => handleOpenModal(date)}
+                                    className="mt-2 px-3 py-1 bg-blue-500 text-white rounded"
+                                >הוספת משימה</button>
+                                {isModalOpen && (
+                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                        <div className="bg-white p-5 rounded shadow-lg w-1/3">
+                                            <button onClick={handleCloseModal}
+                                                className="text-red-500 float-right font-bold">X</button>
+                                                {selectedDate? <AddTask dueDate={selectedDate} />:""}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
                 </div>
-            )}
+            )
+            }
         </div>
     )
 }
