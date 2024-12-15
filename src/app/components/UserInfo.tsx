@@ -52,7 +52,7 @@ function UserInfo() {
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
-        router.push("/"); // ניתוב למסך התחברות במקרה של שגיאה
+        // router.push("/"); // ניתוב למסך התחברות במקרה של שגיאה
       } finally {
         setLoading(false); // סיום טעינה
       }

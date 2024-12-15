@@ -1,44 +1,4 @@
 
-// import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
-// import { NextResponse } from "next/server";
-// import User from "@/app/lib/models/userSchema";
-
-// export async function POST(req: Request) {
-//   try {
-//     const { email, code } = await req.json();
-
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       return NextResponse.json({ message: "User not found." }, { status: 404 });
-//     }
-
-//     if (user.verificationCodeExpiry < Date.now()) {
-//       return NextResponse.json({ message: "Verification code expired." }, { status: 401 });
-//     }
-
-//     const isCodeValid = await bcrypt.compare(code.toString(), user.verificationCode);
-//     if (!isCodeValid) {
-//       return NextResponse.json({ message: "Invalid verification code." }, { status: 401 });
-//     }
-
-//     // יצירת טוקן זמני
-//     const token = jwt.sign(
-//       { email },
-//       process.env.JWT_SECRET || "default_secret",
-//       { expiresIn: "15m" } // הטוקן בתוקף ל-15 דקות
-//     );
-
-//     return NextResponse.json({
-//       message: "Code verified successfully.",
-//       resetToken: token, // שליחת הטוקן ללקוח
-//     });
-//   } catch (error) {
-//     console.error("Error verifying code:", error);
-//     return NextResponse.json({ message: "Failed to verify code." }, { status: 500 });
-//   }
-// }
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
