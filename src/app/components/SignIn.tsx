@@ -47,7 +47,7 @@ function SignIn() {
       
       setSuccessMessage(message); // הצגת הודעת הצלחה
       console.log("User added successfully:", user);
-      router.push("/pages/dashboard"); // מעבר לדשבורד
+      router.push("/pages/main/dashboard"); // מעבר לדשבורד
 
     } catch (err: any) {
       console.error("Error adding user:", err);

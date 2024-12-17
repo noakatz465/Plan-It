@@ -114,6 +114,7 @@ function UserInfo() {
       >
         Sign Out
       </button>
+      
     </div>
   );
 }

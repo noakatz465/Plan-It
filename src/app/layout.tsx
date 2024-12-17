@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+<html lang="he" dir="rtl">
+<body>
         <SessionProvider>
           {children}
         </SessionProvider>

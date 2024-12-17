@@ -72,5 +72,5 @@ export async function middleware(req: NextRequest) {
 
 // הגדרת matcher להפעלת המידלוור
 export const config = {
-  matcher: ["/api/:path*", "/pages/dashboard"], // הפעלה על נתיבי API ודשבורד
+  matcher: ["/api/:path*", "/pages/main/dashboard"], // הפעלה על נתיבי API ודשבורד
 };

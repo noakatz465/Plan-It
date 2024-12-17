@@ -25,7 +25,7 @@ function Login() {
     try {
       const message = await loginUser(email, password);
       console.log("Login successful:", message); // הודעת הצלחה
-      router.push("/pages/dashboard"); // מעבר לדשבורד
+      router.push("/pages/main/dashboard"); // מעבר לדשבורד
     } catch (err: any) {
       console.error("Login failed:", err.message);
       setError(err.message || "An error occurred. Please try again.");
@@ -33,7 +33,7 @@ function Login() {
   };
 
   const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/pages/dashboard" });
+    signIn("google", { callbackUrl: "/pages/main/dashboard" });
   };
 
   return (
@@ -76,7 +76,7 @@ function Login() {
           <div className="text-right">
             <Link
               className="text-sm text-blue-500 hover:underline"
-              href="/pages/signIn"
+              href="/pages/auth/signIn"
             >
               Don't you have an account? <span className="underline">Sign In</span>
             </Link>
@@ -84,7 +84,7 @@ function Login() {
           <div className="text-right mt-2">
             <Link
               className="text-sm text-blue-500 hover:underline"
-              href="/pages/forgotPassword"
+              href="/pages/auth/forgotPassword"
             >
               Forgot your password?
             </Link>

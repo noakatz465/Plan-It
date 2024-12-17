@@ -31,7 +31,7 @@ function VerifyCode() {
     
       // מעבר לדף איפוס סיסמה
       setTimeout(() => {
-        router.push(`/pages/resetPassword`); // אין צורך בפרמטרים ב-URL
+        router.push(`/pages/auth/resetPassword`); // אין צורך בפרמטרים ב-URL
       }, 2000);
     } catch (err: any) {
       console.error("Error verifying code:", err.message);

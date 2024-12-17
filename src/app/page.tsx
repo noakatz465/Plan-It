@@ -1,4 +1,3 @@
-import Calendar from "./components/Calendar";
 import Login from "./components/Login";
 
 export default function Home() {
@@ -6,6 +5,7 @@ export default function Home() {
   
   return (
     <div>
+      
       <Login/>
     </div>
   );
