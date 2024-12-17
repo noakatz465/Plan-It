@@ -18,3 +18,21 @@ export const getUserByID = async (userId: string) => {
         console.error("Failed to fetch user:", error);
     }
 }
+
+export const removeTaskForUsers = async (userIds: string[], taskId: string) => {
+    try {
+        const response = await axios.post(`${API_USERS_URL}/post/removeTask`, {
+            usertIdArr: userIds,
+            taskId: taskId,
+        });
+        if (response.status === 200) {
+            console.log("Task and user relationship updated successfully:", response.data);
+            return response.data;
+        } else {
+            console.warn("Unexpected response status:", response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error updating task and user relationship:", error);
+    }
+}

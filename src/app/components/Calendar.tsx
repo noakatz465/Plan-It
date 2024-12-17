@@ -229,12 +229,14 @@ function Calendar() {
                                 >הוספת משימה</button>
                                 {isModalOpen && (
                                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                                        <div className="bg-white p-5 rounded shadow-lg w-1/3">
-                                            <button onClick={(e) => {
+                                        <div className="bg-white p-5 rounded shadow-lg w-1/3"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >                                            <button
+                                            onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleCloseModal();
                                             }}
-                                                className="text-red-500 float-right font-bold">X</button>
+                                            className="text-red-500 float-right font-bold">X</button>
                                             {selectedDate ? <AddTask dueDate={selectedDate} /> : ""}
                                         </div>
                                     </div>
