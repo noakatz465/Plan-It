@@ -11,7 +11,7 @@ function AddTask(props: TaskDetails) {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState(new Date);
   const [assignedUsers, setAssignedUsers] = useState('');
-  const [projectId, setProjectId] = useState('');
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -98,7 +98,7 @@ function AddTask(props: TaskDetails) {
           <input
             id="projectId"
             type="text"
-            value={projectId}
+            value={projectId?? ""}
             onChange={(e) => setProjectId(e.target.value)}
             className="w-full px-3 py-2 border rounded"
           />

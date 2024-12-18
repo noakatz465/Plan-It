@@ -6,7 +6,7 @@ export class TaskModel {
     frequency: "Once" | "Daily" | "Weekly" | "Monthly" | "Yearly"; // תדירות
     status: "Pending" | "In Progress" | "Completed"; // סטטוס
     priority: "Low" | "Medium" | "High"; // עדיפות
-    creatorId: string; // מזהה יוצר המשימה
+    creator: string; // מזהה יוצר המשימה
     assignedUserIds: string[]; // מזהי המשתמשים המשויכים
     reminderDateTime?: Date; // תאריך ושעה לתזכורת
     templateId?: string; // מזהה תבנית
@@ -16,7 +16,7 @@ export class TaskModel {
     constructor(
       title: string,
       status: "Pending" | "In Progress" | "Completed" = "Pending",
-      creatorId: string,
+      creator: string,
       lastModified: Date = new Date(),
       frequency: "Once" | "Daily" | "Weekly" | "Monthly" | "Yearly" = "Once",
       priority: "Low" | "Medium" | "High" = "Medium",
@@ -35,7 +35,7 @@ export class TaskModel {
       this.frequency = frequency;
       this.status = status;
       this.priority = priority;
-      this.creatorId = creatorId;
+      this.creator = creator;
       this.assignedUserIds = assignedUserIds;
       this.reminderDateTime = reminderDateTime;
       this.templateId = templateId;

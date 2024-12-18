@@ -13,7 +13,7 @@ const TaskSchema: Schema = new Schema({
     reminderDateTime: { type: Date },
     templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
     lastModified: { type: Date, default: Date.now, required: true },
-    projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+    projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project'},
 },{ collection: 'Tasks' })
 
 const Task = mongoose.models.Task || mongoose.model<ITask>('Task', TaskSchema);
