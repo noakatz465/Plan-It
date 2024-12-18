@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TaskModel } from "../models/taskModel";
 
 const API_TASKS_URL = '/api/tasks';
 
@@ -47,3 +48,18 @@ export const deleteTask = async (taskId: string) => {
         throw error;
     }
 }
+export const updateTask = async (taskId: string, updatedData: Partial<TaskModel>) => {
+    try {
+      const response = await axios.put(`/api/tasks/put/${taskId}`, updatedData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error("Error in updateTask service:", error);
+      throw error;
+    }
+  };
+  
