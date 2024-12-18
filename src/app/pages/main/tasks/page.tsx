@@ -1,9 +1,10 @@
+import Tasks from '@/app/components/Tasks'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      משימות 
+<Tasks/>
     </div>
   )
 }

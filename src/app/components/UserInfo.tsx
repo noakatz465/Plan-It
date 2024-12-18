@@ -20,7 +20,7 @@ function UserInfo() {
       const details = await fetchUserDetailsBySession(session.user._id);
       setUserDetails(details);
       console.log(userDetails);
-      
+
     } else {
       console.error("Session does not contain _id.");
     }
@@ -69,7 +69,7 @@ function UserInfo() {
     try {
       if (session) {
         console.log("User has a valid session. Using NextAuth sign out...");
-        await signOut();
+        await signOut({ callbackUrl: "/" }); 
         console.log("Sign-out successful via NextAuth.");
       } else {
         console.log("No session detected. Using manual logout...");
@@ -80,7 +80,7 @@ function UserInfo() {
       console.error("Error during logout:", error);
     }
   };
-  
+
 
 
   if (status === "loading" || loading) {
@@ -114,7 +114,7 @@ function UserInfo() {
       >
         Sign Out
       </button>
-      
+
     </div>
   );
 }

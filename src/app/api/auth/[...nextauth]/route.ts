@@ -73,7 +73,7 @@ const handler = NextAuth({
 
     // הפניה מותאמת אישית
     async redirect({ url, baseUrl }) {
-      return url.startsWith(baseUrl) ? url : `${baseUrl}/pages/dashboard`;
+      return url.startsWith(baseUrl) ? url : `${baseUrl}/pages/main/dashboard`;
     },
   },
 });
