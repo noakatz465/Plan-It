@@ -7,34 +7,35 @@ interface UserState {
   user: UserModel | null; // המשתמש
   fetchUser: () => Promise<void>; // שליפת המשתמש
   clearUser: () => void; // ניקוי המשתמש
+  getTasks: () => UserModel["tasks"] | []; // החזרת משימות
 }
 
 export const useUserStore = create<UserState>((set, get) => {
   const initializeUser = async () => {
+    if (get().user) return; // אם המשתמש כבר קיים, לא להמשיך
     try {
-      const session = await getSession();
-      let userDetails;
+        const session = await getSession();
+        let userDetails;
 
-      if (session?.user?._id) {
-        console.log("Fetching user details via session...");
-        userDetails = await fetchUserDetailsBySession(session.user._id);
-      } else {
-        console.log("Fetching user details via cookie...");
-        userDetails = await fetchUserDetailsByCookie();
-      }
+        if (session?.user?._id) {
+            userDetails = await fetchUserDetailsBySession(session.user._id);
+        } else {
+            userDetails = await fetchUserDetailsByCookie();
+        }
 
-      set({ user: userDetails });
-      console.log("User fetched successfully:", userDetails);
+        set({ user: userDetails });
     } catch (error) {
-      console.error("Error fetching user details:", error);
-      set({ user: null });
+        console.error("Error fetching user details:", error);
+        set({ user: null });
     }
-  };
+};
+
 
   // החזרת החנות
   return {
     user: null,
     fetchUser: initializeUser,
     clearUser: () => set({ user: null }),
+    getTasks: () => get().user?.tasks || [], // החזרת המשימות
   };
 });

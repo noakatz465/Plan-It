@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import TaskNavBar from "@/app/components/TaskNavBar"; // נבבר המשימות
 import TaskListView from "@/app/components/TaskListView"; // קומפוננטת תצוגת רשימה
-import TaskCalendarView from "@/app/components/TaskCalendarView"; // קומפוננטת לוח שנה
 import TaskKanbanView from "@/app/components/TaskKanbanView"; // קומפוננטת קנבן
+import Calendar from "./Calendar";
 
 function Tasks() {
   const [view, setView] = useState<"list" | "calendar" | "kanban">("list"); // מצב התצוגה הנוכחית
@@ -21,7 +21,7 @@ function Tasks() {
       {/* הצגת הקומפוננטה לפי התצוגה הנוכחית */}
       <div className="p-4">
         {view === "list" && <TaskListView />}
-        {view === "calendar" && <TaskCalendarView />}
+        {view === "calendar" && <Calendar />}
         {view === "kanban" && <TaskKanbanView />}
       </div>
     </div>

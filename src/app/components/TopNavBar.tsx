@@ -20,7 +20,7 @@ function TopNavBar() {
                 <Link href="/notifications" className="flex items-center hover:text-gray-200 transition duration-200">
                     🔔 <span className="ml-1">התראות</span>
                 </Link>
-                <Link href="/profile" className="flex items-center hover:text-gray-200 transition duration-200">
+                <Link href="/pages/main/profile" className="flex items-center hover:text-gray-200 transition duration-200">
                     👩‍🎨 <span className="ml-1">פרופיל</span>
                 </Link>
             </div>
