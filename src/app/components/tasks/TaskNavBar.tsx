@@ -1,16 +1,22 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 
-interface TaskNavBarProps {
-  onChangeView: (view: "list" | "calendar" | "kanban") => void;
-}
+const TaskNavBar: React.FC = () => {
+  const router = useRouter();
 
-function TaskNavBar({ onChangeView }: TaskNavBarProps) {
+  const handleViewChange = (view: "list" | "calendar" | "kanban") => {
+    
+    router.push(`/pages/main/tasks/${view}`); // מנתב לדף המתאים
+  };
+
   return (
     <div className="bg-white p-4 flex items-center justify-between w-full shadow-md">
       {/* כפתור המשימות שלי */}
-      <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">
+      <div className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">
         ➕ המשימות שלי
-      </button>
+      </div>
 
       {/* שורת חיפוש */}
       <div className="flex-1 mx-4">
@@ -20,11 +26,14 @@ function TaskNavBar({ onChangeView }: TaskNavBarProps) {
           className="w-42 px-4 py-1 rounded-full bg-purple-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-300"
         />
       </div>
+      <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
+        סינון
+      </button>
 
       {/* תפריט בחירת תצוגה */}
       <div className="flex space-x-4 items-center">
         <select
-          onChange={(e) => onChangeView(e.target.value as "list" | "calendar" | "kanban")}
+          onChange={(e) => handleViewChange(e.target.value as "list" | "calendar" | "kanban")}
           className="px-3 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300"
         >
           <option value="list">📋 רשימה</option>
@@ -34,6 +43,6 @@ function TaskNavBar({ onChangeView }: TaskNavBarProps) {
       </div>
     </div>
   );
-}
+};
 
 export default TaskNavBar;

@@ -1,4 +1,4 @@
-import AddTask from '@/app/components/AddTask';
+import AddTask from '@/app/components/tasks/AddTask';
 import React from 'react'
 
 function page({ params }: { params: { date: string } }) {

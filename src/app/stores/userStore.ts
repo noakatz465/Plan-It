@@ -7,10 +7,12 @@ interface UserState {
   user: UserModel | null; // המשתמש
   fetchUser: () => Promise<void>; // שליפת המשתמש
   clearUser: () => void; // ניקוי המשתמש
+  tasks: UserModel["tasks"]; // משימות המשתמש
 }
 
 export const useUserStore = create<UserState>((set, get) => {
   const initializeUser = async () => {
+    if (get().user) return; // אם המשתמש כבר קיים, לא להמשיך
     try {
       const session = await getSession();
       let userDetails;
@@ -23,18 +25,18 @@ export const useUserStore = create<UserState>((set, get) => {
         userDetails = await fetchUserDetailsByCookie();
       }
 
-      set({ user: userDetails });
+      set({ user: userDetails, tasks: userDetails?.tasks || [] }); // עדכון גם של המשתמש וגם של המשימות
       console.log("User fetched successfully:", userDetails);
     } catch (error) {
       console.error("Error fetching user details:", error);
-      set({ user: null });
+      set({ user: null, tasks: [] });
     }
   };
 
-  // החזרת החנות
   return {
     user: null,
     fetchUser: initializeUser,
-    clearUser: () => set({ user: null }),
+    clearUser: () => set({ user: null, tasks: [] }), // ניקוי המשתמש והמשימות
+    tasks: [], // אתחול המשימות כברירת מחדל
   };
 });

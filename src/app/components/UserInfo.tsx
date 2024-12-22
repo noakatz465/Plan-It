@@ -122,23 +122,31 @@
 // export default UserInfo;
 
 
-
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useUserStore } from "../stores/userStore";
+import { UserModel } from "../models/userModel";
 
 const UserInfo = () => {
-  const user = useUserStore((state) => state.user);
+  const userFromStore = useUserStore((state) => state.user);
+  const [user, setUser] = useState<UserModel | null>(userFromStore); // נתוני המשתמש
+
 
   if (!user) {
     return <p>Loading user details...</p>;
   }
 
   return (
-    <div>
-      <h1>Welcome, {user.firstName}!</h1>
+    <div className="p-4 border rounded-lg bg-gray-100 shadow">
+      <h1 className="text-xl font-bold">Welcome, {user.firstName} {user.lastName}!</h1>
       <p>Email: {user.email}</p>
-      
+      <p>Gender: {user.gender || "Not specified"}</p>
+      <p>Birth Date: {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</p>
+      <p>Join Date: {new Date(user.joinDate).toLocaleDateString()}</p>
+      <p>Notifications Enabled: {user.notificationsEnabled ? "Yes" : "No"}</p>
+      <p>Projects: {user.projects?.length > 0 ? user.projects.join(", ") : "No projects available"}</p>
+      <p>Tasks: {user.tasks?.length > 0 ? user.tasks.join(", ") : "No tasks available"}</p>
+      <p>Shared With: {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</p>
     </div>
   );
 };

@@ -7,7 +7,7 @@ const UserLoader = () => {
 
   useEffect(() => {
     fetchUser(); // שליפת המשתמש
-  }, [fetchUser]);
+  }, []);
 
   return null; // הקומפוננטה לא מציגה דבר
 };
