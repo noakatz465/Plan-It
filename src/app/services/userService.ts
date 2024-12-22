@@ -36,3 +36,29 @@ export const removeTaskForUsers = async (userIds: string[], taskId: string) => {
         console.error("Error updating task and user relationship:", error);
     }
 }
+
+//עדכון פרטי משתמש קיים
+export const updateUser = async (userId: string, updatedData: Partial<UserModel>) => {
+    try {
+        const response = await axios.put(`${API_USERS_URL}/put/${userId}`, updatedData, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.status === 200) {
+            console.log("User updated successfully:", response.data.user);
+            const data = response.data.user;
+            const updatedUser = new UserModel(data.firstName, data.lastName, data.email, data.password, new Date(data.joinDate),
+                data.notificationsEnabled, data.projects || [], data.tasks || [], data.sharedWith || [],
+                data._id, data.birthDate ? new Date(data.birthDate) : undefined, data.gender || null, data.profileImage || '');
+            return updatedUser;
+        } else {
+            console.warn("Unexpected response status:", response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return null;
+    }
+}

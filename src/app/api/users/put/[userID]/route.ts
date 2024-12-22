@@ -20,6 +20,7 @@ export async function PUT(req: Request) {
         if (data.email) user.email = data.email;
         if (data.gender) user.gender = data.gender;
         if (data.birthDate) user.birthDate = data.birthDate;
+        if (data.profileImage) user.profileImage = data.profileImage;
 
         await user.save();
         return NextResponse.json({
