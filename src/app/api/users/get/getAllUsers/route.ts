@@ -25,6 +25,7 @@ export async function GET() {
         // projects: user.projects,
         // tasks: user.tasks,
         sharedWith: user.sharedWith,
+        profileImage: user.profileImage,
       })),
     });
   }catch (error) {
