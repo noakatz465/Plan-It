@@ -62,3 +62,26 @@ export const updateUser = async (userId: string, updatedData: Partial<UserModel>
         return null;
     }
 }
+
+export const uploadToCloudinary = async (file: File): Promise<string | null> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "default_preset"); // שימי לב שצריך להגדיר preset בפאנל של Cloudinary
+
+  try {
+    const response = await axios.post(
+      "https://api.cloudinary.com/v1_1/ddbitajje/image/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response.data);
+    return response.data.secure_url; // מחזיר את כתובת ה-URL המאובטחת
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return null;
+  }
+};

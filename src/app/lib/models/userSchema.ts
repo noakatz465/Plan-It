@@ -36,7 +36,6 @@ const UserSchema: Schema = new Schema({
     ],
     profileImage: {
         type: String,
-        default: '/images/default-profile.png',
     },
     verificationCode: { type: String, required: false }, // עדכון ל-String
     verificationCodeExpiry: { type: Date, required: false }, // תוקף הקוד

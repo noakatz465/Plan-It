@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { UserModel } from "@/app/models/userModel";
 import { useUserStore } from "../stores/userStore";
 import Image from "next/image";
-import { updateUser } from "../services/userService";
+import { updateUser, uploadToCloudinary } from "../services/userService";
 
 function Profile() {
   const user = useUserStore((state) => state.user);
@@ -139,14 +139,18 @@ function Profile() {
             type="file"
             name="profileImage"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
               if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setFormData({ ...formData, profileImage: reader.result as string });
-                };
-                reader.readAsDataURL(file); // הופך את הקובץ לבסיס 64
+                const uploadedUrl = await uploadToCloudinary(file);
+                console.log("noa");
+
+                if (uploadedUrl) {
+                  console.log("noa1");
+                  console.log("uploadedUrl" + uploadedUrl);
+                  debugger
+                  setFormData({ ...formData, profileImage: uploadedUrl });
+                }
               }
             }}
             className="w-full px-4 py-2 border rounded"
@@ -155,13 +159,14 @@ function Profile() {
             <div className="mt-4">
               <Image
                 src={formData.profileImage}
-                alt="Preview"
+                alt="Uploaded Profile Image"
                 width={128}
                 height={128}
                 className="rounded-full object-cover"
               />
             </div>
           )}
+
         </div>
 
 

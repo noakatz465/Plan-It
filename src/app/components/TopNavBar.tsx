@@ -1,7 +1,18 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useUserStore } from "../stores/userStore";
+
 
 function TopNavBar() {
+    const user = useUserStore((state) => state.user);
+
+    useEffect(() => {
+        console.log("User profileImage:", user?.profileImage);
+      }, [user]);
+    
+
     return (
         <div className="flex items-center justify-between bg-blue-600 text-white px-6 py-4 shadow-md">
             {/* לוגו */}
@@ -21,7 +32,24 @@ function TopNavBar() {
                     🔔 <span className="ml-1">התראות</span>
                 </Link>
                 <Link href="/pages/main/profile" className="flex items-center hover:text-gray-200 transition duration-200">
-                    👩‍🎨 <span className="ml-1">פרופיל</span>
+                    {user?.profileImage ? (
+                        <Image
+                            src={user.profileImage}
+                            alt="Profile"
+                            width={32}
+                            height={32}
+                            className="rounded-full object-cover"
+                            unoptimized
+                        />
+                    ) : (
+                        <Image
+                            src="" // תמונת ברירת מחדל
+                            alt="Anonymous Profile"
+                            width={32}
+                            height={32}
+                            className="rounded-full object-cover"
+                        />
+                    )}
                 </Link>
             </div>
         </div>
