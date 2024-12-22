@@ -22,8 +22,8 @@ export async function GET() {
         gender: user.gender,
         joinDate: user.joinDate,
         notificationsEnabled: user.notificationsEnabled,
-        projects: user.projects,
-        tasks: user.tasks,
+        // projects: user.projects,
+        // tasks: user.tasks,
         sharedWith: user.sharedWith,
       })),
     });
