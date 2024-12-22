@@ -13,35 +13,49 @@ interface UserState {
 
 export const useUserStore = create<UserState>((set, get) => {
   const initializeUser = async () => {
-    if (get().user) return; // אם המשתמש כבר קיים, לא להמשיך
-    if (get().user) return; // אם המשתמש כבר קיים, לא להמשיך
+    console.log("Starting user initialization...");
+
+    if (get().user) {
+      console.log("User already exists in store:", get().user);
+      return; // אם המשתמש כבר קיים, לא להמשיך
+    }
+
     try {
-        const session = await getSession();
-        let userDetails;
+      const session = await getSession();
+      console.log("Session retrieved:", session);
 
-        if (session?.user?._id) {
-            userDetails = await fetchUserDetailsBySession(session.user._id);
-        } else {
-            userDetails = await fetchUserDetailsByCookie();
-        }
+      let userDetails;
+      if (session?.user?._id) {
+        console.log("Fetching user details via session...");
+        userDetails = await fetchUserDetailsBySession(session.user._id);
+      } else {
+        console.log("Fetching user details via cookie...");
+        userDetails = await fetchUserDetailsByCookie();
+      }
 
-        set({ user: userDetails });
-      set({ user: userDetails, tasks: userDetails?.tasks || [] }); // עדכון גם של המשתמש וגם של המשימות
-      console.log("User fetched successfully:", userDetails);
+      console.log("User details fetched successfully:", userDetails);
+
+      set({ user: userDetails });
+      set({ tasks: userDetails?.tasks || [] }); // עדכון גם של המשתמש וגם של המשימות
+      console.log("User and tasks updated in store:", userDetails, userDetails?.tasks);
     } catch (error) {
-        console.error("Error fetching user details:", error);
-        set({ user: null });
       console.error("Error fetching user details:", error);
-      set({ user: null, tasks: [] });
+      set({ user: null, tasks: [] }); // במקרה של שגיאה, לאפס את החנות
     }
   };
 
   return {
     user: null,
-    fetchUser: initializeUser,
-    clearUser: () => set({ user: null }),
-    getTasks: () => get().user?.tasks || [], // החזרת המשימות
-    clearUser: () => set({ user: null, tasks: [] }), // ניקוי המשתמש והמשימות
     tasks: [], // אתחול המשימות כברירת מחדל
+    fetchUser: initializeUser,
+    getTasks: () => {
+      const tasks = get().user?.tasks || [];
+      console.log("Tasks retrieved from store:", tasks);
+      return tasks;
+    },
+    clearUser: () => {
+      console.log("Clearing user and tasks from store...");
+      set({ user: null, tasks: [] });
+    },
   };
 });

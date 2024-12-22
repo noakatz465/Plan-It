@@ -10,13 +10,24 @@ const TaskNavBar: React.FC = () => {
     
     router.push(`/pages/main/tasks/${view}`); // מנתב לדף המתאים
   };
+  const handleNavigateToAddTask = () => {
+    // ניתוב לדף הוספת משימה
+    router.push("/pages/main/tasks/addTask/");
+  };
 
   return (
     <div className="bg-white p-4 flex items-center justify-between w-full shadow-md">
       {/* כפתור המשימות שלי */}
       <div className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">
-        ➕ המשימות שלי
+        המשימות שלי
       </div>
+      <button
+      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
+      onClick={handleNavigateToAddTask}
+    >
+      +
+    </button>
+
 
       {/* שורת חיפוש */}
       <div className="flex-1 mx-4">
@@ -29,7 +40,7 @@ const TaskNavBar: React.FC = () => {
       <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
         סינון
       </button>
-
+ 
       {/* תפריט בחירת תצוגה */}
       <div className="flex space-x-4 items-center">
         <select

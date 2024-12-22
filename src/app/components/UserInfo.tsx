@@ -1,152 +1,67 @@
-// "use client";
-
-// import React, { useEffect, useState } from "react";
-// import { useSession, signOut } from "next-auth/react";
-// import { useRouter } from "next/navigation";
-// import { UserModel } from "../models/userModel";
-// import { fetchUserDetailsByCookie, fetchUserDetailsBySession, logoutUser } from "../services/authService";
-// import { log } from "console";
-
-// function UserInfo() {
-//   const { data: session, status } = useSession();
-//   const [userDetails, setUserDetails] = useState<UserModel | null>(null);
-//   const [loading, setLoading] = useState(true); // מצב טעינה
-//   const router = useRouter();
-
-//   const fetchBySession = async () => {
-//     if (session?.user?._id) {
-//       console.log("Session user object:", session?.user);
-//       console.log("Fetching user details via session:", session.user._id);
-//       const details = await fetchUserDetailsBySession(session.user._id);
-//       setUserDetails(details);
-//       console.log(userDetails);
-
-//     } else {
-//       console.error("Session does not contain _id.");
-//     }
-//   };
-
-//   const fetchByCookie = async () => {
-//     console.log("Fetching user details via cookie...");
-//     const userDetails = await fetchUserDetailsByCookie();
-//     setUserDetails(userDetails);
-//     console.log(userDetails);
-
-//   };
-
-//   useEffect(() => {
-//     const loadUserDetails = async () => {
-//       try {
-//         if (session?.user?._id) {
-//           console.log("if", session);
-//           await fetchBySession();
-//           console.log(userDetails);
-
-//         } else if (session) {
-//           console.log("else", session);
-//           // await fetchByCookie();
-//         } else {
-//           console.log("Session is still undefined");
-//           await fetchByCookie();
-
-//         }
-//       } catch (error) {
-//         console.error("Error fetching user details:", error);
-//         // router.push("/"); // ניתוב למסך התחברות במקרה של שגיאה
-//       } finally {
-//         setLoading(false); // סיום טעינה
-//       }
-//     };
-
-//     if (status !== "loading") {
-//       // להריץ רק כאשר session לא במצב 'loading'
-//       loadUserDetails();
-//     }
-//   }, [session]);
-
-
-//   const handleSignOut = async () => {
-//     try {
-//       if (session) {
-//         console.log("User has a valid session. Using NextAuth sign out...");
-//         await signOut({ callbackUrl: "/" }); 
-//         console.log("Sign-out successful via NextAuth.");
-//       } else {
-//         console.log("No session detected. Using manual logout...");
-//         await logoutUser(router);
-//         console.log("Manual logout successful.");
-//       }
-//     } catch (error) {
-//       console.error("Error during logout:", error);
-//     }
-//   };
-
-
-
-//   if (status === "loading" || loading) {
-//     return <p>Loading...</p>; // הודעת טעינה
-//   }
-
-//   if (!userDetails) {
-//     return <p>Failed to load user details</p>; // הודעה במקרה ואין פרטי משתמש
-//   }
-
-//   return (
-//     <div className="p-4 border rounded-lg bg-gray-100 shadow">
-//       <h1>
-//         Welcome, {userDetails.firstName} {userDetails.lastName}!
-//       </h1>
-//       <p>Email: {userDetails.email}</p>
-//       <p>Gender: {userDetails.gender || "Not specified"}</p>
-//       <p>
-//         Birth Date:{" "}
-//         {userDetails.birthDate
-//           ? userDetails.birthDate.toLocaleDateString()
-//           : "Not specified"}
-//       </p>
-//       <p>
-//         Notifications Enabled:{" "}
-//         {userDetails.notificationsEnabled ? "Yes" : "No"}
-//       </p>
-//       <button
-//         onClick={handleSignOut}
-//         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-//       >
-//         Sign Out
-//       </button>
-
-//     </div>
-//   );
-// }
-
-// export default UserInfo;
-
-
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
 
-const UserInfo = () => {
-  const userFromStore = useUserStore((state) => state.user);
-  const [user, setUser] = useState<UserModel | null>(userFromStore); // נתוני המשתמש
+const UserInfo: React.FC = () => {
+  const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  const userFromStore = useUserStore((state) => state.user); // הנתונים מהחנות
+  const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
+  const [loading, setLoading] = useState(true); // סטייט למצב טעינה
+  const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
 
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        setLoading(true); // התחלת טעינה
+        await fetchUser(); // שליפת המשתמש מהחנות
+        setUser(userFromStore); // עדכון המשתמש בסטייט
+      } catch (err) {
+        setError("Failed to fetch user details. Please try again."); // טיפול בשגיאה
+      } finally {
+        setLoading(false); // סיום טעינה
+      }
+    };
+
+    loadUser();
+  }, [fetchUser, userFromStore]);
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading user details...</p>;
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500">
+        {error}
+      </p>
+    );
+  }
 
   if (!user) {
-    return <p>Loading user details...</p>;
+    return (
+      <p className="text-center text-gray-500">
+        No user details available.
+      </p>
+    );
   }
 
   return (
     <div className="p-4 border rounded-lg bg-gray-100 shadow">
-      <h1 className="text-xl font-bold">Welcome, {user.firstName} {user.lastName}!</h1>
-      <p>Email: {user.email}</p>
-      <p>Gender: {user.gender || "Not specified"}</p>
-      <p>Birth Date: {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</p>
-      <p>Join Date: {new Date(user.joinDate).toLocaleDateString()}</p>
-      <p>Notifications Enabled: {user.notificationsEnabled ? "Yes" : "No"}</p>
-      <p>Projects: {user.projects?.length > 0 ? user.projects.join(", ") : "No projects available"}</p>
-      <p>Tasks: {user.tasks?.length > 0 ? user.tasks.join(", ") : "No tasks available"}</p>
-      <p>Shared With: {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</p>
+      <h1 className="text-xl font-bold mb-4">
+        Welcome, {user.firstName} {user.lastName}!
+      </h1>
+      <ul className="list-disc list-inside">
+        <li><strong>Email:</strong> {user.email}</li>
+        <li><strong>Gender:</strong> {user.gender || "Not specified"}</li>
+        <li><strong>Birth Date:</strong> {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</li>
+        <li><strong>Join Date:</strong> {new Date(user.joinDate).toLocaleDateString()}</li>
+        <li><strong>Notifications Enabled:</strong> {user.notificationsEnabled ? "Yes" : "No"}</li>
+        <li><strong>Projects:</strong> {user.projects?.length > 0 ? user.projects.map((project) => project).join(", ") : "No projects available"}</li>
+        <li><strong>Tasks:</strong> {user.tasks?.length > 0 ? user.tasks.map((task) => task).join(", ") : "No tasks available"}</li>
+        <li><strong>Shared With:</strong> {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</li>
+      </ul>
     </div>
   );
 };
