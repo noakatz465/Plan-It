@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/app/lib/models/userSchema"; // מודל המשתמש שלך
 import connect from "@/app/lib/db/mongoDB";
+import { log } from "console";
 
 // בדיקת משתנים סביבתיים
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -26,6 +27,8 @@ const handler = NextAuth({
         const existingUser = await User.findOne({ email: user.email });
         console.log("Result from DB:", existingUser); console.log(existingUser)
         if (!existingUser) {
+          console.log(user.name);
+          
           // יצירת משתמש חדש אם לא קיים
           await User.create({
             firstName: user.name?.split(" ")[0] || "First Name", // חלוקה לשם פרטי ומשפחה

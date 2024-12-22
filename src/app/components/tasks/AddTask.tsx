@@ -1,6 +1,6 @@
 'use client'
+import { addTask } from '@/app/services/taskService';
 import React, { useEffect, useState } from 'react'
-import { addTask } from '../services/taskService';
 
 interface TaskDetails {
   dueDate?: Date

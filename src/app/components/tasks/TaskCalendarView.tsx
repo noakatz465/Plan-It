@@ -2,20 +2,23 @@
 import React, { useEffect, useState } from 'react'
 import { addDays, addMonths, addYears, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
 import { HDate } from '@hebcal/core';
-import { TaskModel } from "../models/taskModel";
-import { UserModel } from '../models/userModel';
+import { TaskModel } from "../../models/taskModel";
+import { UserModel } from '../../models/userModel';
 import Link from 'next/link';
-import { getUserByID } from '../services/userService';
+import { getUserByID } from '../../services/userService';
+import { useUserStore } from '../../stores/userStore';
 import AddTask from './AddTask';
 
-function Calendar() {
+function TaskCalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarDates, setCalendarDates] = useState<Date[]>([]);
     const [taskMap, setTaskMap] = useState<{ [key: string]: TaskModel[] }>({});
     const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
     const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
-    const [user, setUser] = useState<UserModel>(new UserModel("", "", "", ""));
-    const userId = '674ed2c952ef7d7732ebb3e7';
+    // const [user, setUser] = useState<UserModel>(new UserModel("", "", "", ""));
+    const tasksFromStore = useUserStore((state) => state.tasks);
+    const [tasks, setTasks]=useState<TaskModel[]>(tasksFromStore)
+    // const userId = '674ed2c952ef7d7732ebb3e7';
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
@@ -33,39 +36,42 @@ function Calendar() {
         setSelectedDate(null);
     };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const fetchedUser = await getUserByID(userId);
-                if (fetchedUser) {
-                    setUser(fetchedUser);
-                } else {
-                    console.warn("User not found");
-                }
-            } catch (error) {
-                console.error("Failed to fetch user:", error);
-            }
-        };
-        fetchUser();
-    }, [userId]);
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             const fetchedUser = await getUserByID(userId);
+    //             if (fetchedUser) {
+    //                 setUser(fetchedUser);
+    //             } else {
+    //                 console.warn("User not found");
+    //             }
+    //         } catch (error) {
+    //             console.error("Failed to fetch user:", error);
+    //         }
+    //     };
+    //     fetchUser();
+    // }, [userId]);
 
     useEffect(() => {
-        if (user.tasks.length > 0) {
-            mapTasksByDate();
-        }
-    }, [user.tasks]);
-
-    useEffect(() => {
+        console.log("Updating calendar dates...");
         if (view === 'yearly') {
             setYearlyDates(createYearlyDates());
         } else {
             setCalendarDates(createCalendarDates());
         }
     }, [currentDate, view]);
+    
+    useEffect(() => {
+        console.log("Mapping tasks...");
+        if (tasks.length > 0) {
+            mapTasksByDate();
+        }
+    }, [tasks]);
+    
 
     const mapTasksByDate = () => {
         const newTaskMap: { [key: string]: TaskModel[] } = {};
-        user.tasks.forEach((task) => {
+        tasks.forEach((task) => {
             if (task.dueDate) {
                 const dateString = format(new Date(task.dueDate), "yyyy-MM-dd");
                 if (!newTaskMap[dateString]) {
@@ -213,7 +219,7 @@ function Calendar() {
                                 <div className="mt-2">
                                     {dayTasks.length > 0 ? (
                                         dayTasks.map((task, index) => (
-                                            <Link href={`pages/viewTask/${task._id}`} key={index} draggable
+                                            <Link href={`/pages/viewTask/${task._id}`} key={index} draggable
                                                 className="text-sm text-blue-600">
                                                 {task.title}
                                             </Link>
@@ -251,4 +257,4 @@ function Calendar() {
     )
 }
 
-export default Calendar
+export default TaskCalendarView
