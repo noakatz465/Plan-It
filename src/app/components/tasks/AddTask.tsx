@@ -33,7 +33,7 @@ function AddTask(props: TaskDetails) {
     setSuccessMessage('');
 
     try {
-      const newTask = await addTask({ title, description, dueDate, creator: userId, assignedUsers: assignedUsersArray, projectId })
+      const newTask = await addTask({ title, description, dueDate, creator: userId, assignedUsers: assignedUsersArray,  projectId: projectId ?? undefined })
       setSuccessMessage(`Task "${newTask.title}" added successfully!`);
       setTitle('');
       setDescription('');
