@@ -1,13 +1,14 @@
 "use client"
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUserStore } from "../stores/userStore";
+import { UserModel } from "../models/userModel";
 
 
 function TopNavBar() {
-    const user = useUserStore((state) => state.user);
-
+    const userFromStore = useUserStore((state) => state.user);
+    const [user, setUser] = useState<UserModel | null>(userFromStore);
     useEffect(() => {
         console.log("User profileImage:", user?.profileImage);
       }, [user]);
