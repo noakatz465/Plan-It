@@ -19,7 +19,7 @@ function ForgotPassword() {
 
       // מעבר לדף אימות קוד
       setTimeout(() => {
-        router.push(`/pages/verifyCode?email=${encodeURIComponent(email)}`);
+        router.push(`/pages/auth/verifyCode?email=${encodeURIComponent(email)}`);
       }, 2000);    } catch (err: any) {
       console.error("Error in handleSubmit:", err.message);
       setMessage("");

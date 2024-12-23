@@ -22,6 +22,8 @@ const UserInfo: React.FC = () => {
       } finally {
         setLoading(false); // סיום טעינה
       }
+      console.log(user?.profileImage);
+      
     };
 
     loadUser();
@@ -49,9 +51,16 @@ const UserInfo: React.FC = () => {
 
   return (
     <div className="p-4 border rounded-lg bg-gray-100 shadow">
-      <h1 className="text-xl font-bold mb-4">
-        Welcome, {user.firstName} {user.lastName}!
-      </h1>
+      <div className="flex items-center mb-4">
+        <img
+          src={user.profileImage } // הצגת תמונה אם קיימת, אחרת תמונת ברירת מחדל
+          alt={`${user.firstName} ${user.lastName}'s Profile`}
+          className="w-16 h-16 rounded-full border shadow mr-4"
+        />
+        <h1 className="text-xl font-bold">
+          Welcome, {user.firstName} {user.lastName}!
+        </h1>
+      </div>
       <ul className="list-disc list-inside">
         <li><strong>Email:</strong> {user.email}</li>
         <li><strong>Gender:</strong> {user.gender || "Not specified"}</li>

@@ -11,7 +11,7 @@ export const getUserByID = async (userId: string) => {
             const data = response.data.user;
             const fetchedUser = new UserModel(data.firstName, data.lastName, data.email, data.password, new Date(data.joinDate),
                 data.notificationsEnabled, data.projects || [], data.tasks || [], data.sharedWith || [],
-                data._id, data.birthDate ? new Date(data.birthDate) : undefined, data.gender || null);
+                data._id, data.birthDate ? new Date(data.birthDate) : undefined, data.gender || null, data.profileImage || null);
             return fetchedUser;
         }
     } catch (error) {
@@ -103,7 +103,8 @@ export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
           [],
           data._id,
           data.birthDate ? new Date(data.birthDate) : undefined,
-          data.gender || null
+          data.gender || null,
+          data.profileImage
         ));
         console.log("Users fetched successfully:", users);
         return users;

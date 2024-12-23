@@ -42,6 +42,8 @@ const handler = NextAuth({
             projects: [],
             tasks: [],
             sharedWith: [],
+            profileImage: user.image  // שמירת התמונה מה-Provider
+
           });
           console.log("New user created:", user);
         } else {
@@ -67,6 +69,7 @@ const handler = NextAuth({
           session.user = {
             _id: userFromDB._id.toString(),
             email: userFromDB.email, // שמירה של השדה email
+            image: userFromDB.profileImage , // שמירת התמונה
 
           };
         }
