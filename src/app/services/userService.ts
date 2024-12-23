@@ -64,26 +64,57 @@ export const updateUser = async (userId: string, updatedData: Partial<UserModel>
 }
 
 export const uploadToCloudinary = async (file: File): Promise<string | null> => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "default_preset"); // שימי לב שצריך להגדיר preset בפאנל של Cloudinary
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "default_preset"); // שימי לב שצריך להגדיר preset בפאנל של Cloudinary
 
-  try {
-    const response = await axios.post(
-      "https://api.cloudinary.com/v1_1/ddbitajje/image/upload",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log(response.data);
-    return response.data.secure_url; // מחזיר את כתובת ה-URL המאובטחת
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    return null;
-  }
+    try {
+        const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/ddbitajje/image/upload",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        console.log(response.data);
+        return response.data.secure_url; // מחזיר את כתובת ה-URL המאובטחת
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        return null;
+    }
+};
+
+export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
+    try {
+        const response = await axios.get(`${API_USERS_URL}`);
+        if (response.status === 200) {
+            const usersData = response.data.users;
+            const users = usersData.map((data: UserModel) => new UserModel(
+                data.firstName,
+                data.lastName,
+                data.email,
+                "",
+                new Date(data.joinDate),
+                data.notificationsEnabled,
+                [], // מערך ריק לפרויקטים
+                [], // מערך ריק למשימות
+                [],
+                data._id,
+                data.birthDate ? new Date(data.birthDate) : undefined,
+                data.gender || null
+            ));
+            console.log("Users fetched successfully:", users);
+            return users;
+        } else {
+            console.warn("Unexpected response status:", response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        return null;
+    }
 };
 
 export const fetchAllUsers = async (): Promise<UserModel[] | null> => {

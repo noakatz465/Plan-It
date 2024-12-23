@@ -8,6 +8,7 @@ import { updateUser, uploadToCloudinary } from "../services/userService";
 function Profile() {
   const user = useUserStore((state) => state.user);
   const [formData, setFormData] = useState<UserModel | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -49,6 +50,15 @@ function Profile() {
   if (!formData) {
     return <div>Loading...</div>;
   }
+
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    const uploadedUrl = await uploadToCloudinary(file);
+    if (uploadedUrl) {
+      setFormData({ ...formData, profileImage: uploadedUrl });
+    }
+    setIsUploading(false);
+  };
 
   return (
     <div className="p-6 bg-white shadow-md rounded">
@@ -152,6 +162,7 @@ function Profile() {
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (file) {
+                  handleImageUpload(file);
                   const uploadedUrl = await uploadToCloudinary(file);
                   console.log("noa");
 
@@ -173,6 +184,7 @@ function Profile() {
         <button
           type="submit"
           className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          disabled={isUploading}
         >
           שמור שינויים
         </button>
