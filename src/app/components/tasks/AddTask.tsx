@@ -1,5 +1,6 @@
 'use client'
 import { addTask } from '@/app/services/taskService';
+import { useUserStore } from '@/app/stores/userStore';
 import React, { useEffect, useState } from 'react'
 
 interface TaskDetails {
@@ -15,8 +16,7 @@ function AddTask(props: TaskDetails) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const userId= "674ed2c952ef7d7732ebb3e7";
-
+  const user = useUserStore((state) => state.user);
   useEffect(() => {
     if (props.dueDate)
       setDueDate(props.dueDate)    
@@ -33,13 +33,17 @@ function AddTask(props: TaskDetails) {
     setSuccessMessage('');
 
     try {
-      const newTask = await addTask({ title, description, dueDate, creator: userId, assignedUsers: assignedUsersArray,  projectId: projectId ?? undefined })
+      console.log();
+      
+      const newTask = await addTask({ title, description, dueDate, creator: user?._id?? '', assignedUsers: assignedUsersArray?? [],  projectId: projectId ?? undefined })
       setSuccessMessage(`Task "${newTask.title}" added successfully!`);
       setTitle('');
       setDescription('');
       setDueDate(new Date);
       setAssignedUsers('');
       setProjectId('');
+      
+      
     } catch (error) {
       setError('Failed to add task. Please try again.');
       console.error(error);
