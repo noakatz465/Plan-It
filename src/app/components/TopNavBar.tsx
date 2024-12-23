@@ -10,8 +10,8 @@ function TopNavBar() {
     const userFromStore = useUserStore((state) => state.user);
     const [user, setUser] = useState<UserModel | null>(userFromStore);
     useEffect(() => {
-        console.log("User profileImage:", user?.profileImage);
-      }, [user]);
+        console.log("User profileImage!!!!!!!!!!:", user?.profileImage);
+      }, [user?.profileImage]);
     
 
     return (

@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@/app/lib/models/userSchema"; // מודל המשתמש שלך
 import connect from "@/app/lib/db/mongoDB";
-import { log } from "console";
 
 // בדיקת משתנים סביבתיים
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -42,8 +41,7 @@ const handler = NextAuth({
             projects: [],
             tasks: [],
             sharedWith: [],
-            profileImage: user.image  // שמירת התמונה מה-Provider
-
+            profileImage: user.image // שמירת התמונה מה-Provider
           });
           console.log("New user created:", user);
         } else {
