@@ -1,18 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import AddTask from "./AddTask";
 
 const TaskNavBar: React.FC = () => {
+  const [openModal, setOpenModal] = useState(false)
   const router = useRouter();
 
   const handleViewChange = (view: "list" | "calendar" | "kanban") => {
-    
+
     router.push(`/pages/main/tasks/${view}`); // מנתב לדף המתאים
   };
-  const handleNavigateToAddTask = () => {
-    // ניתוב לדף הוספת משימה
-    router.push("/pages/main/tasks/addTask/");
+  const handleOpenModal = () => {
+    setOpenModal(true);
   };
 
   return (
@@ -22,11 +23,11 @@ const TaskNavBar: React.FC = () => {
         המשימות שלי
       </div>
       <button
-      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
-      onClick={handleNavigateToAddTask}
-    >
-      +
-    </button>
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
+        onClick={handleOpenModal}
+      >
+        +
+      </button>
 
 
       {/* שורת חיפוש */}
@@ -40,7 +41,7 @@ const TaskNavBar: React.FC = () => {
       <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
         סינון
       </button>
- 
+
       {/* תפריט בחירת תצוגה */}
       <div className="flex space-x-4 items-center">
         <select
@@ -52,6 +53,19 @@ const TaskNavBar: React.FC = () => {
           <option value="kanban">🗂️ קנבן</option>
         </select>
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <AddTask />
+            <button
+              onClick={() => setOpenModal(false)}
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              סגור
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

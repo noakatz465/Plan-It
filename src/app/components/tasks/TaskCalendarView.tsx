@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { addDays, addMonths, addYears, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
 import { HDate } from '@hebcal/core';
 import { TaskModel } from "../../models/taskModel";
-import { UserModel } from '../../models/userModel';
 import Link from 'next/link';
-import { getUserByID } from '../../services/userService';
 import { useUserStore } from '../../stores/userStore';
 import AddTask from './AddTask';
 
@@ -15,10 +13,8 @@ function TaskCalendarView() {
     const [taskMap, setTaskMap] = useState<{ [key: string]: TaskModel[] }>({});
     const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
     const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
-    // const [user, setUser] = useState<UserModel>(new UserModel("", "", "", ""));
     const tasksFromStore = useUserStore((state) => state.tasks);
     const [tasks, setTasks]=useState<TaskModel[]>(tasksFromStore)
-    // const userId = '674ed2c952ef7d7732ebb3e7';
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
@@ -34,23 +30,8 @@ function TaskCalendarView() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedDate(null);
+        setTasks(tasksFromStore);
     };
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         try {
-    //             const fetchedUser = await getUserByID(userId);
-    //             if (fetchedUser) {
-    //                 setUser(fetchedUser);
-    //             } else {
-    //                 console.warn("User not found");
-    //             }
-    //         } catch (error) {
-    //             console.error("Failed to fetch user:", error);
-    //         }
-    //     };
-    //     fetchUser();
-    // }, [userId]);
 
     useEffect(() => {
         console.log("Updating calendar dates...");
