@@ -11,8 +11,8 @@ function Profile() {
 
   useEffect(() => {
     if (user) {
+      console.log("User data:", user);
       setFormData({ ...user });
-      console.log("User data loaded into form:", user);
     }
   }, [user]);
 
@@ -135,27 +135,8 @@ function Profile() {
         {/* תמונת פרופיל */}
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">תמונת פרופיל</label>
-          <input
-            type="file"
-            name="profileImage"
-            accept="image/*"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                const uploadedUrl = await uploadToCloudinary(file);
-                console.log("noa");
 
-                if (uploadedUrl) {
-                  console.log("noa1");
-                  console.log("uploadedUrl" + uploadedUrl);
-                  debugger
-                  setFormData({ ...formData, profileImage: uploadedUrl });
-                }
-              }
-            }}
-            className="w-full px-4 py-2 border rounded"
-          />
-          {formData.profileImage && (
+          {formData.profileImage ?
             <div className="mt-4">
               <Image
                 src={formData.profileImage}
@@ -164,8 +145,26 @@ function Profile() {
                 height={128}
                 className="rounded-full object-cover"
               />
-            </div>
-          )}
+            </div> : <input
+              type="file"
+              name="profileImage"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const uploadedUrl = await uploadToCloudinary(file);
+                  console.log("noa");
+
+                  if (uploadedUrl) {
+                    console.log("noa1");
+                    console.log("uploadedUrl" + uploadedUrl);
+                    setFormData({ ...formData, profileImage: uploadedUrl });
+                  }
+                }
+              }}
+              className="w-full px-4 py-2 border rounded"
+            />
+          }
 
         </div>
 

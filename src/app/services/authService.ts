@@ -86,7 +86,8 @@ export const fetchUserDetailsByCookie = async (): Promise<UserModel> => {
       userDetails.sharedWith || [],
       userDetails._id,
       userDetails.birthDate ? new Date(userDetails.birthDate) : undefined,
-      userDetails.gender
+      userDetails.gender,
+      userDetails.profileImage
     );
   } catch (error) {
     console.error("Error fetching user details:", error);
@@ -113,7 +114,8 @@ export const fetchUserDetailsBySession = async (userId: string): Promise<UserMod
       userDetails.sharedWith || [],
       userDetails._id,
       userDetails.birthDate ? new Date(userDetails.birthDate) : undefined,
-      userDetails.gender
+      userDetails.gender,
+      userDetails.profileImage
     );
   } catch (error) {
     console.error("Failed to fetch user details:", error);
