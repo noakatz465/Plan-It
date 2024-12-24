@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
@@ -24,7 +24,7 @@ const UserInfo: React.FC = () => {
         setLoading(false); // סיום טעינה
       }
       console.log(user?.profileImage);
-      
+
     };
 
     loadUser();
@@ -53,8 +53,8 @@ const UserInfo: React.FC = () => {
   return (
     <div className="p-4 border rounded-lg bg-gray-100 shadow">
       <div className="flex items-center mb-4">
-        <img
-          src={user.profileImage } // הצגת תמונה אם קיימת, אחרת תמונת ברירת מחדל
+        <Image
+          src={user.profileImage ?? ''}
           alt={`${user.firstName} ${user.lastName}'s Profile`}
           className="w-16 h-16 rounded-full border shadow mr-4"
         />
