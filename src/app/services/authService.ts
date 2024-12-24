@@ -1,6 +1,5 @@
 import axios from "axios";
 import { UserModel } from "../models/userModel";
-import { useSession } from "next-auth/react";
 
 const API_USERS_URL = '/api/users';
 const API_LOGIN_URL = '/api/login';
@@ -54,7 +53,7 @@ export const loginUser = async (
     } else {
       throw new Error(`Unexpected response: ${response.statusText}`);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error("Axios error:", error.response?.data || error.message);
       throw new Error(error.response?.data?.message || "Login failed.");

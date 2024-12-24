@@ -28,7 +28,7 @@ export const verifyCode = async (email: string, code: string): Promise<string> =
       } else {
         throw new Error("Invalid or expired verification code.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         console.error("Axios error:", err.response?.data || err.message);
         throw new Error(err.response?.data?.message || "Failed to verify code.");
