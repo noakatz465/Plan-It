@@ -1,6 +1,5 @@
 
 'use client'
-import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 // import UserLoader from "./components/UserLoader";

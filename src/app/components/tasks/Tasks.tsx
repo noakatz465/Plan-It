@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import TaskNavBar from "@/app/components/tasks/TaskNavBar";
 
 function Tasks() {
   return (
