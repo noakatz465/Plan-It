@@ -22,7 +22,7 @@ const UserInfo: React.FC = () => {
       } finally {
         setLoading(false); // סיום טעינה
       }
-      console.log(user?.profileImage);
+      console.log('User from store:', userFromStore);
       
     };
 
@@ -62,6 +62,7 @@ const UserInfo: React.FC = () => {
         </h1>
       </div>
       <ul className="list-disc list-inside">
+      <li><strong>ID:</strong> {user._id}</li>
         <li><strong>Email:</strong> {user.email}</li>
         <li><strong>Gender:</strong> {user.gender || "Not specified"}</li>
         <li><strong>Birth Date:</strong> {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</li>

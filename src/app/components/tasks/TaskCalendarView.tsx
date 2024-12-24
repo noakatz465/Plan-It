@@ -13,8 +13,8 @@ function TaskCalendarView() {
     const [taskMap, setTaskMap] = useState<{ [key: string]: TaskModel[] }>({});
     const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
     const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
-    const tasksFromStore = useUserStore((state) => state.tasks);
-    const [tasks, setTasks]=useState<TaskModel[]>(tasksFromStore)
+    const tasks = useUserStore((state) => state.tasks);
+    // const [tasks, setTasks]=useState<TaskModel[]>(tasksFromStore)
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
@@ -30,7 +30,6 @@ function TaskCalendarView() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedDate(null);
-        setTasks(tasksFromStore);
     };
 
     useEffect(() => {

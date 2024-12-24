@@ -1,8 +1,9 @@
 'use client'
+import { TaskModel } from '@/app/models/taskModel';
+import { deleteTask, getTaskByID, updateTask } from '@/app/services/taskService';
+import { removeTaskForUsers } from '@/app/services/userService';
 import React, { useEffect, useState } from 'react'
-import { TaskModel } from '../models/taskModel';
-import { deleteTask, getTaskByID, updateTask } from '../services/taskService';
-import { removeTaskForUsers } from '../services/userService';
+
 
 function ViewTask({ params }: { params: { taskId: string } }) {
     const [task, setTask] = useState<TaskModel | null>(null);

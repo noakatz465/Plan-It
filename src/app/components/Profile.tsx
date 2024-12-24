@@ -146,7 +146,7 @@ function Profile() {
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">תמונת פרופיל</label>
 
-          {formData.profileImage ?
+          {/* {formData.profileImage ? */}
             <div className="mt-4">
               <Image
                 src={formData.profileImage}
@@ -175,7 +175,7 @@ function Profile() {
               }}
               className="w-full px-4 py-2 border rounded"
             />
-          }
+          {/* } */}
 
         </div>
 

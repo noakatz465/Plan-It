@@ -3,15 +3,19 @@ import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "@/app/servi
 import { fetchAllUsers } from "@/app/services/userService"; // ייבוא פונקציית שליפת משתמשים
 import { UserModel } from "@/app/models/userModel";
 import { getSession } from "next-auth/react"; // נקסט אאוט
+
+import { TaskModel } from "@/app/models/taskModel"; // ייבוא מודל המשימה
+
 interface UserState {
   user: UserModel | null; // המשתמש
   fetchUser: () => Promise<void>; // שליפת המשתמש
   clearUser: () => void; // ניקוי המשתמש
-  getTasks: () => UserModel["tasks"] | []; // החזרת משימות
-  tasks: UserModel["tasks"]; // משימות המשתמש
-  users?: UserModel[]|null // רשימת משתמשים (אופציונלי, עם undefined כברירת מחדל)
+  tasks: TaskModel[]; // משימות המשתמש
+  users?: UserModel[] | null; // רשימת משתמשים (אופציונלי, עם undefined כברירת מחדל)
   fetchUsers: () => Promise<void>; // שליפת משתמשים
+  addTaskToStore: (task: TaskModel) => void; // הוספת משימה לחנות
 }
+
 
 export const useUserStore = create<UserState>((set, get) => {
   const initializeUser = async () => {
@@ -44,6 +48,7 @@ export const useUserStore = create<UserState>((set, get) => {
       console.error("Error fetching user details:", error);
       set({ user: null, tasks: [] }); // במקרה של שגיאה, לאפס את החנות
     }
+    
   };
 
   const initializeUsers = async () => {
@@ -66,20 +71,27 @@ export const useUserStore = create<UserState>((set, get) => {
     }
   };
 
+  const addTaskToStore = (task: TaskModel) => {
+    console.log("Adding task to store:", task); // הדפסה של המשימה
+    set((state) => ({
+      tasks: [...state.tasks, task],
+      user: state.user ? { ...state.user, tasks: [...state.user.tasks, task] } : null,
+    }));
+    console.log("Updated tasks in store:", get().tasks); // הדפס את המשימות המעודכנות
+  };
+  
+  
+
   return {
     user: null,
     tasks: [], // אתחול המשימות כברירת מחדל
     users: [], // רשימת המשתמשים תמיד תהיה מערך ריק כברירת מחדל
     fetchUser: initializeUser,
     fetchUsers: initializeUsers,
-    getTasks: () => {
-      const tasks = get().user?.tasks || [];
-      console.log("Tasks retrieved from store:", tasks);
-      return tasks;
-    },
     clearUser: () => {
       console.log("Clearing user and tasks from store...");
       set({ user: null, tasks: [], users: [] });
     },
+    addTaskToStore, // פעולה לעדכון משימה
   };
 });
