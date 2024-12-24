@@ -90,7 +90,7 @@ export const uploadToCloudinary = async (file: File): Promise<string | null> => 
 
 export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
   try {
-    const response = await axios.get(`${API_USERS_URL}`);
+    const response = await axios.get(`${API_USERS_URL}/get/getAllUsers`);
     if (response.status === 200) {
       const usersData = response.data.users;
       const users = usersData.map((data: any) => new UserModel(
@@ -105,7 +105,8 @@ export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
         [],
         data._id,
         data.birthDate ? new Date(data.birthDate) : undefined,
-        data.gender || null
+        data.gender || null,
+        data.profileImage
       ));
       console.log("Users fetched successfully:", users);
       return users;

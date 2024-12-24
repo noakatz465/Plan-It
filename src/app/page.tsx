@@ -1,12 +1,13 @@
+import Home from "./components/Home";
 import Login from "./components/Login";
 
-export default function Home() {
+function page() {
 
   
   return (
     <div>
-      
-      <Login/>
+      <Home></Home>
     </div>
   );
 }
+export default page

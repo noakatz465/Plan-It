@@ -3,19 +3,22 @@
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
-
 const UserInfo: React.FC = () => {
   const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  const fetchUsers = useUserStore((state) => state.fetchUsers); // פעולה להבאת משתמשים
+  const users = useUserStore((state) => state.users); // רשימת המשתמשים מהחנות
+
   const userFromStore = useUserStore((state) => state.user); // הנתונים מהחנות
   const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
   const [loading, setLoading] = useState(true); // סטייט למצב טעינה
   const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadUserAndUsers = async () => {
       try {
         setLoading(true); // התחלת טעינה
         await fetchUser(); // שליפת המשתמש מהחנות
+        await fetchUsers(); // שליפת המשתמשים מהחנות
         setUser(userFromStore); // עדכון המשתמש בסטייט
       } catch (err) {
         setError("Failed to fetch user details. Please try again."); // טיפול בשגיאה
@@ -23,12 +26,11 @@ const UserInfo: React.FC = () => {
         setLoading(false); // סיום טעינה
       }
       console.log('User from store:', userFromStore);
-      
+      console.log('Users from store:', users);
     };
 
-    loadUser();
-  }, [fetchUser, userFromStore]);
-
+    loadUserAndUsers();
+  }, [fetchUser, fetchUsers, userFromStore, users]);
   if (loading) {
     return <p className="text-center text-gray-500">Loading user details...</p>;
   }
@@ -71,6 +73,8 @@ const UserInfo: React.FC = () => {
         <li><strong>Projects:</strong> {user.projects?.length > 0 ? user.projects.map((project) => project).join(", ") : "No projects available"}</li>
         <li><strong>Tasks:</strong> {user.tasks?.length > 0 ? user.tasks.map((task) => task).join(", ") : "No tasks available"}</li>
         <li><strong>Shared With:</strong> {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</li>
+        <li><strong>פרופיל</strong> {user.profileImage}</li>
+
       </ul>
     </div>
   );

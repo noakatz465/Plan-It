@@ -10,9 +10,9 @@ function TopNavBar() {
     const userFromStore = useUserStore((state) => state.user);
     const [user, setUser] = useState<UserModel | null>(userFromStore);
     useEffect(() => {
-        setUser(userFromStore)       
-      }, [user?.profileImage, userFromStore]);
-    
+        setUser(userFromStore)
+    }, [user?.profileImage, userFromStore]);
+
 
     return (
         <div className="flex items-center justify-between bg-blue-600 text-white px-6 py-4 shadow-md">
@@ -39,19 +39,33 @@ function TopNavBar() {
                             alt="Profile"
                             width={32}
                             height={32}
-                            className="rounded-full object-cover"
+                            className="rounded-full"
+                            style={{
+                                objectFit: "cover",
+                                width: "32px", // שמירת הרוחב
+                                height: "32px", // שמירת הגובה
+                                borderRadius: "50%", // הפיכת התמונה לעגולה
+                            }}
                             unoptimized
                         />
                     ) : (
                         <Image
-                            src="" // תמונת ברירת מחדל
+                            src="/default-profile.png" // נתיב לתמונת ברירת מחדל
                             alt="Anonymous Profile"
                             width={32}
                             height={32}
-                            className="rounded-full object-cover"
+                            className="rounded-full"
+                            style={{
+                                objectFit: "cover",
+                                width: "32px", // שמירת הרוחב
+                                height: "32px", // שמירת הגובה
+                                borderRadius: "50%", // הפיכת התמונה לעגולה
+                            }}
+                            unoptimized
                         />
                     )}
                 </Link>
+
             </div>
         </div>
     );

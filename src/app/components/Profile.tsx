@@ -147,34 +147,41 @@ function Profile() {
           <label className="block text-gray-700 mb-2">תמונת פרופיל</label>
 
           {/* {formData.profileImage ? */}
-            <div className="mt-4">
-              <Image
-                src={formData.profileImage}
-                alt="Uploaded Profile Image"
-                width={128}
-                height={128}
-                className="rounded-full object-cover"
-              />
-            </div> : <input
-              type="file"
-              name="profileImage"
-              accept="image/*"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  handleImageUpload(file);
-                  const uploadedUrl = await uploadToCloudinary(file);
-                  console.log("noa");
-
-                  if (uploadedUrl) {
-                    console.log("noa1");
-                    console.log("uploadedUrl" + uploadedUrl);
-                    setFormData({ ...formData, profileImage: uploadedUrl });
-                  }
-                }
+          <div className="mt-4">
+            <Image
+              src={formData.profileImage}
+              alt="Uploaded Profile Image"
+              width={128}
+              height={128}
+              className="rounded-full"
+              style={{
+                objectFit: "cover", // מבטיח שהתמונה תתמקד במרכז ותמלא את הריבוע
+                width: "128px", // שמירת הרוחב
+                height: "128px", // שמירת הגובה
+                borderRadius: "50%", // הפיכת התמונה לעגולה
               }}
-              className="w-full px-4 py-2 border rounded"
             />
+
+          </div> : <input
+            type="file"
+            name="profileImage"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                handleImageUpload(file);
+                const uploadedUrl = await uploadToCloudinary(file);
+                console.log("noa");
+
+                if (uploadedUrl) {
+                  console.log("noa1");
+                  console.log("uploadedUrl" + uploadedUrl);
+                  setFormData({ ...formData, profileImage: uploadedUrl });
+                }
+              }
+            }}
+            className="w-full px-4 py-2 border rounded"
+          />
           {/* } */}
 
         </div>

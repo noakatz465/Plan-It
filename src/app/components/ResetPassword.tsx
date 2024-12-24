@@ -21,7 +21,7 @@ function ResetPassword() {
     try {
       const successMessage = await resetPassword(password); // קריאה לשירות
       setMessage(successMessage);
-      setTimeout(() => router.push("/"), 2000);
+      setTimeout(() => router.push("/pages/auth/login"), 2000);
     } catch (err: any) {
       setError(err.message || "Failed to reset password.");
     }
@@ -76,7 +76,7 @@ function ResetPassword() {
           <p className="mt-4 text-center text-red-600 font-medium">{error}</p>
         )}
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/pages/auth/login")}
           className="mt-6 w-full bg-gray-600 text-white py-2 px-4 rounded-md font-bold hover:bg-gray-700 transition duration-200"
         >
           Back to Login

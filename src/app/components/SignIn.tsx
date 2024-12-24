@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import Link from "next/link";
 import React, { useState } from "react";
 import { UserModel } from "../models/userModel";
@@ -6,10 +6,7 @@ import { addUser } from "../services/authService";
 import { useRouter } from "next/navigation";
 
 function SignIn() {
-  
   const router = useRouter();
-
-
   const [user, setUser] = useState<UserModel>(
     new UserModel("", "", "", "") // ערכים התחלתיים
   );
@@ -25,15 +22,21 @@ function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
       setError("First Name, Last Name, Email, and Password are required.");
       return;
     }
-  
+
+    // הגדרת תמונת פרופיל ברירת מחדל
+    const defaultProfileImage =
+      user.gender === "F"
+        ? "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"
+        : "https://res.cloudinary.com/ddbitajje/image/upload/v1735039205/b75v3xbqrwu8jkubtrxv.png";
+
     setError("");
     setSuccessMessage("");
-  
+
     try {
       // העברת כל השדות שנמצאים באובייקט user לשרת
       const message = await addUser({
@@ -43,18 +46,17 @@ function SignIn() {
         password: user.password,
         gender: user.gender, // העברת מגדר אם קיים
         birthDate: user.birthDate, // העברת תאריך לידה אם קיים
+        profileImage: defaultProfileImage, // הוספת תמונת ברירת מחדל
       } as UserModel); // הגדרת הטיפוס כ-UserModel
-      
+
       setSuccessMessage(message); // הצגת הודעת הצלחה
       console.log("User added successfully:", user);
       router.push("/pages/main/dashboard"); // מעבר לדשבורד
-
     } catch (err: any) {
       console.error("Error adding user:", err);
       setError(err.message || "Failed to add user. Please try again.");
     }
   };
-  
 
   return (
     <div className="grid place-items-center h-screen bg-gray-50">
@@ -123,7 +125,7 @@ function SignIn() {
             </div>
           )}
           <div className="text-right mt-4">
-            <Link className="text-sm text-blue-500 hover:underline" href="/">
+            <Link className="text-sm text-blue-500 hover:underline" href="/pages/auth/login">
               Already have an account? <span className="underline">Login</span>
             </Link>
           </div>
