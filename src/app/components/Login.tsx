@@ -26,9 +26,9 @@ function Login() {
       const message = await loginUser(email, password);
       console.log("Login successful:", message); // הודעת הצלחה
       router.push("/pages/main/dashboard"); // מעבר לדשבורד
-    } catch (err: any) {
-      console.error("Login failed:", err.message);
-      setError(err.message || "An error occurred. Please try again.");
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -78,7 +78,7 @@ function Login() {
               className="text-sm text-blue-500 hover:underline"
               href="/pages/auth/signIn"
             >
-              Don't you have an account? <span className="underline">Sign In</span>
+              Do not you have an account? <span className="underline">Sign In</span>
             </Link>
           </div>
           <div className="text-right mt-2">

@@ -16,7 +16,7 @@ function SignIn() {
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const handleInputChange = (field: keyof UserModel, value: any) => {
+  const handleInputChange = (field: keyof UserModel, value: unknown) => {
     setUser((prevUser) => ({
       ...prevUser,
       [field]: value,
@@ -49,9 +49,9 @@ function SignIn() {
       console.log("User added successfully:", user);
       router.push("/pages/main/dashboard"); // מעבר לדשבורד
 
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error adding user:", err);
-      setError(err.message || "Failed to add user. Please try again.");
+      setError("Failed to add user. Please try again.");
     }
   };
   

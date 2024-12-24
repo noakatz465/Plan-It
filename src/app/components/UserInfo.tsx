@@ -18,6 +18,7 @@ const UserInfo: React.FC = () => {
         await fetchUser(); // שליפת המשתמש מהחנות
         setUser(userFromStore); // עדכון המשתמש בסטייט
       } catch (err) {
+        console.error("Error:", err);
         setError("Failed to fetch user details. Please try again."); // טיפול בשגיאה
       } finally {
         setLoading(false); // סיום טעינה

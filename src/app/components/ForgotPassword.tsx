@@ -20,10 +20,10 @@ function ForgotPassword() {
       // מעבר לדף אימות קוד
       setTimeout(() => {
         router.push(`/pages/auth/verifyCode?email=${encodeURIComponent(email)}`);
-      }, 2000);    } catch (err: any) {
-      console.error("Error in handleSubmit:", err.message);
+      }, 2000);    } catch (err) {
+      console.error("Error in handleSubmit:", err);
       setMessage("");
-      setError(err.message || "Failed to send verification code.");
+      setError( "Failed to send verification code.");
     }
   };
 
