@@ -1,4 +1,4 @@
-import ViewTask from '@/app/components/ViewTask'
+import ViewTask from '@/app/components/tasks/ViewTask'
 import React from 'react'
 
 function page({ params }: { params: { taskId: string } }) {

@@ -3,36 +3,17 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
-
 const UserInfo: React.FC = () => {
-  const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  // const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  // const fetchUsers = useUserStore((state) => state.fetchUsers); // פעולה להבאת משתמשים
+  // const users = useUserStore((state) => state.users); // רשימת המשתמשים מהחנות
+
   const userFromStore = useUserStore((state) => state.user); // הנתונים מהחנות
-  const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
+  const [user, setUser] = useState<UserModel | null>(userFromStore); // סטייט למשתמש
   const [loading, setLoading] = useState(true); // סטייט למצב טעינה
   const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        setLoading(true); // התחלת טעינה
-        await fetchUser(); // שליפת המשתמש מהחנות
-        setUser(userFromStore); // עדכון המשתמש בסטייט
-      } catch (err) {
-        console.error("Error:", err);
-        setError("Failed to fetch user details. Please try again."); // טיפול בשגיאה
-      } finally {
-        setLoading(false); // סיום טעינה
-      }
-      console.log(user?.profileImage);
 
-    };
-
-    loadUser();
-  }, [fetchUser, userFromStore]);
-
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading user details...</p>;
-  }
 
   if (error) {
     return (
@@ -63,6 +44,7 @@ const UserInfo: React.FC = () => {
         </h1>
       </div>
       <ul className="list-disc list-inside">
+      <li><strong>ID:</strong> {user._id}</li>
         <li><strong>Email:</strong> {user.email}</li>
         <li><strong>Gender:</strong> {user.gender || "Not specified"}</li>
         <li><strong>Birth Date:</strong> {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</li>
@@ -71,6 +53,8 @@ const UserInfo: React.FC = () => {
         <li><strong>Projects:</strong> {user.projects?.length > 0 ? user.projects.map((project) => project).join(", ") : "No projects available"}</li>
         <li><strong>Tasks:</strong> {user.tasks?.length > 0 ? user.tasks.map((task) => task).join(", ") : "No tasks available"}</li>
         <li><strong>Shared With:</strong> {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</li>
+        <li><strong>פרופיל</strong> {user.profileImage}</li>
+
       </ul>
     </div>
   );

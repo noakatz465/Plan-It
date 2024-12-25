@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
 
@@ -15,6 +15,13 @@ const TaskNavBar: React.FC = () => {
   const handleOpenModal = () => {
     setOpenModal(true);
   };
+  useEffect(() => {
+    if (openModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [openModal]);
 
   return (
     <div className="bg-white p-4 flex items-center justify-between w-full shadow-md">
@@ -55,7 +62,8 @@ const TaskNavBar: React.FC = () => {
       </div>
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <div className="bg-white p-6 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+
             <AddTask />
             <button
               onClick={() => setOpenModal(false)}
@@ -66,6 +74,7 @@ const TaskNavBar: React.FC = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

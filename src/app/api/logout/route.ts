@@ -5,7 +5,7 @@ export async function POST() {
     // מחיקת העוגייה מהלקוח
     const response = NextResponse.json({
       message: "Logout successful",
-      redirectUrl: "/", // כתובת היעד לניתוב
+      redirectUrl: "/pages/auth/login", // כתובת היעד לניתוב
     });
     response.headers.set(
       "Set-Cookie",

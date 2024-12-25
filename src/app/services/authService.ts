@@ -7,16 +7,22 @@ const API_LOGIN_URL = '/api/login';
 // פונקציית הוספת משתמש
 export const addUser = async (user: UserModel): Promise<string> => {
   try {
-    const response = await axios.post(`${API_USERS_URL}/post`, {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      password: user.password,
-      gender: user.gender,
-      birthDate: user.birthDate ? user.birthDate.toISOString() : undefined,
-    }, {
-      withCredentials: true, // וידוא שכלול עוגיות בבקשה
-    });
+ 
+    const response = await axios.post(
+      `${API_USERS_URL}/post`,
+      {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        gender: user.gender,
+        birthDate: user.birthDate ? user.birthDate.toISOString() : undefined,
+        profileImage: user.profileImage , // שליחת תמונת פרופיל או ברירת מחדל
+      },
+      {
+        withCredentials: true, // וידוא שכלול עוגיות בבקשה
+      }
+    );
 
     if (response.status === 200 || response.status === 201) {
       return "User added successfully!";
@@ -35,6 +41,7 @@ export const addUser = async (user: UserModel): Promise<string> => {
     }
   }
 };
+
 
 // פונקציית התחברות
 export const loginUser = async (

@@ -13,7 +13,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <SideNavBar />
 
                 {/* תוכן ראשי */}
-                <main className="flex-1 bg-purple-100 ">
+                <main
+                    className="flex-1 bg-purple-100"
+                    style={{
+                        paddingTop: "64px", // גובה הנבבר העליון
+                        paddingRight: "64px", // רוחב הנבבר הצדדי
+                    }}
+                >
                     {children}
                 </main>
             </div>

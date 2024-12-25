@@ -1,39 +1,57 @@
 "use client";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Link from "next/link";
 import React, { useState } from "react";
+import Select from "react-select";
 import { UserModel } from "../models/userModel";
 import { addUser } from "../services/authService";
 import { useRouter } from "next/navigation";
 
 function SignIn() {
-  
   const router = useRouter();
-
-
   const [user, setUser] = useState<UserModel>(
     new UserModel("", "", "", "") // ערכים התחלתיים
   );
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const handleInputChange = (field: keyof UserModel, value: unknown) => {
+  const genderOptions = [
+    { value: "M", label: "זכר" },
+    { value: "F", label: "נקבה" },
+  ];
+
+  const handleInputChange = (field: keyof UserModel, value: any) => {
     setUser((prevUser) => ({
       ...prevUser,
       [field]: value,
     }));
   };
 
+  const handleGenderChange = (selectedOption: any) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      gender: selectedOption?.value || "", // עדכון gender
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     if (!user.firstName || !user.lastName || !user.email || !user.password) {
       setError("First Name, Last Name, Email, and Password are required.");
       return;
     }
-  
+
+    // הגדרת תמונת פרופיל ברירת מחדל
+    const defaultProfileImage =
+      user.gender === "F"
+        ? "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"
+        : "https://res.cloudinary.com/ddbitajje/image/upload/v1735039205/b75v3xbqrwu8jkubtrxv.png";
+
     setError("");
     setSuccessMessage("");
-  
+
     try {
       // העברת כל השדות שנמצאים באובייקט user לשרת
       const message = await addUser({
@@ -43,8 +61,9 @@ function SignIn() {
         password: user.password,
         gender: user.gender, // העברת מגדר אם קיים
         birthDate: user.birthDate, // העברת תאריך לידה אם קיים
+        profileImage: defaultProfileImage, // הוספת תמונת ברירת מחדל
       } as UserModel); // הגדרת הטיפוס כ-UserModel
-      
+
       setSuccessMessage(message); // הצגת הודעת הצלחה
       console.log("User added successfully:", user);
       router.push("/pages/main/dashboard"); // מעבר לדשבורד
@@ -54,7 +73,6 @@ function SignIn() {
       setError("Failed to add user. Please try again.");
     }
   };
-  
 
   return (
     <div className="grid place-items-center h-screen bg-gray-50">
@@ -89,15 +107,12 @@ function SignIn() {
             value={user.password}
             onChange={(e) => handleInputChange("password", e.target.value)}
           />
-          <select
-            className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={user.gender ?? ""}
-            onChange={(e) => handleInputChange("gender", e.target.value)}
-          >
-            <option value="">Select Gender</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
+          <Select
+            options={genderOptions}
+            onChange={handleGenderChange}
+            placeholder="Select Gender"
+            className="focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
           <input
             type="date"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -123,8 +138,8 @@ function SignIn() {
             </div>
           )}
           <div className="text-right mt-4">
-            <Link className="text-sm text-blue-500 hover:underline" href="/">
-              Already have an account? <span className="underline">Login</span>
+            <Link className="text-sm text-blue-500 hover:underline" href="/pages/auth/login">
+              כבר יש לך? <span className="underline">Login</span>
             </Link>
           </div>
         </form>

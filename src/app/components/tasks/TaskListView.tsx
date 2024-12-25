@@ -6,8 +6,8 @@ import TaskListItem from "./TaskListItem"; // ייבוא הקומפוננטה ש
 import { TaskModel } from "../../models/taskModel";
 
 const TaskListView: React.FC = () => {
-  const tasksFromStore = useUserStore((state) => state.tasks);
-  const [tasks, setTasks] = useState<TaskModel[]>(tasksFromStore);
+  const tasks = useUserStore((state) => state.tasks);
+  // const [tasks, setTasks] = useState<TaskModel[]>(tasksFromStore);
 
   if (!tasks || tasks.length === 0) {
     return <p className="text-center text-gray-500">No tasks available.</p>;

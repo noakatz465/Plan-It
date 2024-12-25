@@ -1,15 +1,19 @@
 'use client'
+import { TaskModel } from '@/app/models/taskModel';
+import { deleteTask, getTaskByID, updateTask } from '@/app/services/taskService';
+import { removeTaskForUsers } from '@/app/services/userService';
+import { useUserStore } from '@/app/stores/userStore';
 import React, { useEffect, useState } from 'react'
-import { TaskModel } from '../models/taskModel';
-import { deleteTask, getTaskByID, updateTask } from '../services/taskService';
-import { removeTaskForUsers } from '../services/userService';
+
 
 function ViewTask({ params }: { params: { taskId: string } }) {
     const [task, setTask] = useState<TaskModel | null>(null);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [editedTask, setEditedTask] = useState<TaskModel | null>(null);
-    const userId = '674ed2c952ef7d7732ebb3e7';
+    const user = useUserStore((state) => state.user);
+    const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
+
 
     useEffect(() => {
         const fetchTask = async () => {
@@ -27,8 +31,8 @@ function ViewTask({ params }: { params: { taskId: string } }) {
 
     const handleDeleteTask = async () => {
         if (!task) return;
-        if (userId === task.creator) {
-            await deleteTask(params.taskId);
+        if (user?._id === task.creator) {
+            await deleteTaskAndRefreshUser(params.taskId);
         } else {
             try {
                 const newAssignedUserIdsArr = [...task.assignedUserIds, task.creator];
