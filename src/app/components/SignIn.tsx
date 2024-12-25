@@ -1,6 +1,9 @@
-"use client"
+"use client";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Link from "next/link";
 import React, { useState } from "react";
+import Select from "react-select";
 import { UserModel } from "../models/userModel";
 import { addUser } from "../services/authService";
 import { useRouter } from "next/navigation";
@@ -13,10 +16,22 @@ function SignIn() {
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
+  const genderOptions = [
+    { value: "M", label: "זכר" },
+    { value: "F", label: "נקבה" },
+  ];
+
   const handleInputChange = (field: keyof UserModel, value: any) => {
     setUser((prevUser) => ({
       ...prevUser,
       [field]: value,
+    }));
+  };
+
+  const handleGenderChange = (selectedOption: any) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      gender: selectedOption?.value || "", // עדכון gender
     }));
   };
 
@@ -91,15 +106,12 @@ function SignIn() {
             value={user.password}
             onChange={(e) => handleInputChange("password", e.target.value)}
           />
-          <select
-            className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
-            value={user.gender ?? ""}
-            onChange={(e) => handleInputChange("gender", e.target.value)}
-          >
-            <option value="">Select Gender</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
+          <Select
+            options={genderOptions}
+            onChange={handleGenderChange}
+            placeholder="Select Gender"
+            className="focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
           <input
             type="date"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
@@ -126,7 +138,7 @@ function SignIn() {
           )}
           <div className="text-right mt-4">
             <Link className="text-sm text-blue-500 hover:underline" href="/pages/auth/login">
-              Already have an account? <span className="underline">Login</span>
+              כבר יש לך? <span className="underline">Login</span>
             </Link>
           </div>
         </form>

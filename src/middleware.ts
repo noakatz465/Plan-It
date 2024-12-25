@@ -55,14 +55,13 @@
 //   matcher: ["/api/:path*", "/pages/main/:path*","/pages/auth/:path*"], // הפעלת המידלוור על /main ועל קריאות API
 // };
 
-
 import { getToken } from "next-auth/jwt";
 import { NextResponse, NextRequest } from "next/server";
 
 // מפה לשמירת היסטוריית קריאות לפי IP
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000; // חלון זמן של דקה אחת
-const RATE_LIMIT_MAX_REQUESTS = 10; // מקסימום 10 קריאות לדקה
+const RATE_LIMIT_MAX_REQUESTS = 20; // מקסימום 20 קריאות לדקה
 
 // פונקציה לבדיקה אם כתובת ה-IP מוגבלת
 function isRateLimited(ip: string) {
@@ -103,24 +102,19 @@ export async function middleware(req: NextRequest) {
     "/_next/static",
   ];
 
-
-   // בדיקת הגבלת קריאות לפי IP
-   if (isRateLimited(ip)) {
-    console.log(`Too many requests from IP: ${ip}. Blocking access.`);
-    return NextResponse.json(
-      { message: "Too many requests. Please try again later." },
-      { status: 429 }
-    );
-  }
-
-
-  // החרגת נתיבים שמתחילים בנתיב המוחרג
+  // בדיקת הגבלת קריאות **רק על נתיבים מוחרגים**
   if (exemptPaths.some((path) => url.pathname.startsWith(path))) {
+    if (isRateLimited(ip)) {
+      console.log(`Too many requests from IP: ${ip}. Blocking access.`);
+      return NextResponse.json(
+        { message: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
     console.log("Exempt path accessed. Allowing access.");
     return NextResponse.next();
   }
 
- 
   // אם הנתיב נמצא תחת /main ואין טוקן, לחסום גישה
   if (url.pathname.startsWith("/pages/main/") && !authToken && !nextAuthToken) {
     console.log("No valid token found. Redirecting to login page...");

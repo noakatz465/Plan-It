@@ -4,7 +4,14 @@ import React from "react";
 function SideNavBar() {
     return (
         <div
-            className="w-16 bg-blue-500 h-full flex flex-col items-center py-4 space-y-6 text-white shadow-md">
+            className="w-16 bg-blue-500 h-full flex flex-col items-center py-4 space-y-6 text-white shadow-md"
+            style={{
+                position: "fixed",
+                marginTop: "64px", // גובה הניווב העליון (אם גובהו 64px)
+
+
+            }}
+            >
             <Link href="/pages/main/tasks">
                 <button className="hover:bg-blue-600 p-2 rounded transition duration-200">
                     📋משימות

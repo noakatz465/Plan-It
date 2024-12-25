@@ -1,10 +1,9 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
-
 
 function TopNavBar() {
     const userFromStore = useUserStore((state) => state.user);
@@ -13,9 +12,16 @@ function TopNavBar() {
         setUser(userFromStore)
     }, [user?.profileImage, userFromStore]);
 
-
     return (
-        <div className="flex items-center justify-between bg-blue-600 text-white px-6 py-4 shadow-md">
+        <div
+            className="flex items-center justify-between bg-blue-600 text-white px-6 py-4 shadow-md"
+            style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+            }}
+        >
             {/* לוגו */}
             <div className="text-2xl font-bold">
                 PlanIt
@@ -42,9 +48,9 @@ function TopNavBar() {
                             className="rounded-full"
                             style={{
                                 objectFit: "cover",
-                                width: "32px", // שמירת הרוחב
-                                height: "32px", // שמירת הגובה
-                                borderRadius: "50%", // הפיכת התמונה לעגולה
+                                width: "32px",
+                                height: "32px",
+                                borderRadius: "50%",
                             }}
                             unoptimized
                         />
@@ -57,15 +63,14 @@ function TopNavBar() {
                             className="rounded-full"
                             style={{
                                 objectFit: "cover",
-                                width: "32px", // שמירת הרוחב
-                                height: "32px", // שמירת הגובה
-                                borderRadius: "50%", // הפיכת התמונה לעגולה
+                                width: "32px",
+                                height: "32px",
+                                borderRadius: "50%",
                             }}
                             unoptimized
                         />
                     )}
                 </Link>
-
             </div>
         </div>
     );
