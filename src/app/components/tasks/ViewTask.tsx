@@ -1,42 +1,31 @@
 'use client'
 import { TaskModel } from '@/app/models/taskModel';
-import { deleteTask, getTaskByID, updateTask } from '@/app/services/taskService';
+import { deleteTask, updateTask } from '@/app/services/taskService';
 import { removeTaskForUsers } from '@/app/services/userService';
 import { useUserStore } from '@/app/stores/userStore';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
+interface ViewTaskProps {
+    task: TaskModel
+}
 
-function ViewTask({ params }: { params: { taskId: string } }) {
-    const [task, setTask] = useState<TaskModel | null>(null);
-    const [loading, setLoading] = useState(true);
+function ViewTask({ task }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
     const [editedTask, setEditedTask] = useState<TaskModel | null>(null);
     const user = useUserStore((state) => state.user);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
 
-
-    useEffect(() => {
-        const fetchTask = async () => {
-            try {
-                const fetchedTask = await getTaskByID(params.taskId);
-                setTask(fetchedTask);
-            } catch (error) {
-                console.error("Failed to fetch task:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchTask();
-    }, [params.taskId]);
-
     const handleDeleteTask = async () => {
         if (!task) return;
         if (user?._id === task.creator) {
-            await deleteTaskAndRefreshUser(params.taskId);
+            if (task._id)
+                await deleteTaskAndRefreshUser(task._id);
         } else {
             try {
                 const newAssignedUserIdsArr = [...task.assignedUserIds, task.creator];
-                const result = await removeTaskForUsers(newAssignedUserIdsArr, params.taskId);
+                let result;
+                if (task._id)
+                    result = await removeTaskForUsers(newAssignedUserIdsArr, task._id);
                 console.log("Update result:", result);
             } catch (error) {
                 console.error("Error updating task and users:", error);
@@ -59,8 +48,10 @@ function ViewTask({ params }: { params: { taskId: string } }) {
     const handleEditSubmit = async () => {
         if (editedTask) {
             try {
-                const updatedTask = await updateTask(params.taskId, editedTask);
-                setTask(updatedTask);
+                let updatedTask;
+                if (task._id)
+                updatedTask = await updateTask(task._id, editedTask);
+                // setTask(updatedTask);
                 setEditMode(false);
             } catch (error) {
                 console.error("Error updating task:", error);
@@ -68,13 +59,10 @@ function ViewTask({ params }: { params: { taskId: string } }) {
         }
     };
 
-    if (loading) {
-        return <div className="p-4 text-center text-gray-500">טוען משימה...</div>;
+    if (!task) {
+        return <div>משימה לא קיימת.</div>;
     }
 
-    if (!task) {
-        return <div className="p-4 text-center text-red-500">המשימה לא נמצאה.</div>;
-    }
 
     return (
         <div className="p-4 border rounded bg-gray-100">

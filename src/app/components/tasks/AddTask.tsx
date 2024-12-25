@@ -5,7 +5,6 @@ import Select from 'react-select';
 import { addTask } from '@/app/services/taskService';
 import { useUserStore } from '@/app/stores/userStore';
 import { TaskModel } from '@/app/models/taskModel';
-import { log } from 'console';
 
 interface TaskDetails {
   dueDate?: Date;
