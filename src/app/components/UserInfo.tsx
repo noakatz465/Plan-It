@@ -4,36 +4,16 @@ import React, { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { UserModel } from "../models/userModel";
 const UserInfo: React.FC = () => {
-  const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
-  const fetchUsers = useUserStore((state) => state.fetchUsers); // פעולה להבאת משתמשים
-  const users = useUserStore((state) => state.users); // רשימת המשתמשים מהחנות
+  // const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  // const fetchUsers = useUserStore((state) => state.fetchUsers); // פעולה להבאת משתמשים
+  // const users = useUserStore((state) => state.users); // רשימת המשתמשים מהחנות
 
   const userFromStore = useUserStore((state) => state.user); // הנתונים מהחנות
-  const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
+  const [user, setUser] = useState<UserModel | null>(userFromStore); // סטייט למשתמש
   const [loading, setLoading] = useState(true); // סטייט למצב טעינה
   const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
 
-  useEffect(() => {
-    const loadUserAndUsers = async () => {
-      try {
-        setLoading(true); // התחלת טעינה
-        await fetchUser(); // שליפת המשתמש מהחנות
-        await fetchUsers(); // שליפת המשתמשים מהחנות
-        setUser(userFromStore); // עדכון המשתמש בסטייט
-      } catch (err) {
-        setError("Failed to fetch user details. Please try again."); // טיפול בשגיאה
-      } finally {
-        setLoading(false); // סיום טעינה
-      }
-      console.log('User from store:', userFromStore);
-      console.log('Users from store:', users);
-    };
 
-    loadUserAndUsers();
-  }, [fetchUser, fetchUsers, userFromStore, users]);
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading user details...</p>;
-  }
 
   if (error) {
     return (

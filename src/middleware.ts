@@ -61,7 +61,7 @@ import { NextResponse, NextRequest } from "next/server";
 // מפה לשמירת היסטוריית קריאות לפי IP
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000; // חלון זמן של דקה אחת
-const RATE_LIMIT_MAX_REQUESTS = 20; // מקסימום 20 קריאות לדקה
+const RATE_LIMIT_MAX_REQUESTS = 30; // מקסימום 20 קריאות לדקה
 
 // פונקציה לבדיקה אם כתובת ה-IP מוגבלת
 function isRateLimited(ip: string) {

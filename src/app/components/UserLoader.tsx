@@ -1,15 +1,26 @@
-// "use client";
-// import React, { useEffect } from "react";
-// import { useUserStore } from "../stores/userStore";
+"use client";
+import React, { useEffect } from "react";
+import { useUserStore } from "../stores/userStore";
 
-// const UserLoader = () => {
-//   const fetchUser = useUserStore((state) => state.fetchUser);
+const UserLoader = () => {
+  const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת משתמש
+  const fetchUsers = useUserStore((state) => state.fetchUsers); // פעולה להבאת משתמשים
 
-//   useEffect(() => {
-//     fetchUser(); // שליפת המשתמש
-//   }, []);
+  useEffect(() => {
+    const loadUserAndUsers = async () => {
+      try {
+        await fetchUser(); // שליפת המשתמש מהחנות
+        await fetchUsers(); // שליפת המשתמשים מהחנות
+        console.log("User and users loaded successfully");
+      } catch (err) {
+        console.error("Error loading user or users:", err);
+      }
+    };
 
-//   return null; // הקומפוננטה לא מציגה דבר
-// };
+    loadUserAndUsers();
+  }, [fetchUser, fetchUsers]); // התלות מתייחסת רק לפונקציות fetch
 
-// export default UserLoader;
+  return null; // הקומפוננטה לא מציגה דבר
+};
+
+export default UserLoader;

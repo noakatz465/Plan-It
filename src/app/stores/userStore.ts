@@ -98,6 +98,7 @@ export const useUserStore = create<UserState>((set, get) => {
       await deleteTask(taskId); // מוחק את המשימה מהשרת
       console.log(`Task ${taskId} deleted successfully from server.`);
   
+      set({ user: null, tasks: [], projects: [] });
       await initializeUser(); // שולף מחדש את המשתמש ואת המשימות
       console.log("User and tasks refreshed successfully.");
     } catch (error) {

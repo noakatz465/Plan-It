@@ -10,8 +10,6 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
   return (
     <div >
       <Link href={`/pages/viewTask/${task._id}`} className="flex items-center justify-between p-4 border-b hover:bg-gray-50 transition">
-      {/* מזהה המשימה */}
-      <span className="font-medium text-gray-700">{task._id || "N/A"}</span>
       {/* כותרת */}
       <span className="text-gray-800">{task.title}</span>
       {/* סטטוס */}

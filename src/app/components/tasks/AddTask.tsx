@@ -5,12 +5,13 @@ import Select from 'react-select';
 import { addTask } from '@/app/services/taskService';
 import { useUserStore } from '@/app/stores/userStore';
 import { TaskModel } from '@/app/models/taskModel';
+import { log } from 'console';
 
 interface TaskDetails {
   dueDate?: Date;
 }
 
-  const AddTask: React.FC<TaskDetails> = (props) => {
+const AddTask: React.FC<TaskDetails> = (props) => {
   const initialTask = new TaskModel('', 'Pending', '', undefined);
   const [task, setTask] = useState<TaskModel>(initialTask);
   const [loading, setLoading] = useState(false);
@@ -62,6 +63,8 @@ interface TaskDetails {
       const newTaskResponse = await addTask(updatedTask);
 
       addTaskToStore({ ...updatedTask, _id: userFromStore?._id });
+      console.log(newTaskResponse);
+
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
     } catch (error) {
@@ -75,7 +78,15 @@ interface TaskDetails {
     value: project._id, // מזהה ייחודי של הפרויקט
     label: project.name, // שם הפרויקט שיוצג
   }));
-  
+
+  const frequencyOptions = [
+    { value: "Once", label: "חד פעמי" },
+    { value: "Daily", label: "יומי" },
+    { value: "Weekly", label: "שבועי" },
+    { value: "Monthly", label: "חודשי" },
+    { value: "Yearly", label: "שנתי" },
+  ];
+
   const userOptions = users?.map((user) => ({
     value: user._id,
     label: (
@@ -115,110 +126,135 @@ interface TaskDetails {
   ];
 
   return (
-<div className="max-w-2xl mx-auto bg-white rounded">
-  <h2 className="text-xl font-bold mb-4"> משימה חדשה</h2>
-  {error && <p className="text-red-500">{error}</p>}
-  {successMessage && <p className="text-green-500">{successMessage}</p>}
-  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-    <div>
-      <label htmlFor="title" className="block font-medium">כותרת</label>
-      <input
-        id="title"
-        name="title"
-        type="text"
-        value={task.title}
-        onChange={handleChange}
-        className="w-full px-3 py-2 border rounded"
-        required
-      />
-    </div>
-    <div>
-      <label htmlFor="description" className="block font-medium">תאור</label>
-      <textarea
-        id="description"
-        name="description"
-        value={task.description}
-        onChange={handleChange}
-        className="w-full px-3 py-2 border rounded"
-      ></textarea>
-    </div>
-    <div>
-      <label htmlFor="dueDate" className="block font-medium">תאריך </label>
-      <input
-        id="dueDate"
-        name="dueDate"
-        type="date"
-        value={task.dueDate?.toISOString().split('T')[0] || ''}
-        onChange={handleDateChange}
-        className="w-full px-3 py-2 border rounded"
-      />
-    </div>
-    <div>
-      <label htmlFor="priority" className="block font-medium">עדיפות</label>
-      <Select
-        id="priority"
-        options={priorityOptions}
-        onChange={handlePrioritySelect}
-        value={priorityOptions.find((option) => option.value === task.priority)}
-        placeholder="Select priority"
-        styles={{
-          control: (base) => ({
-            ...base,
-            borderColor: '#ccc',
-            borderRadius: '8px',
-            padding: '5px',
-          }),
-        }}
-      />
-    </div>
-    <div>
-      <label htmlFor="assignedUserIds" className="block font-medium">משתמשים מוצמדים</label>
-      <Select
-        id="assignedUserIds"
-        isMulti
-        options={userOptions}
-        onChange={handleUserSelect}
-        placeholder="בחר משתמשים"
-        styles={{
-          control: (base) => ({
-            ...base,
-            borderColor: '#ccc',
-            borderRadius: '8px',
-            padding: '5px',
-          }),
-        }}
-      />
-    </div>
-    <div>
-  <label htmlFor="projectId" className="block font-medium">פרויקט מקושר</label>
-  <Select
-    id="projectId"
-    options={projectOptions} // שימוש באפשרויות שנוצרו
-    onChange={(selectedOption) => setTask((prev) => ({ ...prev, projectId: selectedOption?.value }))}
-    value={projectOptions.find((option) => option.value === task.projectId)} // ערך נבחר
-    placeholder="בחר פרויקט"
-    styles={{
-      control: (base) => ({
-        ...base,
-        borderColor: '#ccc',
-        borderRadius: '8px',
-        padding: '5px',
-      }),
-    }}
-  />
-</div>
+    <div className="max-w-2xl mx-auto bg-white rounded">
+      <h2 className="text-xl font-bold mb-4"> משימה חדשה</h2>
+      {error && <p className="text-red-500">{error}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="title" className="block font-medium">כותרת</label>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            value={task.title}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="description" className="block font-medium">תאור</label>
+          <textarea
+            id="description"
+            name="description"
+            value={task.description}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+          ></textarea>
+        </div>
+        <div>
+          <label htmlFor="dueDate" className="block font-medium">תאריך </label>
+          <input
+            id="dueDate"
+            name="dueDate"
+            type="date"
+            value={task.dueDate?.toISOString().split('T')[0] || ''}
+            onChange={handleDateChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div>
+          <label htmlFor="frequency" className="block font-medium">תדירות</label>
+          <Select
+            id="frequency"
+            options={frequencyOptions} // שימוש באופציות המוגדרות
+            onChange={(selectedOption) =>
+              setTask((prev) => ({
+                ...prev,
+                frequency: (selectedOption?.value || "Once") as TaskModel["frequency"],
+              }))
+            }
+            value={frequencyOptions.find((option) => option.value === task.frequency)} // ערך נבחר
+            placeholder="בחר תדירות"
+            styles={{
+              control: (base) => ({
+                ...base,
+                borderColor: '#ccc',
+                borderRadius: '8px',
+                padding: '5px',
+              }),
+            }}
+          />
 
-    <div>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        disabled={loading}
-      >
-        {loading ? 'Adding...' : 'Add Task'}
-      </button>
+        </div>
+
+        <div>
+          <label htmlFor="priority" className="block font-medium">עדיפות</label>
+          <Select
+            id="priority"
+            options={priorityOptions}
+            onChange={handlePrioritySelect}
+            value={priorityOptions.find((option) => option.value === task.priority)}
+            placeholder="Select priority"
+            styles={{
+              control: (base) => ({
+                ...base,
+                borderColor: '#ccc',
+                borderRadius: '8px',
+                padding: '5px',
+              }),
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor="assignedUserIds" className="block font-medium">משתמשים מוצמדים</label>
+          <Select
+            id="assignedUserIds"
+            isMulti
+            options={userOptions}
+            onChange={handleUserSelect}
+            placeholder="בחר משתמשים"
+            styles={{
+              control: (base) => ({
+                ...base,
+                borderColor: '#ccc',
+                borderRadius: '8px',
+                padding: '5px',
+              }),
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor="projectId" className="block font-medium">פרויקט מקושר</label>
+          <Select
+            id="projectId"
+            options={projectOptions} // שימוש באפשרויות שנוצרו
+            onChange={(selectedOption) => setTask((prev) => ({ ...prev, projectId: selectedOption?.value }))}
+            value={projectOptions.find((option) => option.value === task.projectId)} // ערך נבחר
+            placeholder="בחר פרויקט"
+            styles={{
+              control: (base) => ({
+                ...base,
+                borderColor: '#ccc',
+                borderRadius: '8px',
+                padding: '5px',
+              }),
+            }}
+          />
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? 'Adding...' : 'Add Task'}
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
 
   );
 };
