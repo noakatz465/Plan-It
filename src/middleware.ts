@@ -102,8 +102,15 @@ export async function middleware(req: NextRequest) {
     "/_next/static",
   ];
 
-  // בדיקת הגבלת קריאות **רק על נתיבים מוחרגים**
-  if (exemptPaths.some((path) => url.pathname.startsWith(path))) {
+  const rateLimitedPaths = [
+    "/api/login",
+    "/api/users/post",
+    "/api/sendVerificationCode",
+    "/api/verifyCode",
+  ];
+  
+  // בדיקת הגבלת קריאות **רק על נתיבים עם הגבלת קריאות**
+  if (rateLimitedPaths.some((path) => url.pathname.startsWith(path))) {
     if (isRateLimited(ip)) {
       console.log(`Too many requests from IP: ${ip}. Blocking access.`);
       return NextResponse.json(
@@ -111,9 +118,12 @@ export async function middleware(req: NextRequest) {
         { status: 429 }
       );
     }
-    console.log("Exempt path accessed. Allowing access.");
-    return NextResponse.next();
+    console.log("Rate-limited path accessed. Allowing access.");
   }
+  
+  // נתיבים אחרים ימשיכו כרגיל
+  return NextResponse.next();
+  
 
   // אם הנתיב נמצא תחת /main ואין טוקן, לחסום גישה
   if (url.pathname.startsWith("/pages/main/") && !authToken && !nextAuthToken) {

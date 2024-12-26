@@ -19,7 +19,7 @@ export default function RootLayout({
 <html lang="he" dir="rtl">
 <body>
         <SessionProvider>
-        <UserLoader /> 
+        {/* <UserLoader />  */}
           {children}
         </SessionProvider>
       </body>
