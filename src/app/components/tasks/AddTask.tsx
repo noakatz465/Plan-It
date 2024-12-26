@@ -127,12 +127,12 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded">
-      <h2 className="text-xl font-bold mb-4"> משימה חדשה</h2>
+      <h2 className="text-xl  mb-4"> משימה חדשה</h2>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="title" className="block font-medium">כותרת</label>
+          <label htmlFor="title" className="block ">כותרת</label>
           <input
             id="title"
             name="title"
@@ -144,7 +144,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="description" className="block font-medium">תאור</label>
+          <label htmlFor="description" className="block ">תאור</label>
           <textarea
             id="description"
             name="description"
@@ -154,7 +154,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           ></textarea>
         </div>
         <div>
-          <label htmlFor="dueDate" className="block font-medium">תאריך </label>
+          <label htmlFor="dueDate" className="block ">תאריך </label>
           <input
             id="dueDate"
             name="dueDate"
@@ -165,7 +165,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="frequency" className="block font-medium">תדירות</label>
+          <label htmlFor="frequency" className="block ">תדירות</label>
           <Select
             id="frequency"
             options={frequencyOptions} // שימוש באופציות המוגדרות
@@ -190,7 +190,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
         </div>
 
         <div>
-          <label htmlFor="priority" className="block font-medium">עדיפות</label>
+          <label htmlFor="priority" className="block ">עדיפות</label>
           <Select
             id="priority"
             options={priorityOptions}
@@ -208,7 +208,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="assignedUserIds" className="block font-medium">משתמשים מוצמדים</label>
+          <label htmlFor="assignedUserIds" className="block ">משתמשים מוצמדים</label>
           <Select
             id="assignedUserIds"
             isMulti
@@ -226,7 +226,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="projectId" className="block font-medium">פרויקט מקושר</label>
+          <label htmlFor="projectId" className="block ">פרויקט מקושר</label>
           <Select
             id="projectId"
             options={projectOptions} // שימוש באפשרויות שנוצרו

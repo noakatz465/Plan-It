@@ -28,9 +28,11 @@ function ResetPassword() {
   };
   
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-indigo-500">
+<div
+  className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#FF2929]"
+      style={{ backgroundColor: "#3D3BF3" }}>
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+        <h2 className="text-2xl  mb-4 text-center text-gray-800">
           Reset Password
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -62,7 +64,7 @@ function ResetPassword() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-bold hover:bg-blue-700 transition duration-200"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md  hover:bg-blue-700 transition duration-200"
           >
             Reset Password
           </button>
@@ -77,7 +79,7 @@ function ResetPassword() {
         )}
         <button
           onClick={() => router.push("/pages/auth/login")}
-          className="mt-6 w-full bg-gray-600 text-white py-2 px-4 rounded-md font-bold hover:bg-gray-700 transition duration-200"
+          className="mt-6 w-full bg-gray-600 text-white py-2 px-4 rounded-md  hover:bg-gray-700 transition duration-200"
         >
           Back to Login
         </button>

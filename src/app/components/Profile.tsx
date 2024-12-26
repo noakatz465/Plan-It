@@ -62,7 +62,7 @@ function Profile() {
 
   return (
     <div className="p-6 bg-white shadow-md rounded">
-      <h1 className="text-2xl font-bold mb-4">הגדרות משתמש</h1>
+      <h1 className="text-2xl  mb-4">הגדרות משתמש</h1>
       <form onSubmit={handleSubmit}>
         {/* שם פרטי */}
         <div className="mb-4">

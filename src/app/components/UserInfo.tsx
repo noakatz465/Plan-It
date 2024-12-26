@@ -1,47 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useUserStore } from "../stores/userStore";
-import { UserModel } from "../models/userModel";
 
 const UserInfo: React.FC = () => {
-  const userFromStore = useUserStore((state) => state.user); // שליפת המשתמש מהחנות
-  const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת המשתמש
-  const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
-  const [loading, setLoading] = useState(true); // סטייט למצב טעינה
-  const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
+  const user = useUserStore((state) => state.user); // שליפת המשתמש מהחנות
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        setLoading(true); // התחלת טעינה
-        await fetchUser(); // שליפת המשתמש
-        setUser(userFromStore); // עדכון הסטייט עם הנתונים מהחנות
-      } catch (err) {
-        setError("Failed to load user details."); // עדכון שגיאה אם יש בעיה
-      } finally {
-        setLoading(false); // סיום טעינה
-      }
-    };
-
-    loadUser();
-  }, [fetchUser, userFromStore]);
-
-
-
-  if (error) {
-    return (
-      <p className="text-center text-red-500">
-        {error}
-      </p>
-    );
-  }
-
+  // הצגת הודעה אם אין מידע על המשתמש
   if (!user) {
     return (
-      <p className="text-center text-gray-500">
-        No user details available.
-      </p>
+      <div className="text-center text-gray-500">
+        <p>Loading user details...</p>
+      </div>
     );
   }
 
@@ -64,8 +34,8 @@ const UserInfo: React.FC = () => {
         <li><strong>Birth Date:</strong> {user.birthDate ? new Date(user.birthDate).toLocaleDateString() : "Not specified"}</li>
         <li><strong>Join Date:</strong> {new Date(user.joinDate).toLocaleDateString()}</li>
         <li><strong>Notifications Enabled:</strong> {user.notificationsEnabled ? "Yes" : "No"}</li>
-        <li><strong>Projects:</strong> {user.projects?.length > 0 ? user.projects.map((project) => project).join(", ") : "No projects available"}</li>
-        <li><strong>Tasks:</strong> {user.tasks?.length > 0 ? user.tasks.map((task) => task).join(", ") : "No tasks available"}</li>
+        <li><strong>Projects:</strong> {user.projects?.length > 0 ? user.projects.map((project) => project.name).join(", ") : "No projects available"}</li>
+        <li><strong>Tasks:</strong> {user.tasks?.length > 0 ? user.tasks.map((task) => task.title).join(", ") : "No tasks available"}</li>
         <li><strong>Shared With:</strong> {user.sharedWith?.length > 0 ? user.sharedWith.join(", ") : "No shared users available"}</li>
       </ul>
     </div>

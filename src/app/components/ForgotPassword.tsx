@@ -28,9 +28,10 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="grid place-items-center h-screen bg-gray-50">
-      <div className="shadow-lg p-6 rounded-lg border-t-4 border-blue-400 max-w-md w-full bg-white">
-        <h1 className="text-xl font-bold mb-4 text-center">Forgot Password</h1>
+    <div className="grid place-items-center h-screen bg-gray-50"
+    style={{ backgroundColor: "#3D3BF3"}}>
+      <div className="shadow-lg p-6 rounded-lg  max-w-md w-full bg-white">
+        <h1 className="text-xl  mb-4 text-center">Forgot Password</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -42,7 +43,7 @@ function ForgotPassword() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+            className="w-full bg-blue-600 text-white  py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >
             Send Verification Code
           </button>

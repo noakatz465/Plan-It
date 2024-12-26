@@ -52,11 +52,11 @@ const ProjectNavBar: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg">
             {/* תוכן המודאל להוספת פרויקט */}
-            <h2 className="text-xl font-bold mb-4">הוספת פרויקט חדש</h2>
+            <h2 className="text-xl  mb-4">הוספת פרויקט חדש</h2>
             {/* ניתן לשלב קומפוננטת AddProject כאן */}
             <form className="space-y-4">
               <div>
-                <label className="block font-medium">שם הפרויקט</label>
+                <label className="block ">שם הפרויקט</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"

@@ -100,6 +100,7 @@ export async function middleware(req: NextRequest) {
     "/api/sendVerificationCode",
     "/api/verifyCode",
     "/_next/static",
+    "/api/resetPassword"
   ];
 
   const rateLimitedPaths = [
@@ -121,15 +122,13 @@ export async function middleware(req: NextRequest) {
     console.log("Rate-limited path accessed. Allowing access.");
   }
   
-  // נתיבים אחרים ימשיכו כרגיל
-  return NextResponse.next();
   
 
-  // אם הנתיב נמצא תחת /main ואין טוקן, לחסום גישה
-  if (url.pathname.startsWith("/pages/main/") && !authToken && !nextAuthToken) {
-    console.log("No valid token found. Redirecting to login page...");
-    return NextResponse.redirect(new URL("/pages/auth/login", req.url));
-  }
+  // // אם הנתיב נמצא תחת /main ואין טוקן, לחסום גישה
+  // if (url.pathname.startsWith("/pages/main/") && !authToken && !nextAuthToken) {
+  //   console.log("No valid token found. Redirecting to login page...");
+  //   return NextResponse.redirect(new URL("/pages/auth/login", req.url));
+  // }
 
   // אם המשתמש מחובר ויש לו טוקן והוא מנסה לגשת לנתיב שמתחיל ב- /pages/auth
   if ((authToken || nextAuthToken) && url.pathname.startsWith("/pages/auth")) {
@@ -138,12 +137,30 @@ export async function middleware(req: NextRequest) {
   }
 
   // אם זו קריאת API לא מוחרגת ואין טוקן, לחסום גישה
+  // if (url.pathname.startsWith("/api") && !authToken && !nextAuthToken) {
+  //   console.log("No valid token found for API request. Blocking access...");
+  //   return NextResponse.json(
+  //     { message: "Unauthorized. Please log in." },
+  //     { status: 401 }
+  //   );
+  // }
+
   if (url.pathname.startsWith("/api") && !authToken && !nextAuthToken) {
-    console.log("No valid token found for API request. Blocking access...");
-    return NextResponse.json(
-      { message: "Unauthorized. Please log in." },
-      { status: 401 }
-    );
+    if (!exemptPaths.some((path) => url.pathname.startsWith(path))) {
+      console.log("No valid token found for API request. Blocking access...");
+      return NextResponse.json(
+        { message: "Unauthorized. Please log in." },
+        { status: 401 }
+      );
+    }
+    console.log("Exempt API path accessed. Allowing access.");
+    return NextResponse.next(); // אפשר גישה לנתיבים המוחרגים
+  }
+
+  // בדיקת גישה לנתיב /pages/main/
+  if (url.pathname.startsWith("/pages/main/") && !authToken && !nextAuthToken) {
+    console.log("No valid token found. Redirecting to login page...");
+    return NextResponse.redirect(new URL("/pages/auth/login", req.url));
   }
 
   console.log("Request allowed. Proceeding...");

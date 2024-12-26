@@ -44,9 +44,10 @@ function VerifyCode() {
   
 
   return (
-    <div className="grid place-items-center h-screen bg-gray-50">
-      <div className="shadow-lg p-6 rounded-lg border-t-4 border-green-400 max-w-md w-full bg-white">
-        <h1 className="text-xl font-bold mb-4 text-center">Verify Code</h1>
+    <div className="grid place-items-center h-screen bg-gray-50"
+    style={{ backgroundColor: "#3D3BF3" }}>
+<div className="shadow-lg p-6 rounded-lg  max-w-md w-full bg-white">
+<h1 className="text-xl  mb-4 text-center">Verify Code</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
@@ -58,7 +59,7 @@ function VerifyCode() {
           />
           <button
             type="submit"
-            className="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-700 transition duration-200"
+            className="w-full bg-green-600 text-white  py-2 rounded-md hover:bg-green-700 transition duration-200"
             disabled={isLoading}
           >
             {isLoading ? "Verifying..." : "Verify Code"}
