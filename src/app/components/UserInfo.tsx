@@ -8,19 +8,16 @@ const UserInfo: React.FC = () => {
   const userFromStore = useUserStore((state) => state.user); // שליפת המשתמש מהחנות
   const fetchUser = useUserStore((state) => state.fetchUser); // פעולה להבאת המשתמש
   const [user, setUser] = useState<UserModel | null>(null); // סטייט למשתמש
-  const [loading, setLoading] = useState(true); // סטייט למצב טעינה
   const [error, setError] = useState<string | null>(null); // סטייט למצב שגיאה
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        setLoading(true); // התחלת טעינה
         await fetchUser(); // שליפת המשתמש
         setUser(userFromStore); // עדכון הסטייט עם הנתונים מהחנות
       } catch (err) {
         setError("Failed to load user details."); // עדכון שגיאה אם יש בעיה
       } finally {
-        setLoading(false); // סיום טעינה
       }
     };
 

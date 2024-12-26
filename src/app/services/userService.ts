@@ -86,6 +86,20 @@ export const uploadToCloudinary = async (file: File): Promise<string | null> => 
     }
 };
 
+//שיתוף משימה
+export const shareTask = async (data: {taskId: string;
+    targetUserId: string;
+    sharedByUserId: string;}) => {
+    try {
+      const response = await axios.post(`${API_USERS_URL}/post/shareTask`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error sharing task:", error);
+      throw new Error(
+         "Failed to share the task"
+      );
+    }
+  };
 
 export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
     try {

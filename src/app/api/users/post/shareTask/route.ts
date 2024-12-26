@@ -24,8 +24,8 @@ export async function POST(req: Request) {
         }
         // בדיקה אם המשתמש היעד כבר מופיע במערך sharedWith
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
-        console.log(isAlreadyShared+" isAlreadyShared");
-        
+        console.log(isAlreadyShared + " isAlreadyShared");
+
         if (isAlreadyShared) {
             // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
             task.assignedUsers.push(targetUserId);
@@ -38,13 +38,15 @@ export async function POST(req: Request) {
             });
         } else {
             // המשתמש לא מורשה - שליחת בקשה לאישור במייל
+            const apiUrl = `http://localhost:3000/api/share/task`;
+            const queryString = `?taskId=${taskId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}`;
             await sendEmail({
                 to: targetUser.email,
                 subject: "Request to share task",
                 text: `You have been invited to collaborate on the task: "${task.title}". Click the link below to accept the invitation.`,
                 html: `<p>You have been invited to collaborate on the task: "<strong>${task.title}</strong>".</p>
                        <p>Click the link below to accept the invitation:</p>
-                       <a href="http://localhost:3000/accept-task/${taskId}/${sharedByUserId}">Accept Invitation</a>`,
+                        <a href="${apiUrl}${queryString}">Accept Invitation</a>`
             });
 
             return NextResponse.json({
