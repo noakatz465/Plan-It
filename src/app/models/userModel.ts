@@ -13,7 +13,7 @@ export class UserModel {
     gender?: 'M' | 'F' | null;
     projects: ProjectModel[];
     tasks: TaskModel[];
-    sharedWith: string[];
+    sharedWith: UserModel[];
     profileImage?: string;
   
     constructor(
@@ -25,7 +25,7 @@ export class UserModel {
       notificationsEnabled: boolean = true,
       projects: ProjectModel[] = [],
       tasks: TaskModel[] = [],
-      sharedWith: string[] = [],
+      sharedWith: UserModel[] = [],
       _id?: string,
       birthDate?: Date,
       gender?: 'M' | 'F' | null,

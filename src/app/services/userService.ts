@@ -19,6 +19,22 @@ export const getUserByID = async (userId: string) => {
     }
 }
 
+//GET משתמש לפי EMAIL
+export const getUserByEmail = async (email: string) => {
+    try {
+        const response = await axios.get(`${API_USERS_URL}/get/getUserByEmail/${email}`);
+        if (response.status === 200) {
+            const data = response.data.user;
+            const fetchedUser = new UserModel(data.firstName, data.lastName, data.email, data.password, new Date(data.joinDate),
+                data.notificationsEnabled, data.projects || [], data.tasks || [], data.sharedWith || [],
+                data._id, data.birthDate ? new Date(data.birthDate) : undefined, data.gender || null, data.profileImage || null);
+            return fetchedUser._id;
+        }
+    } catch (error) {
+        console.error("Failed to fetch user:", error);
+    }
+}
+
 export const removeTaskForUsers = async (userIds: string[], taskId: string) => {
     try {
         const response = await axios.post(`${API_USERS_URL}/post/removeTask`, {

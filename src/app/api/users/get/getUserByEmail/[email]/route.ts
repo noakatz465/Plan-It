@@ -6,11 +6,11 @@ export async function GET(req: Request) {
     try {
         await connect();
 
-        const  userId  = req.url.split('/').pop();
-        const user = await User.findById(userId).populate('tasks').populate('projects').populate({
-          path: 'sharedWith',
-          select: 'firstName lastName email profileImage',
-      });;
+        const email = req.url.split('/').pop(); 
+        const user = await User.findOne({ email }).populate('tasks').populate('projects').populate({
+            path: 'sharedWith',
+            select: 'firstName lastName email profileImage',
+          });
 
         return NextResponse.json({
             message: "User fetched successfully",
