@@ -58,7 +58,7 @@ function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-green-600 text-white  py-2 rounded-md hover:bg-green-700 transition duration-200"
+            className="w-full bg-green-500 text-white  py-2 rounded-md hover:bg-green-600 transition duration-200"
           >
             Login
           </button>
@@ -70,8 +70,8 @@ function Login() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="mt-2 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-[#FF2929] transition duration-200"
-            >
+            className="mt-2 w-full bg-[#FF2929] text-white  py-2 rounded-md hover:bg-red-600 transition duration-200"
+          >
             Sign in with Google
           </button>
           <div className="text-right">

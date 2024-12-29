@@ -8,8 +8,8 @@ import { addUser } from "../services/authService";
 import { z } from "zod";
 
 const userSchema = z.object({
-  firstName: z.string().min(1, "שם פרטי נדרש"),
-  lastName: z.string().min(1, "שם משפחה נדרש"),
+  firstName: z.string().min(2, "שם פרטי נדרש"),
+  lastName: z.string().min(2, "שם משפחה נדרש"),
   email: z.string().email("יש להזין כתובת אימייל תקינה"),
   password: z.string().min(6, "הסיסמה חייבת להכיל לפחות 6 תווים"),
   gender: z.string().optional(),
@@ -118,7 +118,7 @@ function SignIn() {
           <input
             type="email"
             placeholder="אימייל"
-            className={`border rounded-md py-2 px-4 focus:outline-none ${fieldErrors.email
+            className={`border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-[#9694FF] ${fieldErrors.email
               ? "border-red-500 focus:ring-red-400"
               : "border-gray-300 focus:ring-green-400"
               }`}
@@ -163,10 +163,9 @@ function SignIn() {
 
           <button
             type="submit"
-            className="bg-green-600 text-white  py-2 rounded-md hover:bg-green-700 transition duration-200"
+            className="bg-green-500 text-white  py-2 rounded-md hover:bg-green-600 transition duration-200"
           >
-            הירשם
-          </button>
+            Sign In          </button>
           {successMessage && (
             <div className="bg-green-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
               {successMessage}
