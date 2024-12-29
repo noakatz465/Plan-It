@@ -46,7 +46,7 @@ export async function POST(req: Request) {
             );
           }
 
-        return NextResponse.json({ message: "Task created and user updated!" });
+        return NextResponse.json(savedTask, { status: 200 });
 
     } catch (error) {
         console.error("Error creating task and updating user:", error);

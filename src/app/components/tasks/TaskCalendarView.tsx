@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { addDays, addMonths, addYears, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
 import { HDate } from '@hebcal/core';
 import { TaskModel } from "../../models/taskModel";
-import Link from 'next/link';
 import { useUserStore } from '../../stores/userStore';
 import AddTask from './AddTask';
+import ViewTask from './ViewTask';
 
 function TaskCalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -20,16 +20,26 @@ function TaskCalendarView() {
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
     ];
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedTask, setSelectedTask] = useState<TaskModel | null>(null);
+    
 
     const handleOpenModal = (date: Date) => {
         setSelectedDate(date);
         setIsModalOpen(true);
     };
 
+    const handleOpenViewTaskModal = (task: TaskModel) => {
+        setSelectedTask(task);
+        setIsViewTaskModalOpen(true);
+    };
+
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedDate(null);
+        setSelectedTask(null);
+        setIsViewTaskModalOpen(false);
     };
 
     useEffect(() => {
@@ -199,10 +209,10 @@ function TaskCalendarView() {
                                 <div className="mt-2">
                                     {dayTasks.length > 0 ? (
                                         dayTasks.map((task, index) => (
-                                            <Link href={`/pages/viewTask/${task._id}`} key={index} draggable
+                                            <div onClick={()=> handleOpenViewTaskModal(task)} key={index} draggable
                                                 className="text-sm text-blue-600">
                                                 {task.title}
-                                            </Link>
+                                            </div>
                                         ))
                                     ) : (
                                         <div className="text-xs text-gray-400">אין אירועים</div>
@@ -227,6 +237,21 @@ function TaskCalendarView() {
                                         </div>
                                     </div>
                                 )}
+                                {isViewTaskModalOpen && (
+                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                        <div className="bg-white p-5 rounded shadow-lg w-1/3"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >                                            <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleCloseModal();
+                                            }}
+                                            className="text-red-500 float-right font-bold">X</button>
+                                            {selectedTask ? <ViewTask task={selectedTask} /> : ""}
+                                        </div>
+                                    </div>
+                                )}
+
                             </div>
                         );
                     })}

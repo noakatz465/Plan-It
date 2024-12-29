@@ -5,7 +5,11 @@ import Select from 'react-select';
 import { addTask } from '@/app/services/taskService';
 import { useUserStore } from '@/app/stores/userStore';
 import { TaskModel } from '@/app/models/taskModel';
-import { log } from 'console';
+import Image from "next/image";
+import CreatableSelect from 'react-select/creatable';
+import { shareTask } from '@/app/services/userService';
+
+
 
 interface TaskDetails {
   dueDate?: Date;
@@ -39,9 +43,14 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   };
 
   const handleUserSelect = (selectedOptions: any) => {
+    const newUsers = selectedOptions.map((option: any) => ({
+      value: option.value,
+      label: option.label,
+      isNew: option.__isNew__ || false, // אם האופציה נוצרה באופן חופשי
+    }));
     setTask((prev) => ({
       ...prev,
-      assignedUserIds: selectedOptions.map((option: any) => option.value),
+      assignedUserIds: newUsers.map((user: { value: any; }) => user.value),
     }));
   };
 
@@ -59,12 +68,27 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     setSuccessMessage('');
 
     try {
-      const updatedTask = { ...task, creator: userFromStore?._id || '' };
+      const updatedTask = { ...task, creator: userFromStore?._id || '' };      
       const newTaskResponse = await addTask(updatedTask);
+      if (updatedTask.assignedUserIds) {
+        
+        await Promise.all(
+          updatedTask.assignedUserIds.map(async (userId) => {
+            try {
+              await shareTask({
+                taskId: newTaskResponse._id,
+                targetUserId: userId,
+                sharedByUserId: userFromStore?._id || '',
+              });
+              console.log(`Task successfully shared with user ${userId}`);
+            } catch (error) {
+              console.error(`Failed to share task with user ${userId}:`, error);
+            }
+          })
+        );
+      }
 
       addTaskToStore({ ...updatedTask, _id: userFromStore?._id });
-      console.log(newTaskResponse);
-
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
     } catch (error) {
@@ -92,7 +116,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {user?.profileImage ? (
-          <img
+          <Image
             src={user.profileImage}
             alt={`${user.firstName} ${user.lastName}`}
             style={{
@@ -103,7 +127,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         ) : (
-          <img
+          <Image
             src="/default-profile.png" // תמונת ברירת מחדל
             alt="Anonymous Profile"
             style={{
@@ -214,7 +238,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             isMulti
             options={userOptions}
             onChange={handleUserSelect}
-            placeholder="בחר משתמשים"
+            placeholder="בחר או הוסף משתמשים"
             styles={{
               control: (base) => ({
                 ...base,

@@ -83,7 +83,7 @@ export async function POST(req: Request) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret") as { email: string };
       email = decoded.email;
     } catch (err) {
-      return NextResponse.json({ message: "Password reset failed." }, { status: 400 });
+      return NextResponse.json({ message: "Password reset failed.", err }, { status: 400 });
     }
 
     // חיפוש המשתמש

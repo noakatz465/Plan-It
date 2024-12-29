@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import { resetPassword } from "../services/passwordService";
 
 function ResetPassword() {
@@ -21,9 +21,10 @@ function ResetPassword() {
     try {
       const successMessage = await resetPassword(password); // קריאה לשירות
       setMessage(successMessage);
-      setTimeout(() => router.push("/pages/auth/login"), 2000);
-    } catch (err: any) {
-      setError(err.message || "Failed to reset password.");
+      setTimeout(() => router.push("/"), 2000);
+    } catch (err) {
+      console.error("Error in handleSubmit:", err);
+      setError("Failed to reset password.");
     }
   };
   

@@ -3,11 +3,13 @@ import Task from "@/app/lib/models/taskSchema";
 import User from "@/app/lib/models/userSchema";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
     try {
         await connect();
-        const data = await req.json();
-        const { taskId, sharedByUserId, targetUserId } = data;
+        const url = new URL(req.url);
+        const taskId = url.searchParams.get("taskId");
+        const sharedByUserId = url.searchParams.get("sharedByUserId");
+        const targetUserId = url.searchParams.get("targetUserId");
 
         const sharedByUser = await User.findById(sharedByUserId);
         const targetUser = await User.findById(targetUserId);
@@ -25,9 +27,12 @@ export async function POST(req: Request) {
         if (!isAlreadyShared) {
             task.assignedUsers.push(targetUserId);
             targetUser.tasks.push(taskId);
+            // עדכון המערך sharedWith של המשתף (sharedByUser)
+            sharedByUser.sharedWith.push(targetUserId);
 
             await task.save();
             await targetUser.save();
+            await sharedByUser.save();
 
             return NextResponse.json({
                 message: "Task has been shared successfully.",

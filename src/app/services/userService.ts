@@ -86,36 +86,49 @@ export const uploadToCloudinary = async (file: File): Promise<string | null> => 
     }
 };
 
-
+//שיתוף משימה
+export const shareTask = async (data: {taskId: string;
+    targetUserId: string;
+    sharedByUserId: string;}) => {
+    try {
+      const response = await axios.post(`${API_USERS_URL}/post/shareTask`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error sharing task:", error);
+      throw new Error(
+         "Failed to share the task"
+      );
+    }
+  };
 
 export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
-  try {
-    const response = await axios.get(`${API_USERS_URL}/get/getAllUsers`);
-    if (response.status === 200) {
-      const usersData = response.data.users;
-      const users = usersData.map((data: any) => new UserModel(
-        data.firstName,
-        data.lastName,
-        data.email,
-        "",
-        new Date(data.joinDate),
-        data.notificationsEnabled,
-        [], // מערך ריק לפרויקטים
-        [], // מערך ריק למשימות
-        [],
-        data._id,
-        data.birthDate ? new Date(data.birthDate) : undefined,
-        data.gender || null,
-        data.profileImage
-      ));
-      console.log("Users fetched successfully:", users);
-      return users;
-    } else {
-      console.warn("Unexpected response status:", response.status);
+    try {
+      const response = await axios.get(`${API_USERS_URL}`);
+      if (response.status === 200) {
+        const usersData = response.data.users;
+        const users = usersData.map((data: UserModel) => new UserModel(
+          data.firstName,
+          data.lastName,
+          data.email,
+          "",
+          new Date(data.joinDate),
+          data.notificationsEnabled,
+          [], // מערך ריק לפרויקטים
+          [], // מערך ריק למשימות
+          [],
+          data._id,
+          data.birthDate ? new Date(data.birthDate) : undefined,
+          data.gender || null
+        ));
+        console.log("Users fetched successfully:", users);
+        return users;
+      } else {
+        console.warn("Unexpected response status:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
       return null;
     }
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    return null;
-  }
-};
+  };
+  

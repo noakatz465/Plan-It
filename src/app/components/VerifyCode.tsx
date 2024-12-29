@@ -33,9 +33,9 @@ function VerifyCode() {
       setTimeout(() => {
         router.push(`/pages/auth/resetPassword`); // אין צורך בפרמטרים ב-URL
       }, 2000);
-    } catch (err: any) {
-      console.error("Error verifying code:", err.message);
-      setError(err.message || "Invalid verification code.");
+    } catch (err) {
+      console.error("Error verifying code:", err);
+      setError( "Invalid verification code.");
     }
      finally {
       setIsLoading(false);
