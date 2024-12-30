@@ -12,11 +12,12 @@ interface ViewTaskProps {
 }
 
 function ViewTask({ task }: ViewTaskProps) {
-    const initialTask = new TaskModel('', 'Pending', '', undefined);
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);
-    const [editedTask, setEditedTask] = useState<TaskModel>(initialTask);
-    const [loading, setLoading] = useState(false);
+    const [editedTask, setEditedTask] = useState<TaskModel>({
+        ...task,
+        assignedUsers: task.assignedUsers, // ברירת מחדל למערך ריק
+    }); const [loading, setLoading] = useState(false);
     const user = useUserStore((state) => state.user);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
 
@@ -27,8 +28,8 @@ function ViewTask({ task }: ViewTaskProps) {
             if (user?._id === task.creator) {
                 if (task._id) await deleteTaskAndRefreshUser(task._id);
             } else {
-                const newAssignedUserIdsArr = [...task.assignedUserIds, task.creator];
-                if (task._id) await removeTaskForUsers(newAssignedUserIdsArr, task._id);
+                const newAssignedUsersArr = [...task.assignedUsers, task.creator];
+                if (task._id) await removeTaskForUsers(newAssignedUsersArr, task._id);
             }
             alert('Task deleted successfully.');
         } catch (error) {
@@ -69,6 +70,18 @@ function ViewTask({ task }: ViewTaskProps) {
         setShareMode(true);
     };
 
+    const handleUserSelect = (selectedOptions: any) => {
+        const newUsers = selectedOptions.map((option: any) => ({
+            value: option.value,
+            label: option.label,
+            isNew: option.__isNew__ || false,
+        }));
+        setEditedTask((prev) => ({
+            ...prev,
+            assignedUsers: newUsers.map((user: { value: string; }) => user.value),
+        }));
+    };
+
     const handleShareSubmit = async () => {
         setLoading(true);
         const failedUsers: string[] = [];
@@ -77,31 +90,33 @@ function ViewTask({ task }: ViewTaskProps) {
 
             // יצירת רשימת IDs לפי אימיילים
             const userIds = await Promise.all(
-                task.assignedUserIds.map(async (email) => {
-                    try {
-                        const user = await getUserByEmail(email);
-                        return user?.toString(); // המרת ה-ID למחרוזת
-                    } catch {
-                        throw new Error(`Failed to find user with email ${email}`);
-                    }
+                editedTask.assignedUsers.map(async (email) => {
+                  try {
+                    const user = await getUserByEmail(email);
+                    return user?.toString();
+                  } catch {
+                    throw new Error(`Failed to find user with email ${email}`);
+                  }
                 })
-            );
+              );
 
-            updatedTask.assignedUserIds = userIds.filter((id) => id !== undefined); // סינון של undefined אם יש
-
-            await Promise.all(
-                editedTask.assignedUserIds.map(async (userId) => {
-                    try {
-                        await shareTask({
-                            taskId: task._id as string,
-                            targetUserId: userId,
-                            sharedByUserId: user?._id || ""
-                        });
-                    } catch {
-                        failedUsers.push(userId);
-                    }
-                })
-            );
+            updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
+            if (updatedTask.assignedUsers)
+                await Promise.all(
+                    updatedTask.assignedUsers.map(async (userId) => {
+                        if (editedTask._id)
+                            try {
+                                await shareTask({
+                                    taskId: editedTask._id,
+                                    targetUserId: userId,
+                                    sharedByUserId: user?._id || '',
+                                });
+                                console.log(`Task successfully shared with user ${userId}`);
+                            } catch (error) {
+                                console.error(`Failed to share task with user ${userId}:`, error);
+                            }
+                    })
+                );
 
             if (failedUsers.length) {
                 alert(`Failed to share with users: ${failedUsers.join(", ")}`);
@@ -115,15 +130,6 @@ function ViewTask({ task }: ViewTaskProps) {
         } finally {
             setLoading(false);
         }
-    };
-
-
-    const handleUserSelect = (selectedOptions: any) => {
-        const newUsers = selectedOptions.map((option: any) => option.value);
-        setEditedTask((prev) => ({
-            ...prev,
-            assignedUserIds: newUsers,
-        }));
     };
 
     const userOptions = user?.sharedWith.map((user) => ({
@@ -231,9 +237,9 @@ function ViewTask({ task }: ViewTaskProps) {
             )}
             {shareMode && (
                 <div className="mt-4">
-                    <label htmlFor="assignedUserIds" className="block font-medium">משתמשים מוצמדים</label>
+                    <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
                     <CreatableSelect
-                        id="assignedUserIds"
+                        id="assignedUsers"
                         isMulti
                         options={userOptions}
                         onChange={handleUserSelect}

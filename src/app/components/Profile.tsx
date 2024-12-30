@@ -12,7 +12,6 @@ function Profile() {
 
   useEffect(() => {
     if (user) {
-      console.log("User data:", user);
       setFormData({ ...user });
     }
   }, [user]);

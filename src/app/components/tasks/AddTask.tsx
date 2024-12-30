@@ -45,7 +45,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     }));
     setTask((prev) => ({
       ...prev,
-      assignedUserIds: newUsers.map((user: { value: string; }) => user.value),
+      assignedUsers: newUsers.map((user: { value: string; }) => user.value),
     }));
   };
 
@@ -67,7 +67,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
       // יצירת רשימת IDs לפי אימיילים
       const userIds = await Promise.all(
-        task.assignedUserIds.map(async (email) => {
+        task.assignedUsers.map(async (email) => {
           try {
             const user = await getUserByEmail(email);
             return user?.toString(); // המרת ה-ID למחרוזת
@@ -77,13 +77,12 @@ const AddTask: React.FC<TaskDetails> = (props) => {
         })
       );
       
-      updatedTask.assignedUserIds = userIds.filter((id) => id !== undefined); // סינון של undefined אם יש
-
+      updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
       // שלב הוספת המשימה ושיתוף
       const newTaskResponse = await addTask(updatedTask);
-      if (updatedTask.assignedUserIds) {
+      if (updatedTask.assignedUsers) {
         await Promise.all(
-          updatedTask.assignedUserIds.map(async (userId) => {
+          updatedTask.assignedUsers.map(async (userId) => {
             try {
               await shareTask({
                 taskId: newTaskResponse._id,
@@ -242,9 +241,9 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="assignedUserIds" className="block font-medium">משתמשים מוצמדים</label>
+          <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
           <CreatableSelect
-            id="assignedUserIds"
+            id="assignedUsers"
             isMulti
             options={userOptions}
             onChange={handleUserSelect}
