@@ -15,7 +15,7 @@ export async function PUT(req: Request) {
                 { status: 404 }
             );
         }
-        if (data.title) project.name = data.name;
+        if (data.name) project.name = data.name;
         if (data.description) project.description = data.description;
         if (data.lastModified) project.lastModified = data.lastModified;
 
