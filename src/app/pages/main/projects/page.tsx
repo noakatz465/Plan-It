@@ -1,9 +1,10 @@
+import ProjectListView from '@/app/components/projects/ProjectListView'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      פרויקטים
+      <ProjectListView />
     </div>
   )
 }
