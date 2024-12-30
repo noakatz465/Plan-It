@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
@@ -7,9 +6,7 @@ import { useUserStore } from '@/app/stores/userStore';
 import { TaskModel } from '@/app/models/taskModel';
 import Image from "next/image";
 import CreatableSelect from 'react-select/creatable';
-import { shareTask } from '@/app/services/userService';
-
-
+import { getUserByEmail, shareTask } from '@/app/services/userService';
 
 interface TaskDetails {
   dueDate?: Date;
@@ -23,9 +20,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   const [successMessage, setSuccessMessage] = useState('');
   const userFromStore = useUserStore((state) => state.user);
   const addTaskToStore = useUserStore((state) => state.addTaskToStore);
-  const users = useUserStore((state) => state.users);
   const projects = useUserStore((state) => state.projects);
-
 
   useEffect(() => {
     if (props.dueDate) {
@@ -46,11 +41,11 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     const newUsers = selectedOptions.map((option: any) => ({
       value: option.value,
       label: option.label,
-      isNew: option.__isNew__ || false, // אם האופציה נוצרה באופן חופשי
+      isNew: option.__isNew__ || false,
     }));
     setTask((prev) => ({
       ...prev,
-      assignedUserIds: newUsers.map((user: { value: any; }) => user.value),
+      assignedUsers: newUsers.map((user: { value: string; }) => user.value),
     }));
   };
 
@@ -68,12 +63,26 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     setSuccessMessage('');
 
     try {
-      const updatedTask = { ...task, creator: userFromStore?._id || '' };      
+      const updatedTask = { ...task, creator: userFromStore?._id || '' };
+
+      // יצירת רשימת IDs לפי אימיילים
+      const userIds = await Promise.all(
+        task.assignedUsers.map(async (email) => {
+          try {
+            const user = await getUserByEmail(email);
+            return user?.toString(); // המרת ה-ID למחרוזת
+          } catch {
+            throw new Error(`Failed to find user with email ${email}`);
+          }
+        })
+      );
+      
+      updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
+      // שלב הוספת המשימה ושיתוף
       const newTaskResponse = await addTask(updatedTask);
-      if (updatedTask.assignedUserIds) {
-        
+      if (updatedTask.assignedUsers) {
         await Promise.all(
-          updatedTask.assignedUserIds.map(async (userId) => {
+          updatedTask.assignedUsers.map(async (userId) => {
             try {
               await shareTask({
                 taskId: newTaskResponse._id,
@@ -98,9 +107,10 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setLoading(false);
     }
   };
+
   const projectOptions = projects?.map((project) => ({
-    value: project._id, // מזהה ייחודי של הפרויקט
-    label: project.name, // שם הפרויקט שיוצג
+    value: project._id,
+    label: project.name,
   }));
 
   const frequencyOptions = [
@@ -111,28 +121,28 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     { value: "Yearly", label: "שנתי" },
   ];
 
-  const userOptions = users?.map((user) => ({
-    value: user._id,
+  const userOptions = userFromStore?.sharedWith?.map((user) => ({     
+    value: user.email,
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {user?.profileImage ? (
           <Image
             src={user.profileImage}
             alt={`${user.firstName} ${user.lastName}`}
+            width={32}
+            height={32}
             style={{
-              width: '32px',
-              height: '32px',
               borderRadius: '50%',
               objectFit: 'cover',
             }}
           />
         ) : (
           <Image
-            src="/default-profile.png" // תמונת ברירת מחדל
+            src="/default-profile.png" 
             alt="Anonymous Profile"
+            width={32}
+            height={32}
             style={{
-              width: '32px',
-              height: '32px',
               borderRadius: '50%',
               objectFit: 'cover',
             }}
@@ -192,14 +202,14 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           <label htmlFor="frequency" className="block ">תדירות</label>
           <Select
             id="frequency"
-            options={frequencyOptions} // שימוש באופציות המוגדרות
+            options={frequencyOptions}
             onChange={(selectedOption) =>
               setTask((prev) => ({
                 ...prev,
                 frequency: (selectedOption?.value || "Once") as TaskModel["frequency"],
               }))
             }
-            value={frequencyOptions.find((option) => option.value === task.frequency)} // ערך נבחר
+            value={frequencyOptions.find((option) => option.value === task.frequency)}
             placeholder="בחר תדירות"
             styles={{
               control: (base) => ({
@@ -210,7 +220,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
               }),
             }}
           />
-
         </div>
 
         <div>
@@ -232,9 +241,9 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="assignedUserIds" className="block ">משתמשים מוצמדים</label>
-          <Select
-            id="assignedUserIds"
+          <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
+          <CreatableSelect
+            id="assignedUsers"
             isMulti
             options={userOptions}
             onChange={handleUserSelect}
@@ -279,7 +288,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
         </div>
       </form>
     </div>
-
   );
 };
 

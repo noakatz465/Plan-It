@@ -9,7 +9,7 @@ export interface ITask {
     status: string;
     priority?: string;
     creator: mongoose.Types.ObjectId;
-    assignedUsers?: mongoose.Types.ObjectId[];
+    assignedUsers: mongoose.Types.ObjectId[];
     reminderDateTime?: Date;
     templateId?: mongoose.Types.ObjectId;
     lastModified: Date;

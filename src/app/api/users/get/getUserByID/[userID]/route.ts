@@ -7,7 +7,10 @@ export async function GET(req: Request) {
         await connect();
 
         const  userId  = req.url.split('/').pop();
-        const user = await User.findById(userId).populate('tasks').populate('projects');
+        const user = await User.findById(userId).populate('tasks').populate('projects').populate({
+          path: 'sharedWith',
+          select: 'firstName lastName email profileImage',
+      });;
 
         return NextResponse.json({
             message: "User fetched successfully",

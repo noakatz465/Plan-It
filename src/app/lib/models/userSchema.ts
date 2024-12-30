@@ -37,8 +37,8 @@ const UserSchema: Schema = new Schema({
     profileImage: {
         type: String,
     },
-    verificationCode: { type: String, required: false }, // עדכון ל-String
-    verificationCodeExpiry: { type: Date, required: false }, // תוקף הקוד
+    verificationCode: { type: String, required: false },
+    verificationCodeExpiry: { type: Date, required: false },
 },{ collection: 'Users' })
 
 const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema); 

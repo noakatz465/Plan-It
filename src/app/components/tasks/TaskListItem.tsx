@@ -3,7 +3,7 @@ import { TaskModel } from "../../models/taskModel";
 import ViewTask from "./ViewTask";
 
 interface TaskItemListProps {
-  task: TaskModel; // המשימה הבודדת
+  task: TaskModel;
 }
 
 const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
