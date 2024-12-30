@@ -42,7 +42,6 @@ export const addUser = async (user: UserModel): Promise<string> => {
   }
 };
 
-
 // פונקציית התחברות
 export const loginUser = async (
   email: string,
@@ -78,8 +77,6 @@ export const fetchUserDetailsByCookie = async (): Promise<UserModel> => {
     });
 
     const userDetails = response.data.user;
-    console.log(userDetails.profileImage);
-
     // יצירת אובייקט UserModel
     return new UserModel(
       userDetails.firstName,
@@ -107,8 +104,6 @@ export const fetchUserDetailsBySession = async (userId: string): Promise<UserMod
   try {
     const response = await axios.get(`${API_USERS_URL}/get/getUserByID/${userId}`);
     const userDetails = response.data.user;
-    console.log(userDetails.profileImage);
-
     // יצירת אובייקט UserModel
     return new UserModel(
       userDetails.firstName,

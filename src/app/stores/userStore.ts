@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "@/app/services/authService";
-import { fetchAllUsers } from "@/app/services/userService"; // ייבוא פונקציית שליפת משתמשים
 import { UserModel } from "@/app/models/userModel";
 import { ProjectModel } from "@/app/models/projectModel"; // ייבוא מודל הפרויקט
 import { getSession } from "next-auth/react"; // נקסט אאוט
@@ -14,8 +13,6 @@ interface UserState {
   clearUser: () => void; // ניקוי המשתמש
   tasks: TaskModel[]; // משימות המשתמש
   projects: ProjectModel[]; // פרויקטים של המשתמש
-  users?: UserModel[] | null; // רשימת משתמשים (אופציונלי, עם undefined כברירת מחדל)
-  fetchUsers: () => Promise<void>; // שליפת משתמשים
   addTaskToStore: (task: TaskModel) => void; // הוספת משימה לחנות
   addProjectToStore: (project: ProjectModel) => void; // הוספת פרויקט לחנות
   deleteTaskAndRefreshUser: (taskId: string) => Promise<void>; // מחיקת משימה ורענון המשתמש
@@ -52,26 +49,6 @@ export const useUserStore = create<UserState>((set, get) => {
     } catch (error) {
       console.error("Error fetching user details:", error);
       set({ user: null, tasks: [], projects: [] }); // במקרה של שגיאה, לאפס את החנות
-    }
-  };
-
-  const initializeUsers = async () => {
-    console.log("Starting users initialization...");
-
-    const users = get().users || []; // מבטיח ש-`users` תמיד יהיה מערך
-    if (users.length > 0) {
-      console.log("Users already exist in store:", users);
-      return; // אם המשתמשים כבר קיימים, לא להמשיך
-    }
-
-    try {
-      const allUsers = await fetchAllUsers();
-      console.log("Users fetched successfully:", allUsers);
-
-      set({ users: allUsers });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      set({ users: [] }); // במקרה של שגיאה, לאפס את רשימת המשתמשים
     }
   };
 
@@ -113,10 +90,9 @@ export const useUserStore = create<UserState>((set, get) => {
     projects: [], // אתחול הפרויקטים כברירת מחדל
     users: [], // רשימת המשתמשים תמיד תהיה מערך ריק כברירת מחדל
     fetchUser: initializeUser,
-    fetchUsers: initializeUsers,
     clearUser: () => {
       console.log("Clearing user, tasks, and projects from store...");
-      set({ user: null, tasks: [], projects: [], users: [] });
+      set({ user: null, tasks: [], projects: [] });
     },
     addTaskToStore, // פעולה לעדכון משימה
     addProjectToStore, // פעולה לעדכון פרויקט
