@@ -89,7 +89,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
       {/* תצוגת המשימה */}
       <div
         onClick={() => handleOpenViewTaskModal(task)}
-        className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition cursor-pointer mb-4"
+        className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition cursor-pointer mb-4"
       >
         {/* כותרת */}
         <div className="flex-1 text-right pr-4">

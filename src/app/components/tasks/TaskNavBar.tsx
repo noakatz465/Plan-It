@@ -15,9 +15,11 @@ import {
 const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
+  const [selectedView, setSelectedView] = useState<string | null>(null);
   const router = useRouter();
 
   const handleViewChange = (selectedOption: any) => {
+    setSelectedView(selectedOption.value);
     router.push(`/pages/main/tasks/${selectedOption.value}`);
   };
 
@@ -42,28 +44,38 @@ const TaskNavBar: React.FC = () => {
     {
       value: "list",
       label: (
-        <div className="flex items-center p-2">
-          <ListBulletIcon className="h-6 w-6 text-[#FF2929]" />
+        <div
+          className={`flex items-center justify-center p-2 rounded-full ${selectedView === "list" ? " text-white" : "text-[#FF2929]"
+            }`}
+        >
+          <ListBulletIcon className="h-6 w-6" />
         </div>
       ),
     },
     {
       value: "calendar",
       label: (
-        <div className="flex items-center p-2">
-          <CalendarDaysIcon className="h-6 w-6 text-[#FF2929]" />
+        <div
+          className={`flex items-center justify-center p-2 rounded-full ${selectedView === "calendar" ? " text-white" : "text-[#FF2929]"
+            }`}
+        >
+          <CalendarDaysIcon className="h-6 w-6" />
         </div>
       ),
     },
     {
       value: "kanban",
       label: (
-        <div className="flex items-center p-2">
-          <ViewColumnsIcon className="h-6 w-6 text-[#FF2929]" />
+        <div
+          className={`flex items-center justify-center p-2 rounded-full ${selectedView === "kanban" ? " text-white" : "text-[#FF2929]"
+            }`}
+        >
+          <ViewColumnsIcon className="h-6 w-6" />
         </div>
       ),
     },
   ];
+
 
   const filterOptions = [
     {
@@ -91,7 +103,7 @@ const TaskNavBar: React.FC = () => {
     },
   ];
 
-  const customStyles = {
+  const customViewStyles = {
     control: (provided: any) => ({
       ...provided,
       display: "flex",
@@ -109,9 +121,42 @@ const TaskNavBar: React.FC = () => {
       zIndex: 9999,
     }),
     option: (provided: any, state: any) => ({
+      alignItems: "center",
+      justifyContent: "center",
+      ...provided,
+      display: "flex",
+      backgroundColor: state.isSelected
+        ? "#9694FF"
+        : state.isFocused
+          ? "#EBEAFF"
+          : "#fff",
+      color: state.isSelected ? "#fff" : "#000",
+      padding: "5px 10px", // צמצום ריווח אנכי ואופקי
+    })
+
+
+  };
+  const customFilterStyles = {
+    control: (provided: any) => ({
       ...provided,
       display: "flex",
       alignItems: "center",
+      justifyContent: "space-between",
+      borderRadius: "8px",
+      padding: "0 8px",
+      border: "1px solid #ccc",
+      height: "44px",
+      minHeight: "44px",
+      boxShadow: "none",
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+    option: (provided: any, state: any) => ({
+
+      ...provided,
+      display: "flex",
       backgroundColor: state.isSelected
         ? "#9694FF"
         : state.isFocused
@@ -144,7 +189,6 @@ const TaskNavBar: React.FC = () => {
     }),
   };
 
-
   const CustomOption = (props: any) => {
     const { data, isSelected } = props;
     return (
@@ -162,12 +206,8 @@ const TaskNavBar: React.FC = () => {
     );
   };
 
-
-
-
-
   return (
-    <div className="bg-white px-2 py-2 flex items-center justify-between w-full shadow-md h-12 fixed left-0 right-[50px] w-[calc(100%-50px)]  z-50 ">
+    <div className="bg-white px-2 py-2 flex items-center justify-between  shadow-md h-12 fixed left-0 right-[50px] w-[calc(100%-50px)]  z-50 ">
 
       <div className="text-[#FF2929] font-bold px-2 py-1 rounded">המשימות שלי</div>
 
@@ -203,7 +243,7 @@ const TaskNavBar: React.FC = () => {
           isMulti
           closeMenuOnSelect={false} // שומר על התפריט פתוח לאחר בחירה
           styles={{
-            ...customStyles,
+            ...customFilterStyles,
             menu: (provided: any) => ({
               ...provided,
               width: "auto", // מאפשר לתפריט לגדול לפי תוכנו
@@ -227,8 +267,9 @@ const TaskNavBar: React.FC = () => {
         <Select
           options={viewOptions}
           onChange={handleViewChange}
-          styles={customStyles}
+          styles={customViewStyles}
           placeholder="תצוגה"
+
         />
       </div>
 
