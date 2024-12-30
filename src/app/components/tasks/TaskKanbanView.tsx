@@ -7,26 +7,27 @@ import TaskKanbanItem from "./TaskKanbanItem";
 
 function TaskKanbanView() {
   const tasks = useUserStore((state) => state.tasks);
-  // const [tasks, setTasks] = useState<TaskModel[]>(tasksFromStore);
 
   // חלוקת המשימות לפי סטטוס
   const groupedTasks = tasks.reduce<Record<string, TaskModel[]>>(
     (acc, task) => {
       if (!acc[task.status]) {
-        acc[task.status] = []; // אתחול המפתח כמערך ריק אם אינו קיים
+        acc[task.status] = [];
       }
-      acc[task.status].push(task); // הוספת המשימה לקטגוריה המתאימה
+      acc[task.status].push(task);
       return acc;
     },
-    {} // אובייקט ריק כמצטבר התחלתי
+    {}
   );
 
   return (
-    <div className="p-4 bg-purple-50 rounded shadow flex justify-between">
+    <div className="p-6 max-w-5xl mx-auto  flex justify-between">
       {/* עמודה: חדש */}
       <div className="w-1/3 p-2">
-        <h3 className="text-lg font-bold text-center text-purple-700">חדש</h3>
-        <div className="mt-4 space-y-2">
+        <div className="pb-2 border-b border-[#3D3BF3] font-bold text-[#3D3BF3] mb-4 p-2">
+          <h3 className="text-lg text-center">חדש</h3>
+        </div>
+        <div className="mt-4 flex flex-col items-center space-y-4">
           {groupedTasks.Pending?.map((task) => (
             <TaskKanbanItem key={task._id} task={task} />
           ))}
@@ -35,8 +36,10 @@ function TaskKanbanView() {
 
       {/* עמודה: בביצוע */}
       <div className="w-1/3 p-2">
-        <h3 className="text-lg font-bold text-center text-purple-700">בביצוע</h3>
-        <div className="mt-4 space-y-2">
+        <div className="pb-2 border-b border-[#3D3BF3] font-bold text-[#3D3BF3] mb-4 p-2">
+          <h3 className="text-lg text-center">בביצוע</h3>
+        </div>
+        <div className="mt-4 flex flex-col items-center space-y-4">
           {groupedTasks["In Progress"]?.map((task) => (
             <TaskKanbanItem key={task._id} task={task} />
           ))}
@@ -45,8 +48,10 @@ function TaskKanbanView() {
 
       {/* עמודה: הושלם */}
       <div className="w-1/3 p-2">
-        <h3 className="text-lg font-bold text-center text-purple-700">הושלם</h3>
-        <div className="mt-4 space-y-2">
+        <div className="pb-2 border-b border-[#3D3BF3] font-bold text-[#3D3BF3] mb-4 p-2">
+          <h3 className="text-lg text-center">הושלם</h3>
+        </div>
+        <div className="mt-4 flex flex-col items-center space-y-4">
           {groupedTasks.Completed?.map((task) => (
             <TaskKanbanItem key={task._id} task={task} />
           ))}
@@ -57,3 +62,4 @@ function TaskKanbanView() {
 }
 
 export default TaskKanbanView;
+

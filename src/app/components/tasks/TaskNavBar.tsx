@@ -167,7 +167,7 @@ const TaskNavBar: React.FC = () => {
 
 
   return (
-<div className="bg-white px-2 py-2 flex items-center justify-between w-full shadow-md h-12 fixed left-0 right-[50px] w-[calc(100%-50px)]  z-50 ">
+    <div className="bg-white px-2 py-2 flex items-center justify-between w-full shadow-md h-12 fixed left-0 right-[50px] w-[calc(100%-50px)]  z-50 ">
 
       <div className="text-[#FF2929] font-bold px-2 py-1 rounded">המשימות שלי</div>
 
@@ -181,10 +181,9 @@ const TaskNavBar: React.FC = () => {
       </button>
 
 
-
       {/* Search Bar */}
-      <div className="flex-1 mx-2">
-        <div className="relative flex items-center" style={{ width: '200px' }}>
+      <div className="flex-1 mx-4 flex justify-center">
+        <div className="relative flex items-center w-full max-w-xs">
           <input
             type="text"
             placeholder="חיפוש"
@@ -195,8 +194,6 @@ const TaskNavBar: React.FC = () => {
           </div>
         </div>
       </div>
-
-
 
       {/* Filter Dropdown */}
       <div className="mr-2">

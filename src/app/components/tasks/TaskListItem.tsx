@@ -105,10 +105,8 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
 
         {/* עדיפות בכוכבים */}
         <div className="flex-1  text-center items-center">{renderPriorityStars(task.priority)}</div>
-{/* עדיפות בכוכבים */}
-{/* <div className="flex-1 flex justify-center items-center">
-  {renderPriorityStars(task.priority)}
-</div> */}
+        {/* עדיפות בכוכבים */}
+
 
         {/* פס התקדמות */}
         <div className="flex-1 flex justify-center pr-4">
