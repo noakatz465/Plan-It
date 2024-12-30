@@ -20,6 +20,8 @@ const UserInfo: React.FC = () => {
     <div className="p-4 border rounded-lg bg-gray-100 shadow">
       <div className="flex items-center mb-4">
         <Image
+          width={128}
+          height={128}
           src={user.profileImage ?? ''}
           alt={`${user.firstName} ${user.lastName}'s Profile`}
           className="w-16 h-16 rounded-full border shadow mr-4"

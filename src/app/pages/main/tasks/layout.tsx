@@ -3,17 +3,14 @@ import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex flex-col h-screen">
-            {/* נבבר  */}
-
+        <div >
+            {/* Navbar */}
             <TaskNavBar />
 
-
-                {/* תוכן ראשי */}
-                <main className="flex-1 bg-purple-100 ">
-                    {children}
-                </main>
-            
+            {/* Main Content */}
+            <main className="flex-1 bg-[#EBEAFF] pt-12">
+                {children}
+            </main>
         </div>
     );
 }
