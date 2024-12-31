@@ -332,7 +332,10 @@ function TaskCalendarView() {
                                                 handleCloseModal();
                                             }}>
                                             <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
-                                            >
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}>
+                                            
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();

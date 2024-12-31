@@ -41,7 +41,7 @@ function TopNavBar() {
           <CogIcon className="h-6 w-6 text-white ml-1" />
         </Link>
         <Link
-          href="/notifications"
+          href="/pages/main/notifications"
           className="flex items-center hover:text-gray-200 transition duration-200"
           title="התראות"
         >

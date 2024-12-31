@@ -1,7 +1,8 @@
+import { INotification } from "@/app/types/notificationInterface";
 import mongoose, { Schema } from "mongoose";
 
 // יצירת סכמת ההתראות
-const NotificationSchema: Schema = new Schema({
+const AlertNotificationSchema: Schema = new Schema({
     // מזהה המשימה שאליה משויכת ההתראה
     taskId: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -42,11 +43,14 @@ const NotificationSchema: Schema = new Schema({
         enum: ['Active', 'Dismissed'], 
         default: 'Active' 
     }
-},{ 
+}, { 
     // שם אוסף הנתונים במסד הנתונים
-    collection: 'Notifications' 
+    collection: 'AlertNotification' 
 });
 
-// יצירת מודל ההתראות
-const Notification = mongoose.models.Notification || mongoose.model('Notification', NotificationSchema);
-export default Notification;
+// יצירת מודל ההתראות בשילוב הממשק
+const AlertNotification =
+    mongoose.models.AlertNotification ||
+    mongoose.model<INotification>("AlertNotification", AlertNotificationSchema);
+
+export default AlertNotification;

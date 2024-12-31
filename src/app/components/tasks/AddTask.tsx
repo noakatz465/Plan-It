@@ -7,6 +7,7 @@ import { TaskModel } from '@/app/models/taskModel';
 import Image from "next/image";
 import CreatableSelect from 'react-select/creatable';
 import { getUserByEmail, shareTask } from '@/app/services/userService';
+import { createNotificationsPerUsers } from '@/app/services/notificationService';
 
 interface TaskDetails {
   dueDate?: Date;
@@ -76,12 +77,15 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           }
         })
       );
-      
+
       updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
-      // שלב הוספת המשימה ושיתוף
+
+      // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
+
       if (updatedTask.assignedUsers) {
-        await Promise.all(
+        // ביצוע שיתוף משימה עבור כל המשתמשים
+        const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
             try {
               await shareTask({
@@ -90,16 +94,42 @@ const AddTask: React.FC<TaskDetails> = (props) => {
                 sharedByUserId: userFromStore?._id || '',
               });
               console.log(`Task successfully shared with user ${userId}`);
+              return true; // הצלחה
             } catch (error) {
               console.error(`Failed to share task with user ${userId}:`, error);
+              return false; // כישלון
             }
           })
         );
+
+        // בדיקה אם כל השיתופים הצליחו
+        const allSharesSucceeded = shareResults.every((result) => result);
+        console.log('התראה');
+        console.log(newTaskResponse);
+
+
+        if (allSharesSucceeded && userFromStore?.notificationsEnabled) {
+          // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+          try {
+            await createNotificationsPerUsers(
+              "TaskAssigned",
+              newTaskResponse,
+              updatedTask.assignedUsers
+            );
+
+            console.log('Notifications sent successfully.');
+          } catch (error) {
+            console.error('Failed to send notifications:', error);
+          }
+        } else {
+          console.warn('Not all shares succeeded. Notifications will not be sent.');
+        }
       }
 
       addTaskToStore({ ...updatedTask, _id: userFromStore?._id });
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
+
     } catch (error) {
       setError('Failed to add task. Please try again.');
       console.error(error);
@@ -107,6 +137,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setLoading(false);
     }
   };
+
 
   const projectOptions = projects?.map((project) => ({
     value: project._id,
@@ -121,7 +152,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     { value: "Yearly", label: "שנתי" },
   ];
 
-  const userOptions = userFromStore?.sharedWith?.map((user) => ({     
+  const userOptions = userFromStore?.sharedWith?.map((user) => ({
     value: user.email,
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -138,7 +169,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         ) : (
           <Image
-            src="/default-profile.png" 
+            src="/default-profile.png"
             alt="Anonymous Profile"
             width={32}
             height={32}
