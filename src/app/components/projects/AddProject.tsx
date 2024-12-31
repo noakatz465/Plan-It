@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import { ProjectModel } from '@/app/models/projectModel';
+import { createProject } from '@/app/services/projectService';
+import { useUserStore } from '@/app/stores/userStore';
 
 function AddProject() {
     const [newProject, setNewProject] = useState<ProjectModel>({
@@ -14,6 +16,8 @@ function AddProject() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const userFromStore = useUserStore((state) => state.user);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -28,11 +32,18 @@ function AddProject() {
         setLoading(true);
         setError(null);
         try {
-            // קריאה לסרוויס ליצירת פרויקט
-            // await createProject(newProject);
-            console.log('Project created successfully!');
+            // המרת linkedTasks ל-array של IDs
+            const linkedTaskIds = newProject.linkedTasks.map((task) => task._id || "");
+            // המרת members ל-array של IDs
+            const memberIds = newProject.members.map((member) => member._id || "");
+            await createProject({
+                ...newProject,
+                manager: userFromStore?._id || ' ',
+                linkedTasks: linkedTaskIds,
+                members: memberIds,
+            });
         } catch (err) {
-            console.log('Failed to create project. Please try again.'+ err);
+            console.log('Failed to create project. Please try again.' + err);
         } finally {
             setLoading(false);
         }
@@ -63,19 +74,6 @@ function AddProject() {
                         name="description"
                         value={newProject.description}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded"
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label htmlFor="manager" className="block text-sm font-medium">מנהל</label>
-                    <input
-                        type="text"
-                        id="manager"
-                        name="manager"
-                        value={newProject.manager}
-                        onChange={handleChange}
-                        required
                         className="mt-1 p-2 w-full border rounded"
                     />
                 </div>
