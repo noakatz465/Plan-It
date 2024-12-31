@@ -1,5 +1,5 @@
 export class NotificationModel {
-    _id?: string; // מזהה ייחודי להתראה
+    _id: string; // מזהה ייחודי להתראה
     taskId: string; // מזהה המשימה המשויכת
     notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue"; // סוג ההתראה
     notificationText: string; // טקסט ההתראה
@@ -16,7 +16,7 @@ export class NotificationModel {
       notificationDate: Date ,
       isRead: boolean ,
       status: "Active" | "Dismissed" ,
-      _id?: string
+      _id: string
     ) {
       this._id = _id;
       this.taskId = taskId;

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
                     const newNotification = new AlertNotification({
                         taskId: task._id, // מזהה המשימה
                         notificationType, // סוג ההתראה (לדוגמה: TaskAssigned)
-                        notificationText: `${creator.firstName} ${creator.lastName} (${creator.email}) הזמינה אותך להשתתף במשימה:  ${task.title}`, // טקסט ההתראה
+                        notificationText: ` הוזמנת להשתתף במשימה  ${task.title} על ידי: ${creator.firstName} ${creator.lastName} (${creator.email})  `, // טקסט ההתראה
                         recipientUserId: userId, // המשתמש אליו ההתראה מיועדת
                         notificationDate: new Date(), // מועד יצירת ההתראה
                         isRead: false, // ההתראה לא נקראה

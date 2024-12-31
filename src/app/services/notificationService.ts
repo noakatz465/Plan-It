@@ -56,3 +56,17 @@ export async function fetchNotificationsByUserId(userId: string): Promise<Notifi
   }
 }
 
+
+//עדכון התראה כנקראה
+export async function markNotificationAsRead(notificationId: string) {
+  try {
+    const response = await axios.patch("/api/notifications/patch", {
+      notificationId,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    throw error;
+  }
+}
+

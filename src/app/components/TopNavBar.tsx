@@ -22,8 +22,10 @@ function TopNavBar() {
         top: 0,
         left: 0,
         width: "100%",
-        height: "50px", // גובה הניווט העליון
+        height: "50px",
+        zIndex: 1000, // גובה הניווט העליון
       }}
+
     >
       {/* לוגו */}
       <div className="text-lg font-bold">PlanIt</div>

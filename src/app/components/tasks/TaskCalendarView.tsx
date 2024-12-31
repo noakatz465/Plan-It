@@ -341,7 +341,7 @@ function TaskCalendarView() {
                                                         e.stopPropagation();
                                                         handleCloseModal();
                                                     }}
-                                                    className="text-red-500 float-right font-bold">X</button>
+                                                    className="text-red-500 float-right font-bold"> ✖</button>
                                                 {selectedDate ? <AddTask dueDate={selectedDate} /> : ""}
                                             </div>
                                         </div>
@@ -379,7 +379,7 @@ function TaskCalendarView() {
                                                     onClick={handleCloseDayModal}
                                                     className="text-red-500 float-right font-bold"
                                                 >
-                                                    X
+                                                     ✖
                                                 </button>
                                                 <h2 className="text-lg font-medium mb-3 text-black-900">
                                                     משימות ליום:{" "}
