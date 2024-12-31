@@ -1,4 +1,5 @@
 import { TaskModel } from "./taskModel";
+import { UserModel } from "./userModel";
 
 export class ProjectModel {
     _id?: string
@@ -6,7 +7,7 @@ export class ProjectModel {
     description?: string;
     manager: string;
     linkedTasks: TaskModel[];
-    members: string[];
+    members: UserModel[];
     lastModified: Date;
   
     constructor(
@@ -15,7 +16,7 @@ export class ProjectModel {
       lastModified: Date = new Date(),
       description?: string,
       linkedTasks: TaskModel[] = [],
-      members:string[] = [],
+      members:UserModel[] = [],
       _id?: string
     ) {
       this._id = _id;

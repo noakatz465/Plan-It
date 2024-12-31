@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import AddProject from "./AddProject";
 
 const ProjectNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -50,26 +51,9 @@ const ProjectNavBar: React.FC = () => {
       {/* מודאל הוספת פרויקט */}
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            {/* תוכן המודאל להוספת פרויקט */}
-            <h2 className="text-xl font-bold mb-4">הוספת פרויקט חדש</h2>
-            {/* ניתן לשלב קומפוננטת AddProject כאן */}
-            <form className="space-y-4">
-              <div>
-                <label className="block font-medium">שם הפרויקט</label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  placeholder="שם הפרויקט"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                שמירה
-              </button>
-            </form>
+          <div className="bg-white p-6 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+
+            <AddProject />
             <button
               onClick={() => setOpenModal(false)}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
