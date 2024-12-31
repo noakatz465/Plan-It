@@ -7,6 +7,8 @@ function page() {
   return (
     <div>
       <Home></Home>
+
+
     </div>
   );
 }

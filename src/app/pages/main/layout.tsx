@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {isLoading ? (
                 // מסך טעינה
-                <div className="flex justify-center items-center min-h-screen bg-purple-100">
+                <div className="flex justify-center items-center min-h-screen bg-[#EBEAFF]">
                     <LoadingSpinner /> {/* Spinner לטעינה */}
                 </div>
             ) : (
@@ -31,10 +31,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
                         {/* תוכן ראשי */}
                         <main
-                            className="flex-1 bg-purple-100"
+                            className="flex-1 bg-[#EBEAFF]"
                             style={{
-                                paddingTop: "64px", // גובה הנבבר העליון
-                                paddingRight: "64px", // רוחב הנבבר הצדדי
+                                paddingTop: "50px", // גובה הנבבר העליון
+                                paddingRight: "50px", // רוחב הנבבר הצדדי
                             }}
                         >
                             {children}

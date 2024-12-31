@@ -16,7 +16,17 @@ export default function RootLayout({
 }>) {
   return (
 <html lang="he" dir="rtl">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Rubik:wght@300..900&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
 <body>
+  
         <SessionProvider>
         {/* <UserLoader />  */}
           {children}

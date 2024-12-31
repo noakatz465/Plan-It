@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 
                 {/* תוכן ראשי */}
-                <main className="flex-1 bg-purple-100 ">
+                <main className="flex-1 bg-[#EBEAFF] ">
                     {children}
                 </main>
             

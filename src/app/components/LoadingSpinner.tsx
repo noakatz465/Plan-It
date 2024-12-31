@@ -10,7 +10,7 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 40,
-  color = "#3498db", // צבע ברירת מחדל: כחול
+  color = "#3D3BF3", // צבע ברירת מחדל: כחול
   message,
 }) => {
   return (
@@ -28,7 +28,9 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         <p className="text-gray-700 text-lg mt-4">
           {message}
         </p>
+        
       )}
+      
     </div>
   );
 };

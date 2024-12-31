@@ -7,6 +7,7 @@ import { TaskModel } from '@/app/models/taskModel';
 import Image from "next/image";
 import CreatableSelect from 'react-select/creatable';
 import { getUserByEmail, shareTask } from '@/app/services/userService';
+import { createNotificationsPerUsers } from '@/app/services/notificationService';
 
 interface TaskDetails {
   dueDate?: Date;
@@ -76,12 +77,15 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           }
         })
       );
-      
+
       updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
-      // שלב הוספת המשימה ושיתוף
+
+      // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
+
       if (updatedTask.assignedUsers) {
-        await Promise.all(
+        // ביצוע שיתוף משימה עבור כל המשתמשים
+        const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
             try {
               await shareTask({
@@ -90,16 +94,42 @@ const AddTask: React.FC<TaskDetails> = (props) => {
                 sharedByUserId: userFromStore?._id || '',
               });
               console.log(`Task successfully shared with user ${userId}`);
+              return true; // הצלחה
             } catch (error) {
               console.error(`Failed to share task with user ${userId}:`, error);
+              return false; // כישלון
             }
           })
         );
+
+        // בדיקה אם כל השיתופים הצליחו
+        const allSharesSucceeded = shareResults.every((result) => result);
+        console.log('התראה');
+        console.log(newTaskResponse);
+
+
+        if (allSharesSucceeded && userFromStore?.notificationsEnabled) {
+          // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+          try {
+            await createNotificationsPerUsers(
+              "TaskAssigned",
+              newTaskResponse,
+              updatedTask.assignedUsers
+            );
+
+            console.log('Notifications sent successfully.');
+          } catch (error) {
+            console.error('Failed to send notifications:', error);
+          }
+        } else {
+          console.warn('Not all shares succeeded. Notifications will not be sent.');
+        }
       }
 
       addTaskToStore({ ...updatedTask, _id: userFromStore?._id });
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
+
     } catch (error) {
       setError('Failed to add task. Please try again.');
       console.error(error);
@@ -107,6 +137,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setLoading(false);
     }
   };
+
 
   const projectOptions = projects?.map((project) => ({
     value: project._id,
@@ -121,7 +152,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     { value: "Yearly", label: "שנתי" },
   ];
 
-  const userOptions = userFromStore?.sharedWith?.map((user) => ({     
+  const userOptions = userFromStore?.sharedWith?.map((user) => ({
     value: user.email,
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -138,7 +169,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         ) : (
           <Image
-            src="/default-profile.png" 
+            src="/default-profile.png"
             alt="Anonymous Profile"
             width={32}
             height={32}
@@ -161,12 +192,12 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded">
-      <h2 className="text-xl font-bold mb-4"> משימה חדשה</h2>
+      <h2 className="text-xl  mb-4"> משימה חדשה</h2>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="title" className="block font-medium">כותרת</label>
+          <label htmlFor="title" className="block ">כותרת</label>
           <input
             id="title"
             name="title"
@@ -178,7 +209,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="description" className="block font-medium">תאור</label>
+          <label htmlFor="description" className="block ">תאור</label>
           <textarea
             id="description"
             name="description"
@@ -188,7 +219,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           ></textarea>
         </div>
         <div>
-          <label htmlFor="dueDate" className="block font-medium">תאריך </label>
+          <label htmlFor="dueDate" className="block ">תאריך </label>
           <input
             id="dueDate"
             name="dueDate"
@@ -199,7 +230,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="frequency" className="block font-medium">תדירות</label>
+          <label htmlFor="frequency" className="block ">תדירות</label>
           <Select
             id="frequency"
             options={frequencyOptions}
@@ -223,7 +254,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
         </div>
 
         <div>
-          <label htmlFor="priority" className="block font-medium">עדיפות</label>
+          <label htmlFor="priority" className="block ">עדיפות</label>
           <Select
             id="priority"
             options={priorityOptions}
@@ -259,7 +290,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           />
         </div>
         <div>
-          <label htmlFor="projectId" className="block font-medium">פרויקט מקושר</label>
+          <label htmlFor="projectId" className="block ">פרויקט מקושר</label>
           <Select
             id="projectId"
             options={projectOptions} // שימוש באפשרויות שנוצרו

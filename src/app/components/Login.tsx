@@ -37,9 +37,10 @@ function Login() {
   };
 
   return (
-    <div className="grid place-items-center h-screen bg-gray-50">
-      <div className="shadow-lg p-6 rounded-lg border-t-4 border-green-400 max-w-md w-full bg-white">
-        <h1 className="text-xl font-bold my-4 text-center">Login</h1>
+    <div className="grid place-items-center h-screen bg-gray-50"
+    style={{ backgroundColor: "#3D3BF3" }}>
+      <div className="shadow-lg p-6 rounded-lg  max-w-md w-full bg-white">
+        <h1 className="text-xl  my-4 text-center">Login</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -57,7 +58,7 @@ function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-700 transition duration-200"
+            className="w-full bg-green-500 text-white  py-2 rounded-md hover:bg-green-600 transition duration-200"
           >
             Login
           </button>
@@ -69,7 +70,7 @@ function Login() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="mt-2 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition duration-200"
+            className="mt-2 w-full bg-[#FF2929] text-white  py-2 rounded-md hover:bg-red-600 transition duration-200"
           >
             Sign in with Google
           </button>
@@ -78,7 +79,7 @@ function Login() {
               className="text-sm text-blue-500 hover:underline"
               href="/pages/auth/signIn"
             >
-              Do not you have an account? <span className="underline">Sign In</span>
+              עדין אין לך חשבון? <span className="underline">Sign In</span>
             </Link>
           </div>
           <div className="text-right mt-2">
@@ -86,7 +87,7 @@ function Login() {
               className="text-sm text-blue-500 hover:underline"
               href="/pages/auth/forgotPassword"
             >
-              Forgot your password?
+              שכחת סיסמא?
             </Link>
           </div>
         </form>

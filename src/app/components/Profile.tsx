@@ -61,7 +61,7 @@ function Profile() {
 
   return (
     <div className="p-6 bg-white shadow-md rounded">
-      <h1 className="text-2xl font-bold mb-4">הגדרות משתמש</h1>
+      <h1 className="text-2xl  mb-4">הגדרות משתמש</h1>
       <form onSubmit={handleSubmit}>
         {/* שם פרטי */}
         <div className="mb-4">
@@ -148,18 +148,20 @@ function Profile() {
           {/* {formData.profileImage ? */}
           <div className="mt-4">
             <Image
-              src={formData.profileImage}
+              src={formData.profileImage ||"https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"
+              } // תמונה ברירת מחדל במקרה של undefined
               alt="Uploaded Profile Image"
               width={128}
               height={128}
               className="rounded-full"
               style={{
-                objectFit: "cover", // מבטיח שהתמונה תתמקד במרכז ותמלא את הריבוע
+                objectFit: "cover", // התמקדות במרכז התמונה
                 width: "128px", // שמירת הרוחב
                 height: "128px", // שמירת הגובה
                 borderRadius: "50%", // הפיכת התמונה לעגולה
               }}
             />
+
 
           </div> : <input
             type="file"

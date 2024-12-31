@@ -6,6 +6,8 @@ import { TaskModel } from "../../models/taskModel";
 import { useUserStore } from '../../stores/userStore';
 import AddTask from './AddTask';
 import ViewTask from './ViewTask';
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/solid";
+
 
 function TaskCalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -23,7 +25,9 @@ function TaskCalendarView() {
     const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTask, setSelectedTask] = useState<TaskModel | null>(null);
-    
+
+    const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+    const [selectedDayTasks, setSelectedDayTasks] = useState<TaskModel[]>([]);
 
     const handleOpenModal = (date: Date) => {
         setSelectedDate(date);
@@ -41,6 +45,16 @@ function TaskCalendarView() {
         setSelectedTask(null);
         setIsViewTaskModalOpen(false);
     };
+    const handleOpenDayModal = (day: any, tasks: TaskModel[]) => {
+        setCurrentDate(day);
+        setSelectedDayTasks(tasks);
+        setIsDayModalOpen(true);
+    };
+
+    const handleCloseDayModal = () => {
+        setIsDayModalOpen(false);
+        setSelectedDayTasks([]);
+    };
 
     useEffect(() => {
         console.log("Updating calendar dates...");
@@ -50,14 +64,25 @@ function TaskCalendarView() {
             setCalendarDates(createCalendarDates());
         }
     }, [currentDate, view]);
-    
+
     useEffect(() => {
         console.log("Mapping tasks...");
         if (tasks.length > 0) {
             mapTasksByDate();
         }
     }, [tasks]);
-    
+
+
+    useEffect(() => {
+        if (isDayModalOpen || isViewTaskModalOpen || isModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+        return () => {
+            document.body.style.overflow = "auto"; // מנקה תמיד
+        };
+    }, [isDayModalOpen, isViewTaskModalOpen, isModalOpen]);
 
     const mapTasksByDate = () => {
         const newTaskMap: { [key: string]: TaskModel[] } = {};
@@ -148,20 +173,55 @@ function TaskCalendarView() {
     };
 
     return (
-        <div className="p-5 font-sans" dir="rtl">
-            <div className="flex justify-between items-center mb-5">
-                <button onClick={() => handleDateChange('prev')}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">הקודם</button>
-                <h1 className="text-xl font-bold">{hebrewMonths[currentDate.getMonth()]} {currentDate.getFullYear()}</h1>
-                <button onClick={() => handleDateChange('next')}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">הבא</button>
+        <div className="p-5 " dir="rtl">
+            <div className="flex justify-center items-center bg-[#fff] rounded-md shadow-md w-72 mx-auto text-xs font-semibold overflow-hidden  mb-5">
+                <button
+                    onClick={() => handleChangeView('weekly')}
+                    className={`flex-1 py-1 text-center transition duration-300 ${view === 'weekly'
+                        ? 'bg-[#9694FF] text-white'
+                        : 'text-[#9694FF] hover:bg-[#D6D4FF] hover:text-white'
+                        }`}>
+                    תצוגה שבועית
+                </button>
+                <button
+                    onClick={() => handleChangeView('monthly')}
+                    className={`flex-1 py-1 text-center transition duration-300 ${view === 'monthly'
+                        ? 'bg-[#9694FF] text-white'
+                        : 'text-[#9694FF] hover:bg-[#D6D4FF] hover:text-white'
+                        }`}>
+                    תצוגה חודשית
+                </button>
+                <button
+                    onClick={() => handleChangeView('yearly')}
+                    className={`flex-1 py-1 text-center transition duration-300 ${view === 'yearly'
+                        ? 'bg-[#9694FF] text-white'
+                        : 'text-[#9694FF] hover:bg-[#D6D4FF] hover:text-white'
+                        }`}>
+                    תצוגה שנתית
+                </button>
             </div>
-            <h1>{hebrewMonths[currentDate.getMonth()]}</h1>
-            <div className="flex justify-center gap-4 mb-5">
-                <button onClick={() => handleChangeView('weekly')} className={`px-4 py-2 rounded ${view === 'weekly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>תצוגה שבועית</button>
-                <button onClick={() => handleChangeView('monthly')} className={`px-4 py-2 rounded ${view === 'monthly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>תצוגה חודשית</button>
-                <button onClick={() => handleChangeView('yearly')} className={`px-4 py-2 rounded ${view === 'yearly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>תצוגה שנתית</button>
+            <div className="flex items-center justify-center mb-5">
+                {/* כפתור הקודם */}
+                <button
+                    onClick={() => handleDateChange("prev")}
+                    className="p-2 text-gray-700 rounded-full hover:bg-white group"
+                >
+                    <ChevronRightIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
+                </button>
+
+                <h1 className="text-xl font-bold text-[#3D3BF3] mx-4">
+                    {hebrewMonths[currentDate.getMonth()]} {currentDate.getFullYear()}
+                </h1>
+
+                {/* כפתור הבא */}
+                <button
+                    onClick={() => handleDateChange("next")}
+                    className="p-2 text-gray-700 rounded-full hover:bg-white group"
+                >
+                    <ChevronLeftIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
+                </button>
             </div>
+
             {/* תצוגת שנתית */}
             {view === 'yearly' && (
                 <div className="grid grid-cols-3 gap-4">
@@ -187,77 +247,192 @@ function TaskCalendarView() {
                     })}
                 </div>
             )}
+
             {/* תצוגת חודש ושבוע */}
             {view !== 'yearly' && (
-                <div className="grid grid-cols-7 gap-2 mt-3">
-                    {calendarDates.map(date => {
-                        const dateString = format(date, 'yyyy-MM-dd');
-                        const dayTasks = taskMap[dateString] || [];
+                <div>
+                    <div className="grid grid-cols-7 gap-2 border-b border-[#3D3BF3] font-bold text-[#3D3BF3] pb-2 mb-3">
+                        <span className="text-[#3D3BF3] text-center">ראשון</span>
+                        <span className="text-[#3D3BF3] text-center">שני</span>
+                        <span className="text-[#3D3BF3] text-center">שלישי</span>
+                        <span className="text-[#3D3BF3] text-center">רביעי</span>
+                        <span className="text-[#3D3BF3] text-center">חמישי</span>
+                        <span className="text-[#3D3BF3] text-center">שישי</span>
+                        <span className="text-[#3D3BF3] text-center">שבת</span>
+                    </div>
+                    <div className="grid grid-cols-7 gap-2 mt-3">
+                        {calendarDates.map((date) => {
+                            const dateString = format(date, 'yyyy-MM-dd');
+                            const dayTasks = taskMap[dateString] || [];
 
-                        return (
-                            <div
-                                onClick={() => handleChangeDay(date)}
-                                key={date.toISOString()} className={`p-3 text-right rounded-md ${isToday(date) ? 'bg-green-500 text-white' : format(date, 'MM') === format(currentDate, 'MM')
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'bg-gray-200 text-gray-500'
-                                    }`}
-                            >
-                                <div className="flex justify-between">
-                                    <span>{format(date, 'd')}</span>
-                                    <span className="text-sm text-blue-600">{getHebrewDate(date)}</span>
-                                </div>
-                                <div className="mt-2">
-                                    {dayTasks.length > 0 ? (
-                                        dayTasks.map((task, index) => (
-                                            <div onClick={()=> handleOpenViewTaskModal(task)} key={index} draggable
-                                                className="text-sm text-blue-600">
-                                                {task.title}
+                            return (
+                                <div
+                                    onClick={() => handleOpenDayModal(date, dayTasks)}
+                                    key={date.toISOString()}
+                                    className={`relative p-3 text-right rounded-md ${isToday(date)
+                                        ? 'bg-green-400 text-white'
+                                        : format(date, 'MM') === format(currentDate, 'MM')
+                                            ? 'bg-white text-gray-900'
+                                            : 'bg-[#E3E1F2] text-gray-500'
+                                        } ${view === 'weekly' ? 'h-60' : 'h-24' // גובה מותאם לתצוגה שבועית
+                                        }`}
+                                >
+                                    <div className="flex justify-between items-start mt-0">
+                                        <span className="text-sm font-medium">{format(date, 'd')}</span>
+                                        <span className="text-sm ">{getHebrewDate(date)}</span>
+                                    </div>
+
+                                    <div className="mt-1 space-y-1 cursor-pointer">
+                                        {dayTasks.length > 0 ? (
+                                            <>
+                                                {/* בדיקה אם מדובר בתצוגת שבועית */}
+                                                {dayTasks.slice(0, view === 'weekly' ? 7 : 2).map((task, index) => (
+                                                    <div
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // מונע פתיחת המודל של היום
+                                                            handleOpenViewTaskModal(task);
+                                                        }}
+                                                        key={index}
+                                                        draggable
+                                                        className="flex justify-center items-center p-1 bg-[#EBEAFF] rounded-md shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer h-5"
+                                                    >
+                                                        <span className="text-xs text-[#3D3BF3] font-medium truncate text-center">{task.title}</span>
+                                                    </div>
+                                                ))}
+
+                                                {/* הצגת "..." אם יש יותר משימות מהמקסימום */}
+                                                {dayTasks.length > 7 && view === 'weekly' && (
+                                                    <div className="text-xl text-gray-500 text-center h-4 leading-none">
+                                                        ...
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </div>
+
+
+                                    {/* כפתור הוספת משימה */}
+                                    <button
+                                        className="absolute bottom-2 left-2 text-[#FF2929] hover:text-red-700 transition duration-200 flex items-center justify-center "
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // למנוע פתיחת הכרטיס בעת לחיצה על הכפתור
+                                            handleOpenModal(date);
+                                        }}
+                                        title="הוספת משימה"
+                                    >
+                                        <PlusIcon className="h-5 w-5 strokeWidth={6} " />
+                                    </button>
+                                    {/* הוספת משימה     */}
+                                    {isModalOpen && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleCloseModal();
+                                            }}>
+                                            <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}>
+                                            
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleCloseModal();
+                                                    }}
+                                                    className="text-red-500 float-right font-bold"> ✖</button>
+                                                {selectedDate ? <AddTask dueDate={selectedDate} /> : ""}
                                             </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-xs text-gray-400">אין אירועים</div>
-
+                                        </div>
                                     )}
-                                </div>
-                                <button
-                                    onClick={() => handleOpenModal(date)}
-                                    className="mt-2 px-3 py-1 bg-blue-500 text-white rounded"
-                                >+</button>
-                                {isModalOpen && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                                        <div className="bg-white p-5 rounded shadow-lg w-1/3"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >                                            <button
+                                    {/* תצוגת משימה */}
+                                    {isViewTaskModalOpen && (
+                                        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-[999]"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleCloseModal();
                                             }}
-                                            className="text-red-500 float-right font-bold">X</button>
-                                            {selectedDate ? <AddTask dueDate={selectedDate} /> : ""}
+                                        >
+                                            <div className="bg-white p-5 rounded shadow-lg w-1/3"
+                                                onClick={(e) => e.stopPropagation()}>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleCloseModal();
+                                                    }}
+                                                    className="text-red-500 float-right font-bold">X</button>
+                                                {selectedTask ? <ViewTask task={selectedTask} /> : ""}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-                                {isViewTaskModalOpen && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                                        <div className="bg-white p-5 rounded shadow-lg w-1/3"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >                                            <button
+                                    )}
+                                    {/* תצוגת משימות ליום נבחר */}
+                                    {isDayModalOpen && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleCloseModal();
-                                            }}
-                                            className="text-red-500 float-right font-bold">X</button>
-                                            {selectedTask ? <ViewTask task={selectedTask} /> : ""}
-                                        </div>
-                                    </div>
-                                )}
+                                                handleCloseDayModal();
+                                            }}>
+                                            <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+                                                onClick={(e) => e.stopPropagation()}>
+                                                <button
+                                                    onClick={handleCloseDayModal}
+                                                    className="text-red-500 float-right font-bold"
+                                                >
+                                                     ✖
+                                                </button>
+                                                <h2 className="text-lg font-medium mb-3 text-black-900">
+                                                    משימות ליום:{" "}
+                                                    {currentDate ? (
+                                                        <>
+                                                            {format(new Date(currentDate), "dd/MM/yyyy")} |{" "}
+                                                            {new HDate(new Date(currentDate)).renderGematriya()}
+                                                        </>
+                                                    ) : (
+                                                        "תאריך לא זמין"
+                                                    )}
+                                                </h2>
+                                                {selectedDayTasks.length > 0 ? (
+                                                    <ul className="space-y-3">
+                                                        {selectedDayTasks.map((task, index) => (
+                                                            <li
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation(); // מונע פתיחת המודל של היום
+                                                                    handleOpenViewTaskModal(task);
+                                                                }}
+                                                                key={index}
+                                                                className="flex items-center justify-between p-4 bg-white border-l-4 border-[#9694FF] rounded-md shadow hover:shadow-lg cursor-pointer transition duration-300 hover:border-[#FF2929] hover:bg-[#F9F9FF]"
+                                                            >
+                                                                <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                                                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#EBEAFF] text-[#3D3BF3] font-bold">
+                                                                        {index + 1}
+                                                                    </div>
+                                                                    <span className="text-md  text-gray-700">{task.title}</span>
+                                                                </div>
+                                                                <div className="text-gray-500 text-xs">
+                                                                    {task.description}
+                                                                </div>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p className="text-gray-500 text-center">אין משימות ליום זה.</p>
+                                                )}
 
-                            </div>
-                        );
-                    })}
+
+
+                                            </div>
+                                        </div>
+                                    )}
+
+                                </div>
+
+                            );
+                        })}
+                    </div>
                 </div>
-            )
-            }
+            )}
+
         </div>
     )
 }
