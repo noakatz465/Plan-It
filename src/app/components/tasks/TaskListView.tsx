@@ -5,7 +5,8 @@ import { useUserStore } from "../../stores/userStore";
 import TaskListItem from "./TaskListItem"; // ייבוא הקומפוננטה שמציגה משימה בודדת
 
 const TaskListView: React.FC = () => {
-  const tasks = useUserStore((state) => state.tasks);
+  // const tasks = useUserStore((state) => state.tasks);
+  const tasks = useUserStore((state) => state.getTasks());
 
   if (!tasks || tasks.length === 0) {
     return <p className="text-center text-gray-500">אין משימות זמינות.</p>;

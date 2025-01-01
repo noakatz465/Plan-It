@@ -110,7 +110,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
 
         {/* פס התקדמות */}
         <div className="flex-1 flex justify-center pr-4">
-          <div className="relative w-24 h-3 bg-gray-300 rounded-full">
+          <div className="relative w-24 h-3 bg-gray-300 rounded-full ">
             <div
               className={`absolute h-full rounded-full ${getProgressColor(
                 task.status
@@ -144,7 +144,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
               }}
               className="text-red-500 float-right font-bold"
             >
-              X
+              ✖
             </button>
             {selectedTask ? (
               <ViewTask task={selectedTask} />

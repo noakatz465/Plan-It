@@ -11,12 +11,14 @@ import {
   PlusIcon,
   MagnifyingGlassIcon
 } from "@heroicons/react/24/outline";
+import { useUserStore } from "@/app/stores/userStore";
 
 const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
   const router = useRouter();
+  const filterTasks = useUserStore((state) => state.filterTasks);
 
   const handleViewChange = (selectedOption: any) => {
     setSelectedView(selectedOption.value);
@@ -26,6 +28,8 @@ const TaskNavBar: React.FC = () => {
   const handleFilterChange = (selectedOptions: any) => {
     setSelectedFilters(selectedOptions);
     console.log("Selected filters:", selectedOptions);
+    filterTasks(selectedOptions);
+
   };
 
   const handleOpenModal = () => {
