@@ -23,7 +23,7 @@ function TopNavBar() {
         left: 0,
         width: "100%",
         height: "50px",
-        zIndex: 1000, // גובה הניווט העליון
+        zIndex: 10, // גובה הניווט העליון
       }}
 
     >

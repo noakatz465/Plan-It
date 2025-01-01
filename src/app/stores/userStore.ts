@@ -68,11 +68,12 @@ export const useUserStore = create<UserState>((set, get) => {
       tasks: [...state.tasks, task],
       user: state.user ? { ...state.user, tasks: [...state.user.tasks, task] } : null,
     }));
-    const filters = get().currentFilters;
-    filterTasks(filters);
+    filterTasks(get().currentFilters);
     
     console.log("Updated tasks in store:", get().tasks); // הדפס את המשימות המעודכנות
   };
+
+
 
   const addProjectToStore = (project: ProjectModel) => {
     console.log("Adding project to store:", project);
@@ -90,15 +91,13 @@ export const useUserStore = create<UserState>((set, get) => {
   
       set({ user: null, tasks: [], projects: [] });
       await initializeUser(); // שולף מחדש את המשתמש ואת המשימות
-      const filters = get().currentFilters;
-      filterTasks(filters);
       console.log("User and tasks refreshed successfully.");
     } catch (error) {
       console.error("Error deleting task or refreshing user:", error);
       throw new Error("Failed to delete task or refresh user.");
     }
   };
-const filterTasks = (filters: any[], searchQuery = get().searchQuery) => {
+const filterTasks = (filters: any[] = [], searchQuery = get().searchQuery) => {
   set({ currentFilters: filters, searchQuery }); 
 
   const allTasks = get().tasks; 

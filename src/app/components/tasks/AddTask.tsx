@@ -83,8 +83,10 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
 
-      if (updatedTask.assignedUsers) {
-        // ביצוע שיתוף משימה עבור כל המשתמשים
+      if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
+        // קוד לביצוע במקרה שיש משתמשים משוייכים
+      
+              // ביצוע שיתוף משימה עבור כל המשתמשים
         const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
             try {
