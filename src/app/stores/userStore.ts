@@ -8,20 +8,21 @@ import { TaskModel } from "@/app/models/taskModel"; // ייבוא מודל המ�
 import { deleteTask } from "../services/taskService";
 
 interface UserState {
-  user: UserModel | null; // המשתמש
-  fetchUser: () => Promise<void>; // שליפת המשתמש
-  clearUser: () => void; // ניקוי המשתמש
-  tasks: TaskModel[]; // משימות המשתמש
-  projects: ProjectModel[]; // פרויקטים של המשתמש
-  addTaskToStore: (task: TaskModel) => void; // הוספת משימה לחנות
-  addProjectToStore: (project: ProjectModel) => void; // הוספת פרויקט לחנות
-  deleteTaskAndRefreshUser: (taskId: string) => Promise<void>; // מחיקת משימה ורענון המשתמש
-  filterTasks: (filters: any[]) => void; // סינון משימות לפי פילטרים
-  filteredTasks: TaskModel[]; // משימות מסוננות
-  getTasks: () => TaskModel[]; // הוספת הפונקציה לממשק
-  currentFilters: any[]; // שמירת הפילטרים הנוכחיים
-
+  user: UserModel | null; 
+  fetchUser: () => Promise<void>; 
+  clearUser: () => void; 
+  tasks: TaskModel[]; 
+  projects: ProjectModel[]; 
+  addTaskToStore: (task: TaskModel) => void; 
+  addProjectToStore: (project: ProjectModel) => void; 
+  deleteTaskAndRefreshUser: (taskId: string) => Promise<void>; 
+  filterTasks: (filters: any[], searchQuery?: string) => void; 
+  filteredTasks: TaskModel[]; 
+  getTasks: () => TaskModel[]; 
+  currentFilters: any[]; 
+  searchQuery: string; 
 }
+
 
 export const useUserStore = create<UserState>((set, get) => {
   const initializeUser = async () => {
@@ -97,59 +98,56 @@ export const useUserStore = create<UserState>((set, get) => {
       throw new Error("Failed to delete task or refresh user.");
     }
   };
-  const filterTasks = (filters: any[]) => {
-    set({ currentFilters: filters }); // שמירת הפילטרים
-  
-    const allTasks = get().tasks; // כל המשימות המקוריות
-    let filteredTasks = [...allTasks]; // תחילת רשימה מסוננת
-  
-    // קיבוץ הפילטרים לפי קטגוריה
-    const filterMap: { [key: string]: string[] } = filters.reduce((acc, filter) => {
-      const category = filter.value.split(/(?=[A-Z])/)[0]; // חילוץ הקטגוריה מהערך (לדוגמה, "priority" מ-"priorityHigh")
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(filter.value);
-      return acc;
-    }, {} as { [key: string]: string[] });
-  
-    // סינון המשימות לפי הפילטרים בקבוצות
-    Object.entries(filterMap).forEach(([category, values]) => {
-      switch (category) {
-        case "date":
-          if (values.includes("dateAsc")) {
-            filteredTasks.sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
-          }
-          if (values.includes("dateDesc")) {
-            filteredTasks.sort((a, b) => new Date(b.dueDate!).getTime() - new Date(a.dueDate!).getTime());
-          }
-          break;
-  
-        case "priority":
-          filteredTasks = filteredTasks.filter((task) =>
-            values.some((value) => {
-              if (value === "priorityLow") return task.priority === "Low";
-              if (value === "priorityMedium") return task.priority === "Medium";
-              if (value === "priorityHigh") return task.priority === "High";
-            })
-          );
-          break;
-  
-        case "status":
-          filteredTasks = filteredTasks.filter((task) =>
-            values.some((value) => {
-              if (value === "statusPending") return task.status === "Pending";
-              if (value === "statusInProgress") return task.status === "In Progress";
-              if (value === "statusCompleted") return task.status === "Completed";
-            })
-          );
-          break;
-  
-        default:
-          break;
-      }
-    });
-  
-    set({ filteredTasks }); // עדכון רשימת המשימות המסוננות
-  };
+const filterTasks = (filters: any[], searchQuery = get().searchQuery) => {
+  set({ currentFilters: filters, searchQuery }); 
+
+  const allTasks = get().tasks; 
+  let filteredTasks = [...allTasks]; 
+
+  // קיבוץ הפילטרים לפי קטגוריה
+  const filterMap: { [key: string]: string[] } = filters.reduce((acc, filter) => {
+    const category = filter.value.split(/(?=[A-Z])/)[0];
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(filter.value);
+    return acc;
+  }, {} as { [key: string]: string[] });
+
+  // סינון לפי קטגוריה
+  Object.entries(filterMap).forEach(([category, values]) => {
+    switch (category) {
+      case "priority":
+        filteredTasks = filteredTasks.filter((task) =>
+          values.some((value) =>
+            value === "priorityLow" ? task.priority === "Low" :
+            value === "priorityMedium" ? task.priority === "Medium" :
+            value === "priorityHigh" ? task.priority === "High" : false
+          )
+        );
+        break;
+      case "status":
+        filteredTasks = filteredTasks.filter((task) =>
+          values.some((value) =>
+            value === "statusPending" ? task.status === "Pending" :
+            value === "statusInProgress" ? task.status === "In Progress" :
+            value === "statusCompleted" ? task.status === "Completed" : false
+          )
+        );
+        break;
+      default:
+        break;
+    }
+  });
+
+  // סינון לפי חיפוש
+  if ((searchQuery || "").trim() !== "") {
+    filteredTasks = filteredTasks.filter((task) =>
+      task.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  set({ filteredTasks }); 
+};
+
   
   const getTasks = () => {
     const { filteredTasks } = get();

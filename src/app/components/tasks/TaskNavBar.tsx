@@ -17,6 +17,8 @@ const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // הגדרת מצב לחיפוש
+
   const router = useRouter();
   const filterTasks = useUserStore((state) => state.filterTasks);
 
@@ -44,6 +46,13 @@ const TaskNavBar: React.FC = () => {
     }
   }, [openModal]);
 
+
+  const searchTasks = (query: string) => {
+    setSearchQuery(query); 
+    const filters = useUserStore.getState().currentFilters; 
+    filterTasks(filters, query); 
+  };
+  
   const viewOptions = [
     {
       value: "list",
@@ -229,8 +238,9 @@ const TaskNavBar: React.FC = () => {
       <div className="flex-1 mx-4 flex justify-center">
         <div className="relative flex items-center w-full max-w-xs">
           <input
+            onChange={(e) => searchTasks(e.target.value)}
             type="text"
-            placeholder="חיפוש"
+            placeholder="חפש משימה"
             className="w-full px-3 py-1 pl-8 rounded-full bg-[#EBEAFF] text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#9694FF]"
           />
           <div className="absolute left-2 text-gray-500">
