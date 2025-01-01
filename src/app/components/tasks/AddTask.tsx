@@ -12,6 +12,7 @@ import { createNotificationsPerUsers } from '@/app/services/notificationService'
 interface TaskDetails {
   dueDate?: Date;
   projectId?: string;
+  assignedUsers?: string[];
 }
 
 const AddTask: React.FC<TaskDetails> = (props) => {
@@ -35,6 +36,13 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setTask((prev) => ({ ...prev, projectId: props.projectId }));
     }
   }, [props.projectId]);
+
+  useEffect(() => {
+    console.log(props.assignedUsers);   
+    if (props.assignedUsers) {
+      setTask((prev) => ({ ...prev, assignedUsers: props.assignedUsers ?? [] }));
+    }
+  }, [props.assignedUsers]);
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -90,6 +98,8 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       if (props.projectId) {
         updatedTask.projectId = props.projectId;
       }
+      if(props.assignedUsers)
+        updatedTask.assignedUsers = props.assignedUsers;
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
 
@@ -279,7 +289,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         </div>
-        <div>
+        {props.assignedUsers? '' :<div>
           <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
           <CreatableSelect
             id="assignedUsers"
@@ -296,7 +306,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
               }),
             }}
           />
-        </div>
+        </div>}
         {props.projectId ? ' ': <div>
           <label htmlFor="projectId" className="block ">פרויקט מקושר</label>
           <Select

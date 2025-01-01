@@ -190,7 +190,7 @@ function AddProject() {
             )}
 
             {showAddTask && addedProject ? (
-                <AddTask projectId={addedProject} />
+                <AddTask projectId={addedProject} assignedUsers={newProject.members} />
             ) : (
                 projectCreated && <p>טוען מידע...</p>
             )}        </div>
