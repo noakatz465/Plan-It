@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         if (data.projectId) {
             await Project.findByIdAndUpdate(
               data.projectId,
-              { $push: { tasks: savedTask._id } },
+              { $push: { LinkedTasks: savedTask._id } },
               { new: true }
             );
           }

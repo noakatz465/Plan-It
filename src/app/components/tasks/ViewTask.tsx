@@ -17,7 +17,8 @@ function ViewTask({ task }: ViewTaskProps) {
     const [editedTask, setEditedTask] = useState<TaskModel>({
         ...task,
         assignedUsers: task.assignedUsers, // ברירת מחדל למערך ריק
-    }); const [loading, setLoading] = useState(false);
+    }); 
+    const [loading, setLoading] = useState(false);
     const user = useUserStore((state) => state.user);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
 

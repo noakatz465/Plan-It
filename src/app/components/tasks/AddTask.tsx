@@ -11,6 +11,7 @@ import { createNotificationsPerUsers } from '@/app/services/notificationService'
 
 interface TaskDetails {
   dueDate?: Date;
+  projectId?: string;
 }
 
 const AddTask: React.FC<TaskDetails> = (props) => {
@@ -28,6 +29,13 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setTask((prev) => ({ ...prev, dueDate: props.dueDate }));
     }
   }, [props.dueDate]);
+
+  useEffect(() => {
+    if (props.projectId) {
+      setTask((prev) => ({ ...prev, projectId: props.projectId }));
+    }
+  }, [props.projectId]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -79,7 +87,9 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       );
 
       updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
-
+      if (props.projectId) {
+        updatedTask.projectId = props.projectId;
+      }
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
 
@@ -94,10 +104,10 @@ const AddTask: React.FC<TaskDetails> = (props) => {
                 sharedByUserId: userFromStore?._id || '',
               });
               console.log(`Task successfully shared with user ${userId}`);
-              return true; // הצלחה
+              return true;
             } catch (error) {
               console.error(`Failed to share task with user ${userId}:`, error);
-              return false; // כישלון
+              return false;
             }
           })
         );
@@ -106,7 +116,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
         const allSharesSucceeded = shareResults.every((result) => result);
         console.log('התראה');
         console.log(newTaskResponse);
-
 
         if (allSharesSucceeded && userFromStore?.notificationsEnabled) {
           // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
@@ -137,7 +146,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setLoading(false);
     }
   };
-
 
   const projectOptions = projects?.map((project) => ({
     value: project._id,
@@ -289,7 +297,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         </div>
-        <div>
+        {props.projectId ? ' ': <div>
           <label htmlFor="projectId" className="block ">פרויקט מקושר</label>
           <Select
             id="projectId"
@@ -307,6 +315,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         </div>
+        }
 
         <div>
           <button

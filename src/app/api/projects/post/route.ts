@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({
             message: "Project created and members updated!",
-            projectId: savedProject._id,
+            projectId: savedProject._id.toString(),
         });
     } catch (error) {
         console.error("Error creating project:", error);

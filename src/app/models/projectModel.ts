@@ -1,29 +1,28 @@
 import { TaskModel } from "./taskModel";
-import { UserModel } from "./userModel";
 
 export class ProjectModel {
     _id?: string
     name: string;
     description?: string;
-    manager: string;
-    linkedTasks: TaskModel[];
-    members: UserModel[];
+    managerID: string;
+    LinkedTasks?: TaskModel[];
+    members: string[];
     lastModified: Date;
   
     constructor(
       name: string,
-      manager:string,
+      managerID:string,
       lastModified: Date = new Date(),
       description?: string,
-      linkedTasks: TaskModel[] = [],
-      members:UserModel[] = [],
+      LinkedTasks: TaskModel[] = [],
+      members:string[] = [],
       _id?: string
     ) {
       this._id = _id;
       this.name = name;
       this.description = description || "";
-      this.manager = manager;
-      this.linkedTasks = linkedTasks;
+      this.managerID = managerID;
+      this.LinkedTasks = LinkedTasks;
       this.members = members;
       this.lastModified = lastModified;
     }

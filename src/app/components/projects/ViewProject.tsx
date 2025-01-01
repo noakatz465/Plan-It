@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { ProjectModel } from '@/app/models/projectModel';
-import { updateProject } from '@/app/services/projectService';
+import { deleteProject, updateProject } from '@/app/services/projectService';
 
 interface ViewProjectProps {
     project: ProjectModel;
@@ -9,6 +9,7 @@ interface ViewProjectProps {
 
 function ViewProject({ project }: ViewProjectProps) {
     const [editMode, setEditMode] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [editedProject, setEditedProject] = useState<ProjectModel>({
         ...project,
     });
@@ -33,6 +34,20 @@ function ViewProject({ project }: ViewProjectProps) {
     const handleCancel = () => {
         setEditMode(false);
     };
+    const handleDeleteTask = async () => {
+        if (!project) return;
+        setLoading(true);
+        try { 
+            if(project._id)          
+            await deleteProject(project._id);
+            alert('Task deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            alert('Failed to delete task.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (!project) {
         return <div>פרויקט לא קיים.</div>;
@@ -40,7 +55,9 @@ function ViewProject({ project }: ViewProjectProps) {
 
     return (
         <div className="p-4 border rounded bg-gray-100">
-            {editMode ? (
+            {loading && <p>Loading...</p>}
+            {!loading &&
+             editMode ? (
                 <>
                     <h2 className="text-lg font-bold text-blue-500 mb-2">ערוך פרויקט</h2>
                     <input
@@ -77,6 +94,7 @@ function ViewProject({ project }: ViewProjectProps) {
                     <div className="flex justify-end space-x-2">
                         <button
                             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                            onClick={handleDeleteTask}
                         >
                             מחיקה
                         </button>

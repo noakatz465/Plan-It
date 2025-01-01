@@ -5,7 +5,7 @@ export interface IProject {
     name: string;
     description?: string;
     managerID: mongoose.Types.ObjectId;
-    LinkedTasks?: mongoose.Types.ObjectId[];
+    linkedTasks?: mongoose.Types.ObjectId[];
     members?: mongoose.Types.ObjectId[];
     lastModified: Date;
 }

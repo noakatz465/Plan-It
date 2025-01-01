@@ -22,7 +22,7 @@ const ProjectSchema: Schema = new Schema({
         default: Date.now,
         required: true
     },
-},{ collection: 'Projects' })
+},{ collection: 'Projects', strict: true })
 
 const Project = mongoose.models.Project || mongoose.model<IProject>('Project', ProjectSchema);
 export default Project;
