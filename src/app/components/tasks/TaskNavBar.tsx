@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
 import Select, { components, MultiValue, OptionProps, SingleValue } from "react-select";
@@ -19,11 +19,6 @@ interface FilterOption {
   label: string;
 }
 
-interface FilterGroup {
-  label: string;
-  options: FilterOption[];
-}
-
 // ממשק לאפשרויות תצוגה
 interface ViewOption {
   value: string;
@@ -33,7 +28,6 @@ const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<MultiValue<FilterOption>>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>(""); // הגדרת מצב לחיפוש
   const router = useRouter();
   const filterTasks = useUserStore((state) => state.filterTasks);
 
@@ -47,16 +41,15 @@ const TaskNavBar: React.FC = () => {
       router.push(`/pages/main/tasks/${selectedOption.value}`);
     }
   };
-  const handleFilterChange = (selectedOptions: MultiValue<FilterOption>) => {
-    // המרת selectedOptions למערך רגיל
-    const filters = [...selectedOptions]; // יוצר עותק חדש, לא משנה את המקור
-  
-    // שמירת המידע המלא של הפילטרים שנבחרו
-    setSelectedFilters(filters);
-    console.log("Selected filters:", filters);
-  
-    // העברת כל המידע לפונקציה filterTasks
-    filterTasks(filters);
+  const handleFilterChange = (
+    selectedOptions: MultiValue<FilterOption> | SingleValue<FilterOption>) => {
+    if (selectedOptions) {
+      const filters = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+      setSelectedFilters(filters);
+      console.log("Selected filters:", filters);
+      // העברת הפילטרים שנבחרו לפונקציה filterTasks
+      filterTasks(filters);
+    }
   };
   
 
@@ -74,7 +67,6 @@ const TaskNavBar: React.FC = () => {
 
 
   const searchTasks = (query: string) => {
-    setSearchQuery(query); 
     const filters = useUserStore.getState().currentFilters; 
     filterTasks(filters, query); 
   };

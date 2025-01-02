@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import { addTask } from '@/app/services/taskService';
 import { useUserStore } from '@/app/stores/userStore';
 import { TaskModel } from '@/app/models/taskModel';
@@ -13,6 +13,17 @@ interface TaskDetails {
   dueDate?: Date;
   projectId?: string;
   assignedUsers?: string[];
+}
+
+// interface UserOption {
+//   value: string;
+//   label: string | JSX.Element;
+//   isNew?: boolean;
+// }
+
+interface PriorityOption {
+  value: string;
+  label: string;
 }
 
 const AddTask: React.FC<TaskDetails> = (props) => {
@@ -39,7 +50,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   }, [props.projectId]);
 
   useEffect(() => {
-    console.log(props.assignedUsers);   
+    console.log(props.assignedUsers);
     if (props.assignedUsers) {
       setTask((prev) => ({ ...prev, assignedUsers: props.assignedUsers ?? [] }));
     }
@@ -55,23 +66,27 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     setTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
   };
 
-  const handleUserSelect = (selectedOptions: any) => {
-    const newUsers = selectedOptions.map((option: any) => ({
+  const handleUserSelect = (
+    selectedOptions: MultiValue<{ value: string; label: React.ReactNode }>,
+  ) => {
+    const newUsers = selectedOptions.map((option) => ({
       value: option.value,
       label: option.label,
-      isNew: option.__isNew__ || false,
     }));
+  
     setTask((prev) => ({
       ...prev,
-      assignedUsers: newUsers.map((user: { value: string; }) => user.value),
+      assignedUsers: newUsers.map((user) => user.value),
     }));
   };
 
-  const handlePrioritySelect = (selectedOption: any) => {
-    setTask((prev) => ({
-      ...prev,
-      priority: selectedOption.value,
-    }));
+  const handlePrioritySelect = (selectedOption: PriorityOption | null) => {
+    if (selectedOption) {
+      setTask((prev) => ({
+        ...prev,
+        priority: selectedOption.value as TaskModel["priority"],
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,7 +114,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       if (props.projectId) {
         updatedTask.projectId = props.projectId;
       }
-      if(props.assignedUsers)
+      if (props.assignedUsers)
         updatedTask.assignedUsers = props.assignedUsers;
       console.log("updatedTask.assignedUsers: " + updatedTask.assignedUsers);
 
@@ -108,9 +123,9 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
       if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
         // קוד לביצוע במקרה שיש משתמשים משוייכים
-      console.log(updatedTask.assignedUsers);
-      
-              // ביצוע שיתוף משימה עבור כל המשתמשים
+        console.log(updatedTask.assignedUsers);
+
+        // ביצוע שיתוף משימה עבור כל המשתמשים
         const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
             try {
@@ -295,7 +310,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         </div>
-        {props.assignedUsers? '' :<div>
+        {props.assignedUsers ? '' : <div>
           <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
           <CreatableSelect
             id="assignedUsers"
@@ -313,7 +328,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             }}
           />
         </div>}
-        {props.projectId ? ' ': <div>
+        {props.projectId ? ' ' : <div>
           <label htmlFor="projectId" className="block ">פרויקט מקושר</label>
           <Select
             id="projectId"
