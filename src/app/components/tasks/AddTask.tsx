@@ -8,6 +8,8 @@ import Image from "next/image";
 import CreatableSelect from 'react-select/creatable';
 import { getUserByEmail, shareTask } from '@/app/services/userService';
 import { useNotificationsStore } from "@/app/stores/notificationsStore";
+import { UserModel } from '@/app/models/userModel';
+import { ProjectModel } from '@/app/models/projectModel';
 
 interface TaskDetails {
   dueDate?: Date;
@@ -73,7 +75,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       value: option.value,
       label: option.label,
     }));
-  
+
     setTask((prev) => ({
       ...prev,
       assignedUsers: newUsers.map((user) => user.value),
@@ -178,7 +180,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     }
   };
 
-  const projectOptions = projects?.map((project) => ({
+  const projectOptions = projects?.map((project: ProjectModel) => ({
     value: project._id,
     label: project.name,
   }));
@@ -191,7 +193,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
     { value: "Yearly", label: "שנתי" },
   ];
 
-  const userOptions = userFromStore?.sharedWith?.map((user) => ({
+  const userOptions = userFromStore?.sharedWith?.map((user: UserModel) => ({
     value: user.email,
     label: (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -334,7 +336,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             id="projectId"
             options={projectOptions} // שימוש באפשרויות שנוצרו
             onChange={(selectedOption) => setTask((prev) => ({ ...prev, projectId: selectedOption?.value }))}
-            value={projectOptions.find((option) => option.value === task.projectId)} // ערך נבחר
+            value={projectOptions.find((option: { value: string | undefined; }) => option.value === task.projectId)} // ערך נבחר
             placeholder="בחר פרויקט"
             styles={{
               control: (base) => ({

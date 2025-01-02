@@ -5,12 +5,13 @@ import Image from 'next/image';
 import { UserOption } from '@/app/types/userOption';
 import { MultiValue } from 'react-select';
 import { TaskModel } from '@/app/models/taskModel';
-import { getUserByEmail, removeTaskForUsers, shareTask } from '@/app/services/userService';
+import { getUserByEmail, shareTask } from '@/app/services/userService';
 import { useUserStore } from '@/app/stores/userStore';
 import { HDate } from '@hebcal/core';
 import { TrashIcon, PencilSquareIcon, ShareIcon } from '@heroicons/react/24/outline';
 import EditTask from './EditTask';
 import { useNotificationsStore } from '@/app/stores/notificationsStore';
+import { UserModel } from '@/app/models/userModel';
 
 interface ViewTaskProps {
     task: TaskModel;
@@ -187,7 +188,7 @@ function ViewTask({ task }: ViewTaskProps) {
     };
 
     const userOptions = React.useMemo(() =>
-        user?.sharedWith.map((user) => ({
+        user?.sharedWith.map((user: UserModel) => ({
             value: user.email,
             label: (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

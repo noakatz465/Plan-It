@@ -7,6 +7,7 @@ import CreatableSelect from 'react-select/creatable';
 import Image from "next/image";
 import { getUserByEmail } from '@/app/services/userService';
 import { MultiValue } from 'react-select';
+import { UserModel } from '@/app/models/userModel';
 
 function AddProject() {
     const [newProject, setNewProject] = useState<ProjectModel>({
@@ -82,7 +83,7 @@ function AddProject() {
         }));
       };
 
-    const userOptions = userFromStore?.sharedWith?.map((user) => ({
+    const userOptions = userFromStore?.sharedWith?.map((user: UserModel) => ({
         value: user.email,
         label: (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
