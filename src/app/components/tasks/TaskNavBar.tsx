@@ -15,7 +15,7 @@ import { useUserStore } from "@/app/stores/userStore";
 
 const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(""); // הגדרת מצב לחיפוש
 
