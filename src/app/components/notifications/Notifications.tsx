@@ -23,7 +23,7 @@ const NotificationsList = () => {
       }
     };
     loadNotifications();
-  }, []);
+  }, [fetchNotifications, userFromStore?._id]);
 
   // סינון ומיון ההתראות הפעילות
   const activeNotifications = notifications

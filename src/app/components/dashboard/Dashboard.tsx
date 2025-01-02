@@ -1,7 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import ClosestTasks from "./ClosestTasks";
-import TasksTimelineChart from "./TasksStatusBarChart";
 import TasksStatusBarChart from "./TasksStatusBarChart";
 import TasksStatusPieChart from "./TasksStatusPieChart";
 import { useUserStore } from "@/app/stores/userStore";
@@ -63,7 +62,7 @@ function Dashboard() {
       <div className="bg-white rounded-lg shadow-md p-4">
         <h2 className="text-center font-bold text-gray-700">נתוני משימות ופרויקטים</h2>
         <ul className="mt-4 text-gray-600 text-lg">
-          <li>סה"כ משימות: <span className="font-bold">{totalTasks}</span></li>
+          <li>סך הכל משימות: <span className="font-bold">{totalTasks}</span></li>
           <li>משימות שהושלמו: <span className="font-bold">{completedTasks}</span></li>
           <li>משימות בתהליך: <span className="font-bold">{inProgressTasks}</span></li>
           <li>משימות ממתינות: <span className="font-bold">{pendingTasks}</span></li>

@@ -41,7 +41,7 @@ const TasksStatusPieChart = () => {
             cx="50%"
             cy="50%"
             outerRadius="60%"
-            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+            label={({ cx, cy, midAngle, outerRadius, index }) => {
               const RADIAN = Math.PI / 180;
               const radius = 25 + outerRadius;
               const x = cx + radius * Math.cos(-midAngle * RADIAN);

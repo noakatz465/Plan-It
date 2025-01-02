@@ -1,6 +1,6 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { addDays, addMonths, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
+import React, { SetStateAction, useEffect, useState } from 'react'
+import { addDays, addMonths, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths } from 'date-fns';
 import { HDate } from '@hebcal/core';
 import { TaskModel } from "../../models/taskModel";
 import { useUserStore } from '../../stores/userStore';
@@ -64,7 +64,7 @@ function TaskCalendarView() {
         setSelectedTask(null);
         setIsViewTaskModalOpen(false);
     };
-    const handleOpenDayModal = (day: any, tasks: TaskModel[]) => {
+    const handleOpenDayModal = (day: SetStateAction<Date>, tasks: TaskModel[]) => {
         setCurrentDate(day);
         setSelectedDayTasks(tasks);
         setIsDayModalOpen(true);
