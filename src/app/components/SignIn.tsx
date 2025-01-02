@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import Select from "react-select";
+import Select, { SingleValue } from "react-select";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserModel } from "../models/userModel";
 import { addUser } from "../services/authService";
 import { z } from "zod";
-
+interface GenderOption {
+  value: string;
+  label: string;
+}
 const userSchema = z.object({
   firstName: z.string().min(2, "שם פרטי נדרש"),
   lastName: z.string().min(2, "שם משפחה נדרש"),
@@ -24,12 +27,12 @@ function SignIn() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({}); // שגיאות לכל שדה
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const genderOptions = [
+  const genderOptions: GenderOption[] = [
     { value: "M", label: "זכר" },
     { value: "F", label: "נקבה" },
   ];
 
-  const handleInputChange = (field: keyof UserModel, value: any) => {
+  const handleInputChange = (field: keyof UserModel, value: string | Date) => {
     setUser((prevUser) => ({
       ...prevUser,
       [field]: value,
@@ -40,7 +43,7 @@ function SignIn() {
     }));
   };
 
-  const handleGenderChange = (selectedOption: any) => {
+  const handleGenderChange = (selectedOption: SingleValue<GenderOption>) => {
     handleInputChange("gender", selectedOption?.value || "");
   };
 
@@ -68,7 +71,7 @@ function SignIn() {
 
       setSuccessMessage(message);
       router.push("/pages/main/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {};
         err.errors.forEach((e) => {

@@ -36,9 +36,9 @@ export async function GET(req: Request) {
     // הסרת הסיסמה והחזרת הנתונים
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-    const { password: _, ...userWithoutPassword } = user.toObject();
-
-    return NextResponse.json({ user: userWithoutPassword });
+    const userObject = user.toObject();
+    userObject.password = ""; // השארת השדה עם ערך ריק
+    return NextResponse.json({ user: userObject });
   } catch (error) {
     console.error("Error fetching user details:", error);
     return NextResponse.json({ message: "An error occurred. Please try again." }, { status: 500 });

@@ -42,10 +42,15 @@ export const verifyCode = async (email: string, code: string): Promise<string> =
   
   export const resetPassword = async (password: string): Promise<string> => {
     try {
-      const response = await axios.post("/api/resetPassword", { password }); // הסרת email
+      const response = await axios.post("/api/resetPassword", { password });
       return response.data.message || "Password updated successfully!";
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || "Failed to reset password.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // טיפול בשגיאות שמגיעות מ-axios
+        throw new Error(error.response?.data?.message || "Failed to reset password.");
+      }
+      // טיפול בשגיאות כלליות
+      throw new Error("An unexpected error occurred. Please try again.");
     }
   };
   

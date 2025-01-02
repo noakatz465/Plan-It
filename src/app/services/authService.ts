@@ -1,5 +1,6 @@
 import axios from "axios";
 import { UserModel } from "../models/userModel";
+import { NextRouter } from "next/router";
 
 const API_USERS_URL = '/api/users';
 const API_LOGIN_URL = '/api/login';
@@ -126,7 +127,7 @@ export const fetchUserDetailsBySession = async (userId: string): Promise<UserMod
   }
 };
 
-export const logoutUser = async (router: any): Promise<void> => {
+export const logoutUser = async (router: NextRouter): Promise<void> => {
   try {
     const response = await axios.post("/api/logout", {}, { withCredentials: true });
     if (response.data.redirectUrl) {
