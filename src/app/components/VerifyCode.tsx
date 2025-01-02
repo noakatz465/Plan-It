@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyCode } from "../services/passwordService";
 
@@ -8,10 +9,18 @@ function VerifyCode() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState<string | null>(null); 
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email"); // חילוץ האימייל מה-URL
+
+  useEffect(() => {
+    // קריאת ה-URL רק לאחר טעינת הדף
+    const emailFromURL = searchParams.get("email");
+    if (emailFromURL) {
+      setEmail(emailFromURL);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,12 +35,12 @@ function VerifyCode() {
     setMessage("");
   
     try {
-      const successMessage = await verifyCode(email, code); // קבל את המחרוזת ישירות
+      const successMessage = await verifyCode(email, code);
       setMessage(successMessage);
     
       // מעבר לדף איפוס סיסמה
       setTimeout(() => {
-        router.push(`/pages/auth/resetPassword`); // אין צורך בפרמטרים ב-URL
+        router.push(`/pages/auth/resetPassword`);
       }, 2000);
     } catch (err) {
       console.error("Error verifying code:", err);
@@ -46,8 +55,8 @@ function VerifyCode() {
   return (
     <div className="grid place-items-center h-screen bg-gray-50"
     style={{ backgroundColor: "#3D3BF3" }}>
-<div className="shadow-lg p-6 rounded-lg  max-w-md w-full bg-white">
-<h1 className="text-xl  mb-4 text-center">Verify Code</h1>
+      <div className="shadow-lg p-6 rounded-lg  max-w-md w-full bg-white">
+        <h1 className="text-xl  mb-4 text-center">Verify Code</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"

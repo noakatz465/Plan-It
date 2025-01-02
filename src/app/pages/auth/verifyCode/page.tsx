@@ -1,12 +1,16 @@
-import VerifyCode from '@/app/components/VerifyCode'
-import React from 'react'
+// דף שמייבא את VerifyCode דינמית
+import dynamic from 'next/dynamic';
 
-function page() {
+const VerifyCode = dynamic(() => import('@/app/components/VerifyCode'), {
+  ssr: false,
+});
+
+function Page() {
   return (
     <div>
-      <VerifyCode/>
+      <VerifyCode />
     </div>
-  )
+  );
 }
 
-export default page
+export default Page;
