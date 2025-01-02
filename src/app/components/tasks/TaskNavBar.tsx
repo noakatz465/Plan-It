@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
-import Select, { ClassNamesState, components, MultiValue, OptionProps, SingleValue,StylesConfig,GroupBase  } from "react-select";
+import Select, { ClassNamesState, components, MultiValue, OptionProps, SingleValue, StylesConfig, GroupBase } from "react-select";
 import {
   ListBulletIcon,
   CalendarDaysIcon,
@@ -33,7 +33,7 @@ const TaskNavBar: React.FC = () => {
   const router = useRouter();
   const filterTasks = useUserStore((state) => state.filterTasks);
 
-  const openTemplats = ()=>{
+  const openTemplats = () => {
     router.push(`/pages/main/tasks/templates`);
   }
 
@@ -53,7 +53,7 @@ const TaskNavBar: React.FC = () => {
       filterTasks(filters);
     }
   };
-  
+
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -69,10 +69,10 @@ const TaskNavBar: React.FC = () => {
 
 
   const searchTasks = (query: string) => {
-    const filters = useUserStore.getState().currentFilters; 
-    filterTasks(filters, query); 
+    const filters = useUserStore.getState().currentFilters;
+    filterTasks(filters, query);
   };
-  
+
   const viewOptions = [
     {
       value: "list",
@@ -161,8 +161,8 @@ const TaskNavBar: React.FC = () => {
       backgroundColor: state.isSelected
         ? "#9694FF"
         : state.isFocused
-        ? "#EBEAFF"
-        : "#fff",
+          ? "#EBEAFF"
+          : "#fff",
       color: state.isSelected ? "#fff" : "#000",
       padding: "5px 10px", // צמצום ריווח אנכי ואופקי
     }),
@@ -190,8 +190,8 @@ const TaskNavBar: React.FC = () => {
       backgroundColor: state.isSelected
         ? "#9694FF"
         : state.isFocused
-        ? "#EBEAFF"
-        : "#fff",
+          ? "#EBEAFF"
+          : "#fff",
       color: state.isSelected ? "#fff" : "#000",
       padding: "5px 10px", // צמצום ריווח אנכי ואופקי
     }),
@@ -218,7 +218,7 @@ const TaskNavBar: React.FC = () => {
       },
     }),
   };
-  
+
 
   const CustomOption: React.FC<OptionProps<FilterOption, boolean>> = (props) => {
     const { data, isSelected } = props;
@@ -309,14 +309,17 @@ const TaskNavBar: React.FC = () => {
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
-          <button
+            <button
               onClick={(e) => {
                 e.stopPropagation();
-                setOpenModal(false)}}
+                setOpenModal(false)
+              }}
               className="text-red-500 float-right font-bold">
               ✖
             </button>
-            <AddTask />
+            <AddTask
+              onClose={() => setOpenModal(false)}
+            />
             <button
               onClick={() => setOpenModal(false)}
               className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
