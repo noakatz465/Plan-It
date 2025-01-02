@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/userSchema";
 import Task from "../models/taskSchema";
 import Project from "../models/projectSchema";
+import Template from "../models/templateSchema";
 
 const MONGODB_URI = process.env.MONGO_URL || ""; 
 
@@ -11,6 +12,7 @@ const connect = async () => {
     mongoose.model("User", User.schema);
     mongoose.model("Task", Task.schema);
     mongoose.model("Project", Project.schema);
+    mongoose.model("Template", Template.schema);
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
     console.error("Error connecting to MongoDB:" + error);

@@ -104,7 +104,7 @@ export async function middleware(req: NextRequest) {
     "/api/batchNotification",
     "/api/notifications",
     "/api/share",
-
+    "/api/templates",
   ];
 
   const rateLimitedPaths = [
