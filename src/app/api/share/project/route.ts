@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     await targetUser.save();
 
-    // הוספת המשתמש היעד למערך `assignedUsers` של הפרויקט
+    // הוספת משתמש היעד למערך `assignedUsers` של הפרויקט
     if (!project.assignedUsers.includes(targetUserId)) {
       project.assignedUsers.push(targetUserId);
       await project.save();

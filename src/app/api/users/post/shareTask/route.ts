@@ -43,10 +43,10 @@ export async function POST(req: Request) {
             await sendEmail({
                 to: targetUser.email,
                 subject: "Request to share task",
-                text: `You have been invited to collaborate on the task: "${task.title}". Click the link below to accept the invitation.`,
-                html: `<p>You have been invited to collaborate on the task: "<strong>${task.title}</strong>".</p>
-                       <p>Click the link below to accept the invitation:</p>
-                        <a href="${apiUrl}${queryString}">Accept Invitation</a>`
+                text: `${sharedByUser.email} הזמין אותך להשתתף במשימה: "${task.title}". לחץ כאן לקבלת השיתוף.`,
+                html: `<p>${sharedByUser.email} הזמין אותך להשתתף במשימה: "<strong>${task.title}</strong>".</p>
+                       <p>לחץ כאן לקבלת השיתוף:</p>
+                        <a href="${apiUrl}${queryString}">אישור שיתוף</a>`
             });
 
             return NextResponse.json({

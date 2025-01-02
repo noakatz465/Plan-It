@@ -6,6 +6,8 @@ import { useUserStore } from '@/app/stores/userStore';
 import React, { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Image from 'next/image';
+import { UserOption } from '@/app/types/userOption';
+import { MultiValue } from 'react-select';
 
 interface ViewTaskProps {
     task: TaskModel;
@@ -16,8 +18,8 @@ function ViewTask({ task }: ViewTaskProps) {
     const [shareMode, setShareMode] = useState(false);
     const [editedTask, setEditedTask] = useState<TaskModel>({
         ...task,
-        assignedUsers: task.assignedUsers, // ברירת מחדל למערך ריק
-    }); 
+        assignedUsers: task.assignedUsers,
+    });
     const [loading, setLoading] = useState(false);
     const user = useUserStore((state) => state.user);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
@@ -71,8 +73,8 @@ function ViewTask({ task }: ViewTaskProps) {
         setShareMode(true);
     };
 
-    const handleUserSelect = (selectedOptions: any) => {
-        const newUsers = selectedOptions.map((option: any) => ({
+    const handleUserSelect = (selectedOptions: MultiValue<UserOption>) => {
+        const newUsers = selectedOptions.map((option) => ({
             value: option.value,
             label: option.label,
             isNew: option.__isNew__ || false,
@@ -92,14 +94,14 @@ function ViewTask({ task }: ViewTaskProps) {
             // יצירת רשימת IDs לפי אימיילים
             const userIds = await Promise.all(
                 editedTask.assignedUsers.map(async (email) => {
-                  try {
-                    const user = await getUserByEmail(email);
-                    return user?.toString();
-                  } catch {
-                    throw new Error(`Failed to find user with email ${email}`);
-                  }
+                    try {
+                        const user = await getUserByEmail(email);
+                        return user?.toString();
+                    } catch {
+                        throw new Error(`Failed to find user with email ${email}`);
+                    }
                 })
-              );
+            );
 
             updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
             if (updatedTask.assignedUsers)
@@ -133,37 +135,38 @@ function ViewTask({ task }: ViewTaskProps) {
         }
     };
 
-    const userOptions = user?.sharedWith.map((user) => ({
-        value: user.email,
-        label: (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {user?.profileImage ? (
-                    <Image
-                        src={user.profileImage}
-                        alt={`${user.firstName} ${user.lastName}`}
-                        width={32}
-                        height={32}
-                        style={{
-                            borderRadius: '50%',
-                            objectFit: 'cover',
-                        }}
-                    />
-                ) : (
-                    <Image
-                        src="/default-profile.png"
-                        alt="Anonymous Profile"
-                        width={32}
-                        height={32}
-                        style={{
-                            borderRadius: '50%',
-                            objectFit: 'cover',
-                        }}
-                    />
-                )}
-                <span>{`${user.firstName} ${user.lastName}`}</span>
-            </div>
-        ),
-    }));
+    const userOptions = React.useMemo(() =>
+        user?.sharedWith.map((user) => ({
+            value: user.email,
+            label: (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {user?.profileImage ? (
+                        <Image
+                            src={user.profileImage}
+                            alt={`${user.firstName} ${user.lastName}`}
+                            width={32}
+                            height={32}
+                            style={{
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                            }}
+                        />
+                    ) : (
+                        <Image
+                            src="/default-profile.png"
+                            alt="Anonymous Profile"
+                            width={32}
+                            height={32}
+                            style={{
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                            }}
+                        />
+                    )}
+                    <span>{`${user.firstName} ${user.lastName}`}</span>
+                </div>
+            ),
+        })), [user?.sharedWith]);
 
     if (!task) {
         return <div>משימה לא קיימת.</div>;

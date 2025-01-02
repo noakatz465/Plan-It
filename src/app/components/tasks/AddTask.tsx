@@ -100,6 +100,8 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       }
       if(props.assignedUsers)
         updatedTask.assignedUsers = props.assignedUsers;
+      console.log("updatedTask.assignedUsers: " + updatedTask.assignedUsers);
+
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
 

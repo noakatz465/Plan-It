@@ -116,3 +116,18 @@ export const shareTask = async (data: {taskId: string;
       );
     }
   };
+
+  //שיתוף פרויקט
+  export const shareProject = async (data: {projectId: string;
+    targetUserId: string;
+    sharedByUserId: string;}) => {
+    try {
+      const response = await axios.post(`${API_USERS_URL}/post/shareProject`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Error sharing project:", error);
+      throw new Error(
+         "Failed to share the project"
+      );
+    }
+  };

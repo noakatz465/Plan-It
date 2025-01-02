@@ -8,7 +8,12 @@ export async function POST(req: Request) {
     try {
         await connect();
         const data = await req.json();
-        console.log(data);
+        // סינון כפילויות ב-assignedUsers
+        console.log('aaaa ')
+        if (data.assignedUsers) {
+            data.assignedUsers = Array.from(new Set(data.assignedUsers));
+            console.log('aaaa '+ data.assignedUsers);           
+        }
         const newTask = new Task({
             ...data,
             lastModified: new Date(),
@@ -33,18 +38,18 @@ export async function POST(req: Request) {
         if (data.assignedUsers && data.assignedUsers.length > 0) {
             await User.updateMany(
                 { _id: { $in: data.assignedUsers } },
-                { $push: { tasks: savedTask._id } }
+                { $addToSet: { tasks: savedTask._id } }
             );
         }
 
         //אם המשימה שייכת לפרויקט- הוספת המשימה לפרויקט המתאים
         if (data.projectId) {
             await Project.findByIdAndUpdate(
-              data.projectId,
-              { $push: { LinkedTasks: savedTask._id } },
-              { new: true }
+                data.projectId,
+                { $addToSet: { LinkedTasks: savedTask._id } },
+                { new: true }
             );
-          }
+        }
 
         return NextResponse.json(savedTask, { status: 200 });
 

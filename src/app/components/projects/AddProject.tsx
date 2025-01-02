@@ -20,8 +20,8 @@ function AddProject() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [showAddTask, setShowAddTask] = useState(false); // state חדש להחביא או להציג את AddTask
-    const [projectCreated, setProjectCreated] = useState(false); // state להחביא הודעה אחרי יצירת פרויקט
+    const [showAddTask, setShowAddTask] = useState(false); 
+    const [projectCreated, setProjectCreated] = useState(false);
     const [addedProject, setAddedProject] = useState<string>('');
     const userFromStore = useUserStore((state) => state.user);
 
