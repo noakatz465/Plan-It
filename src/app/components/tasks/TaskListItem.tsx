@@ -38,7 +38,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
       case "Completed":
         return "bg-green-500";
       case "In Progress":
-        return "bg-yellow-500";
+        return "bg-[#FFD700]";
       case "Pending":
         return "bg-[#FF2929]";
       default:

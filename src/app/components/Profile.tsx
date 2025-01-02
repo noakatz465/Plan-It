@@ -100,16 +100,18 @@ function Profile() {
         </div>
 
         {/* תאריך לידה */}
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">תאריך לידה</label>
-          <input
-            type="date"
-            name="birthDate"
-            value={formData.birthDate ? formData.birthDate.toISOString().split("T")[0] : ""}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border rounded"
-          />
-        </div>
+        <input
+          type="date"
+          name="birthDate"
+          value={
+            formData.birthDate
+              ? new Date(formData.birthDate).toISOString().split("T")[0]
+              : ""
+          }
+          onChange={handleInputChange}
+          className="w-full px-4 py-2 border rounded"
+        />
+
 
         {/* מין */}
         <div className="mb-4">
@@ -148,7 +150,7 @@ function Profile() {
           {/* {formData.profileImage ? */}
           <div className="mt-4">
             <Image
-              src={formData.profileImage ||"https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"
+              src={formData.profileImage || "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"
               } // תמונה ברירת מחדל במקרה של undefined
               alt="Uploaded Profile Image"
               width={128}
