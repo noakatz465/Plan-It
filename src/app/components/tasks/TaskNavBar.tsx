@@ -9,7 +9,8 @@ import {
   CalendarDaysIcon,
   ViewColumnsIcon,
   PlusIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  SparklesIcon
 } from "@heroicons/react/24/outline";
 import { useUserStore } from "@/app/stores/userStore";
 
@@ -36,7 +37,10 @@ const TaskNavBar: React.FC = () => {
   const router = useRouter();
   const filterTasks = useUserStore((state) => state.filterTasks);
 
-  
+  const openTemplats = ()=>{
+    router.push(`/pages/main/tasks/templates`);
+  }
+
   const handleViewChange = (selectedOption: SingleValue<ViewOption>) => {
     if (selectedOption) {
       setSelectedView(selectedOption.value);
@@ -254,6 +258,7 @@ const TaskNavBar: React.FC = () => {
       >
         <PlusIcon className="h-6 w-6 stroke-[2]" />
       </button>
+      <SparklesIcon onClick={openTemplats} className="h-10 w-10 text-yellow-500" />
 
 
       {/* Search Bar */}
