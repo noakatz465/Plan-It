@@ -333,10 +333,10 @@ function TaskCalendarView() {
                                                 handleCloseModal();
                                             }}>
                                             <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                            }}>
-                                            
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}>
+
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -349,21 +349,25 @@ function TaskCalendarView() {
                                     )}
                                     {/* תצוגת משימה */}
                                     {isViewTaskModalOpen && (
-                                        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-[999]"
+                                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleCloseModal();
                                             }}
                                         >
-                                            <div className="bg-white p-5 rounded shadow-lg w-1/3"
+                                            <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
                                                 onClick={(e) => e.stopPropagation()}>
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleCloseModal();
                                                     }}
-                                                    className="text-red-500 float-right font-bold">X</button>
-                                                {selectedTask ? <ViewTask task={selectedTask} /> : ""}
+                                                    className="text-red-500 float-right font-bold">✖</button>
+                                                {selectedTask ?
+
+                                                    <ViewTask task={selectedTask} />
+                                                    : ""
+                                                }
                                             </div>
                                         </div>
                                     )}
@@ -380,7 +384,7 @@ function TaskCalendarView() {
                                                     onClick={handleCloseDayModal}
                                                     className="text-red-500 float-right font-bold"
                                                 >
-                                                     ✖
+                                                    ✖
                                                 </button>
                                                 <h2 className="text-lg font-medium mb-3 text-black-900">
                                                     משימות ליום:{" "}
@@ -432,7 +436,8 @@ function TaskCalendarView() {
                         })}
                     </div>
                 </div>
-            )}
+            )
+            }
 
         </div>
     )

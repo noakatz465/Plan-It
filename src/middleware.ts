@@ -100,7 +100,11 @@ export async function middleware(req: NextRequest) {
     "/api/sendVerificationCode",
     "/api/verifyCode",
     "/_next/static",
-    "/api/resetPassword"
+    "/api/resetPassword",
+    "/api/batchNotification",
+    "/api/notifications",
+    "/api/share",
+
   ];
 
   const rateLimitedPaths = [

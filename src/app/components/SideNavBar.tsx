@@ -15,13 +15,12 @@ function SideNavBar() {
   };
 
   const getButtonClass = (link: string) =>
-    `flex items-center justify-center p-2 w-10 h-10 rounded transition duration-200 ${
-      activeLink === link ? "bg-[#FF2929]" : "hover:bg-[#3D3BF3]"
+    `flex items-center justify-center p-2 w-10 h-10 rounded transition duration-200 ${activeLink === link ? "bg-[#FF2929]" : "hover:bg-[#3D3BF3]"
     }`;
 
   return (
     <div
-      className="w-12 bg-[#9694FF] h-full flex flex-col items-center py-4 space-y-6 text-white shadow-md"
+      className="w-12 bg-[#9694FF] h-full flex flex-col items-center py-1 space-y-6 text-white shadow-md"
       style={{
         position: "fixed",
         width: "50px",
@@ -47,6 +46,8 @@ function SideNavBar() {
           <FolderIcon className="h-7 w-7" />
         </button>
       </Link>
+      {/* קו מפריד */}
+      <div className="border-t border-white w-8"></div>
 
       <Link href="/pages/main/dashboard">
         <button
@@ -58,18 +59,7 @@ function SideNavBar() {
         </button>
       </Link>
 
-      {/* קו מפריד */}
-      <div className="border-t border-blue-300 w-8"></div>
 
-      <Link href="/pages/main/settings">
-        <button
-          className={getButtonClass("settings")}
-          onClick={() => handleLinkClick("settings")}
-          title="הגדרות"
-        >
-          <Cog6ToothIcon className="h-7 w-7" />
-        </button>
-      </Link>
     </div>
   );
 }

@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Image from 'next/image';
 import { TaskModel } from '@/app/models/taskModel';
-import { updateTask } from '@/app/services/taskService';
 import { getUserByEmail, removeTaskForUsers, shareTask } from '@/app/services/userService';
 import { useUserStore } from '@/app/stores/userStore';
 import { HDate } from '@hebcal/core';
 import { TrashIcon, PencilSquareIcon, ShareIcon } from '@heroicons/react/24/outline';
+import EditTask from './EditTask';
+import { useNotificationsStore } from '@/app/stores/notificationsStore';
 
 interface ViewTaskProps {
     task: TaskModel;
@@ -20,118 +21,8 @@ function ViewTask({ task }: ViewTaskProps) {
     const [loading, setLoading] = useState(false);
     const user = useUserStore((state) => state.user);
     const projects = useUserStore((state) => state.projects);
-
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
-
-    const handleDeleteTask = async () => {
-        if (!task) return;
-        setLoading(true);
-        try {
-            if (user?._id === task.creator) {
-                if (task._id) await deleteTaskAndRefreshUser(task._id);
-            } else {
-                const newAssignedUsersArr = [...task.assignedUsers, task.creator];
-                if (task._id) await removeTaskForUsers(newAssignedUsersArr, task._id);
-            }
-        } catch (error) {
-            console.error('Error deleting task:', error);
-            alert('Failed to delete task.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleEditClick = () => {
-        setEditMode(true);
-        if (task) setEditedTask({ ...task });
-    };
-
-    const handleEditChange = (field: keyof TaskModel, value: unknown) => {
-        if (editedTask) {
-            setEditedTask({ ...editedTask, [field]: value });
-        }
-    };
-
-    const handleEditSubmit = async () => {
-        if (!editedTask) return;
-        setLoading(true);
-        try {
-            if (task._id) await updateTask(task._id, editedTask);
-            setEditMode(false);
-            alert('Task updated successfully.');
-        } catch (error) {
-            console.error('Error updating task:', error);
-            alert('Failed to update task.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleShareClick = () => {
-        setShareMode(true);
-    };
-
-    const handleUserSelect = (selectedOptions: any) => {
-        const newUsers = selectedOptions.map((option: any) => ({
-            value: option.value,
-            label: option.label,
-            isNew: option.__isNew__ || false,
-        }));
-        setEditedTask((prev) => ({
-            ...prev,
-            assignedUsers: newUsers.map((user: { value: string; }) => user.value),
-        }));
-    };
-
-    const handleShareSubmit = async () => {
-        setLoading(true);
-        const failedUsers: string[] = [];
-        try {
-            const updatedTask = { ...task, creator: user?._id || '' };
-
-            const userIds = await Promise.all(
-                editedTask.assignedUsers.map(async (email) => {
-                    try {
-                        const user = await getUserByEmail(email);
-                        return user?.toString();
-                    } catch {
-                        throw new Error(`Failed to find user with email ${email}`);
-                    }
-                })
-            );
-
-            updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
-            if (updatedTask.assignedUsers)
-                await Promise.all(
-                    updatedTask.assignedUsers.map(async (userId) => {
-                        if (editedTask._id)
-                            try {
-                                await shareTask({
-                                    taskId: editedTask._id,
-                                    targetUserId: userId,
-                                    sharedByUserId: user?._id || '',
-                                });
-                                console.log(`Task successfully shared with user ${userId}`);
-                            } catch (error) {
-                                console.error(`Failed to share task with user ${userId}:`, error);
-                            }
-                    })
-                );
-
-            if (failedUsers.length) {
-                alert(`Failed to share with users: ${failedUsers.join(', ')}`);
-            } else {
-                alert('Task shared successfully!');
-                setShareMode(false);
-            }
-        } catch (error) {
-            console.error('Error sharing task:', error);
-            alert('Failed to share task.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
+    const { createNotificationsPerUsers } = useNotificationsStore();
     const userOptions = user?.sharedWith.map((user) => ({
         value: user.email,
         label: (
@@ -173,6 +64,130 @@ function ViewTask({ task }: ViewTaskProps) {
                 return "לא מוגדר";
         }
     };
+    const getProgressValue = (status: string) => {
+        switch (status) {
+            case "Completed":
+                return 100;
+            case "In Progress":
+                return 50;
+            case "Pending":
+                return 20;
+            default:
+                return 0;
+        }
+    };
+
+    const getProgressColor = (status: string) => {
+        switch (status) {
+            case "Completed":
+                return "bg-green-500";
+            case "In Progress":
+                return "bg-yellow-500";
+            case "Pending":
+                return "bg-[#FF2929]";
+            default:
+                return "bg-gray-400";
+        }
+    };
+    const handleEditClick = () => {
+        setEditMode(true);
+    };
+
+    const handleEditCancel = () => {
+        setEditMode(false);
+    };
+
+    const handleEditSave = () => {
+        setEditMode(false);
+        // alert("Task updated successfully.");
+    };
+
+    const handleDeleteTask = async () => {
+        if (!task) return;
+        setLoading(true);
+        try {
+            if (user?._id === task.creator) {
+                if (task._id) await deleteTaskAndRefreshUser(task._id);
+            } else {
+                const newAssignedUsersArr = [...task.assignedUsers, task.creator];
+                if (task._id) await removeTaskForUsers(newAssignedUsersArr, task._id);
+            }
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            alert('Failed to delete task.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleShareClick = () => {
+        setShareMode(true);
+    };
+
+    const handleUserSelect = (selectedOptions: any) => {
+        const newUsers = selectedOptions.map((option: any) => ({
+            value: option.value,
+            label: option.label,
+            isNew: option.__isNew__ || false,
+        }));
+        setEditedTask((prev) => ({
+            ...prev,
+            assignedUsers: newUsers.map((user: { value: string; }) => user.value),
+        }));
+    };
+
+    const handleShareSubmit = async () => {
+        setLoading(true);
+        const failedUsers: string[] = [];
+        try {
+            const updatedTask = { ...task, creator: user?._id || '' };
+
+            // יצירת רשימת IDs לפי אימיילים
+            const userIds = await Promise.all(
+                editedTask.assignedUsers.map(async (email) => {
+                    try {
+                        const user = await getUserByEmail(email);
+                        return user?.toString();
+                    } catch {
+                        throw new Error(`Failed to find user with email ${email}`);
+                    }
+                })
+            );
+
+            updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
+            if (updatedTask.assignedUsers)
+                await Promise.all(
+                    updatedTask.assignedUsers.map(async (userId) => {
+                        if (editedTask._id)
+                            try {
+                                await shareTask({
+                                    taskId: editedTask._id,
+                                    targetUserId: userId,
+                                    sharedByUserId: user?._id || '',
+                                });
+                                console.log(`Task successfully shared with user ${userId}`);
+                            } catch (error) {
+                                console.error(`Failed to share task with user ${userId}:`, error);
+                            }
+                    })
+                );
+
+            if (failedUsers.length) {
+                alert(`Failed to share with users: ${failedUsers.join(", ")}`);
+            } else {
+                alert("Task shared successfully!");
+                
+                setShareMode(false);
+            }
+        } catch (error) {
+            console.error("Error sharing task:", error);
+            alert("Failed to share task.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
 
     const renderPriorityStars = (priority: string) => {
         const stars =
@@ -196,48 +211,63 @@ function ViewTask({ task }: ViewTaskProps) {
     };
 
     return (
-        <div className=" bg-white rounded  max-w-md mx-auto">
+        <div className="max-w-2xl mx-auto bg-white rounded">
             {loading && <p>Loading...</p>}
             {!loading && !editMode && !shareMode && (
                 <>
                     <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{task.title}</h2>
-                    <p className="text-gray-600 mb-4">{task.description || 'ללא תיאור'}</p>
+                    <div className="mb-4 flex items-center justify-between">
 
-                    <div className="mb-4">
-                        <p className="text-lg text-gray-500">
-                            <strong>תאריך יעד:</strong>{' '}
-                            {task.dueDate ? new Date(task.dueDate).toLocaleDateString('he-IL') : 'ללא תאריך יעד'}{' / '}  {task.dueDate ? new HDate(new Date(task.dueDate)).renderGematriya() : 'ללא תאריך עברי'}
+                        <p className="text-lg text-black ">
+                            <p >{task.description || 'ללא תיאור'}</p>
                         </p>
                     </div>
+                    <div className="mb-4 flex items-center justify-between">
 
-                    <div className="mb-4">
-                        <p className="text-lg text-gray-500">
-                            <strong>תדירות:</strong>
-                            {translateFrequency(task.frequency)}
 
+                    </div>
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
+                            <strong>תאריך יעד:</strong>
+                        </p>
+                        <p className="text-lg text-black w-2/3">
+                            {task.dueDate ? new Date(task.dueDate).toLocaleDateString('he-IL') : 'ללא תאריך יעד'}{' / '}
+                            {task.dueDate ? new HDate(new Date(task.dueDate)).renderGematriya() : 'ללא תאריך עברי'}
                         </p>
                     </div>
-
                     <div className="mb-4 flex items-center">
-                        <p className="text-lg text-gray-500 ">
-                            <strong>עדיפות:</strong>
-                        </p>
-                        {renderPriorityStars(task.priority)}
-                    </div>
-
-                    <div className="mb-4">
-                        <p className="text-lg text-gray-500">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
                             <strong>סטטוס:</strong>
                         </p>
-                        <div className="relative w-48 h-3 bg-gray-300 rounded-full mt-2">
+                        <div className="relative w-2/3 h-6 bg-gray-300 rounded-full">
                             <div
-                                className={`absolute h-full rounded-full bg-green-500`}
-                                style={{ width: `${task.status === 'Completed' ? 100 : task.status === 'In Progress' ? 50 : 20}%` }}
+                                className={`absolute h-full rounded-full ${getProgressColor(task.status)}`}
+                                style={{ width: `${getProgressValue(task.status)}%` }}
                             ></div>
                         </div>
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
+                            <strong>תדירות:</strong>
+                        </p>
+                        <p className="text-lg text-black w-2/3">
+                            {translateFrequency(task.frequency)}
+                        </p>
+                    </div>
+
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
+                            <strong>עדיפות:</strong>
+                        </p>
+                        <div className="w-2/3 flex items-center">{renderPriorityStars(task.priority)}</div>
+                    </div>
+
+
+
+
+
+                    {/* <div className="mb-4">
                         <p className="text-lg text-gray-500">
                             <strong>משתמשים משותפים:</strong>
                         </p>
@@ -278,7 +308,7 @@ function ViewTask({ task }: ViewTaskProps) {
                         ) : (
                             <p className="text-sm text-gray-500 mt-2">אין משתמשים משותפים.</p>
                         )}
-                    </div>
+                    </div> */}
 
                     <div className="mb-4">
                         <p className="text-lg text-gray-500">
@@ -319,50 +349,35 @@ function ViewTask({ task }: ViewTaskProps) {
                         >
                             <PencilSquareIcon className="w-7 h-7 text-blue-500 group-hover:text-white" />
                         </button>
-                        <button
+                        {task.creator == user?._id && <button
                             className="group p-2 bg-white rounded-full hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
                             title="שיתוף"
                             onClick={handleShareClick}
                         >
                             <ShareIcon className="w-7 h-7 text-green-500 group-hover:text-white" />
-                        </button>
+                        </button>}
                     </div>
 
                 </>
             )}
+
             {editMode && (
-                <div>
-                    <input
-                        type="text"
-                        value={editedTask?.title || ''}
-                        onChange={(e) => handleEditChange('title', e.target.value)}
-                        placeholder="Title"
-                        className="mb-2 p-2 border rounded"
-                    />
-                    <textarea
-                        value={editedTask?.description || ''}
-                        onChange={(e) => handleEditChange('description', e.target.value)}
-                        placeholder="Description"
-                        className="mb-2 p-2 border rounded w-full"
-                    />
-                    <input
-                        type="date"
-                        value={editedTask?.dueDate ? new Date(editedTask.dueDate).toISOString().split('T')[0] : ''}
-                        onChange={(e) => handleEditChange('dueDate', e.target.value)}
-                        className="mb-2 p-2 border rounded"
-                    />
-                    <button
-                        onClick={handleEditSubmit}
-                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
-                    >
-                        שמור
-                    </button>
-                    <button
-                        onClick={() => setEditMode(false)}
-                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300 ml-2"
-                    >
-                        ביטול
-                    </button>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+                        <button
+                            onClick={(e) => {
+                                // e.stopPropagation();
+                                handleEditCancel()
+                            }}
+                            className="text-red-500 float-right font-bold">
+                            ✖
+                        </button>
+                        <EditTask
+                            task={task}
+                            onSave={handleEditSave}
+                            onCancel={handleEditCancel}
+                        />
+                    </div>
                 </div>
             )}
             {shareMode && (

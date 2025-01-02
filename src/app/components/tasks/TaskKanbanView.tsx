@@ -6,7 +6,6 @@ import { TaskModel } from "../../models/taskModel";
 import TaskKanbanItem from "./TaskKanbanItem";
 
 function TaskKanbanView() {
-  // const tasks = useUserStore((state) => state.tasks);
   const tasks = useUserStore((state) => state.getTasks());
 
   // חלוקת המשימות לפי סטטוס

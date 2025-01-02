@@ -38,13 +38,13 @@ const TaskNavBar: React.FC = () => {
     setOpenModal(true);
   };
 
-  useEffect(() => {
-    if (openModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [openModal]);
+  // useEffect(() => {
+  //   if (openModal) {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "auto";
+  //   }
+  // }, [openModal]);
 
 
   const searchTasks = (query: string) => {
@@ -290,11 +290,17 @@ const TaskNavBar: React.FC = () => {
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+          <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenModal(false)}}
+              className="text-red-500 float-right font-bold">
+              ✖
+            </button>
             <AddTask />
             <button
               onClick={() => setOpenModal(false)}
-              className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-            >
+              className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
               סגור
             </button>
           </div>

@@ -12,11 +12,17 @@ const NotificationsList = () => {
   const userFromStore = useUserStore((state) => state.user);
   const [selectedTask, setSelectedTask] = useState<TaskModel | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // סטייט לחיווי טעינה
 
   useEffect(() => {
-    if (userFromStore?._id) {
-      fetchNotifications(userFromStore?._id);
-    }
+    const loadNotifications = async () => {
+      if (userFromStore?._id) {
+        setLoading(true); // חיווי על תחילת טעינה
+        await fetchNotifications(userFromStore?._id);
+        setLoading(false); // חיווי על סיום טעינה
+      }
+    };
+    loadNotifications();
   }, []);
 
   // סינון ומיון ההתראות הפעילות
@@ -50,7 +56,9 @@ const NotificationsList = () => {
       <h2 className="text-2xl font-bold text-center mb-6 text-[#3D3BF3]">
         התראות פעילות
       </h2>
-      {activeNotifications.length === 0 ? (
+      {loading ? ( // חיווי על טעינה
+        <p className="text-center italic text-gray-500">טוען התראות...</p>
+      ) : activeNotifications.length === 0 ? (
         <p className="text-center italic text-gray-500">
           אין התראות פעילות
         </p>
@@ -69,19 +77,17 @@ const NotificationsList = () => {
 
       {isModalOpen && selectedTask && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={closeModal}
-        >
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeModal}>
           <div
-            className="bg-white rounded-xl p-6 w-full max-w-lg shadow-lg relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+            className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}>
             <button
               className="absolute top-4 right-4 text-red-600 hover:text-red-800"
-              onClick={closeModal}
-            >
+              onClick={closeModal}>
               ✖
             </button>
+
             <ViewTask task={selectedTask} />
           </div>
         </div>

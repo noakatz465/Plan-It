@@ -40,7 +40,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
       case "In Progress":
         return "bg-yellow-500";
       case "Pending":
-        return "bg-blue-500";
+        return "bg-[#FF2929]";
       default:
         return "bg-gray-400";
     }
@@ -132,22 +132,22 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
 
       {/* חלון מודאלי להצגת פרטי המשימה */}
       {isViewTaskModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className="bg-white p-5 rounded shadow-lg w-1/3"
-            onClick={(e) => e.stopPropagation()}
-          >
+            className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseModal();
               }}
-              className="text-red-500 float-right font-bold"
-            >
+              className="text-red-500 float-right font-bold">
               ✖
             </button>
             {selectedTask ? (
-              <ViewTask task={selectedTask} />
+
+                  <ViewTask task={selectedTask} />
+              // 
             ) : (
               <p>אין נתונים להצגה</p>
             )}

@@ -1,11 +1,17 @@
 import { create } from "zustand";
 import { NotificationModel } from "@/app/models/notificationModel"; // ודא שמודל ההתראות מוגדר
-import { fetchNotificationsByUserId, markNotificationAsRead } from "../services/notificationService"; // שירותים לפעולות נוספות
+import { fetchNotificationsByUserId, markNotificationAsRead, createNotificationsPerUsers } from "../services/notificationService"; // שירותים לפעולות נוספות
+import { TaskModel } from "../models/taskModel";
 
 interface NotificationsState {
   notifications: NotificationModel[]; // רשימת ההתראות
   fetchNotifications: (userId: string) => Promise<void>; // פונקציה לשליפת ההתראות לפי מזהה משתמש
   markAsRead: (notificationId: string) => Promise<void>; // סימון התראה כ"נקראה"
+  createNotificationsPerUsers: (
+    notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue",
+    task: TaskModel,
+    userIds: string[]
+  ) => Promise<void>; // יצירת התראות פר משתמשים
 }
 
 export const useNotificationsStore = create<NotificationsState>((set, get) => ({
@@ -36,6 +42,20 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
       console.log(`Notification ${notificationId} marked as read.`);
     } catch (error) {
       console.error(`Error marking notification ${notificationId} as read:`, error);
+    }
+  },
+
+  // יצירת התראות פר משתמשים
+  createNotificationsPerUsers: async (
+    notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue",
+    task: TaskModel,
+    userIds: string[]
+  ) => {
+    try {
+      await createNotificationsPerUsers(notificationType, task, userIds);
+      console.log("Notifications created successfully.");
+    } catch (error) {
+      console.error("Error creating notifications:", error);
     }
   },
 }));
