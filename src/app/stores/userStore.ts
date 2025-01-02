@@ -227,11 +227,6 @@
 
 
 
-
-
-
-
-
 import { create } from "zustand";
 import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "@/app/services/authService";
 import { UserModel } from "@/app/models/userModel";
@@ -240,13 +235,16 @@ import { TaskModel } from "@/app/models/taskModel";
 import { getSession } from "next-auth/react";
 import { deleteTask, updateTask } from "../services/taskService";
 import { removeTaskForUsers } from "../services/userService";
-
+interface FilterOption {
+  value: string;
+  label: string;
+}
 interface UserState {
   user: UserModel | null; // משתמש נוכחי
   tasks: TaskModel[]; // רשימת משימות
   projects: ProjectModel[]; // רשימת פרויקטים
   filteredTasks: TaskModel[]; // משימות מסוננות
-  currentFilters: unknown[]; // פילטרים
+  currentFilters: FilterOption[]; // פילטרים
   searchQuery: string; // מונח חיפוש
   fetchUser: () => Promise<void>; // שליפת משתמש
   clearUser: () => void; // איפוס משתמש
@@ -256,7 +254,7 @@ interface UserState {
   removeTaskForUsers: (userIds: string[], taskId: string) => Promise<void>;
   updateTaskInStore: (taskId: string, updatedData: Partial<TaskModel>) => Promise<void>; // עדכון משימה
   updateTaskStatus: (taskId: string, status: "Pending" | "In Progress" | "Completed") => void; // עדכון סטטוס משימה
-  filterTasks: (filters: unknown[], searchQuery?: string) => void; // סינון משימות
+  filterTasks: (filters: FilterOption[], searchQuery?: string) => void; // סינון משימות
   getTasks: () => TaskModel[]; // שליפת משימות
   getProjects:()=>ProjectModel[];//שליפת פרויקטים
 }
@@ -401,60 +399,73 @@ export const useUserStore = create<UserState>((set, get) => ({
     }
   },
   // פונקציות סינון ושליפה
-  filterTasks: (filters: any[] = [], searchQuery = get().searchQuery) => {
+  filterTasks: (filters: FilterOption[] = [], searchQuery = get().searchQuery) => {
     set({ currentFilters: filters, searchQuery });
-
+  
     const allTasks = get().tasks;
     let filteredTasks = [...allTasks];
-
-    const filterMap: { [key: string]: string[] } = filters.reduce((acc, filter) => {
+  
+    // יצירת מפת פילטרים
+    const filterMap: Record<string, string[]> = filters.reduce((acc, filter) => {
       const category = filter.value.split(/(?=[A-Z])/)[0];
-      if (!acc[category]) acc[category] = [];
+      acc[category] = acc[category] || [];
       acc[category].push(filter.value);
       return acc;
-    }, {});
-
+    }, {} as Record<string, string[]>);
+  
+    // סינון לפי קטגוריות
     Object.entries(filterMap).forEach(([category, values]) => {
       switch (category) {
         case "priority":
           filteredTasks = filteredTasks.filter((task) =>
-            values.some((value) =>
-              value === "priorityLow"
-                ? task.priority === "Low"
-                : value === "priorityMedium"
-                ? task.priority === "Medium"
-                : value === "priorityHigh"
-                ? task.priority === "High"
-                : false
-            )
+            values.some((value) => {
+              switch (value) {
+                case "priorityLow":
+                  return task.priority === "Low";
+                case "priorityMedium":
+                  return task.priority === "Medium";
+                case "priorityHigh":
+                  return task.priority === "High";
+                default:
+                  return false;
+              }
+            })
           );
           break;
+  
         case "status":
           filteredTasks = filteredTasks.filter((task) =>
-            values.some((value) =>
-              value === "statusPending"
-                ? task.status === "Pending"
-                : value === "statusInProgress"
-                ? task.status === "In Progress"
-                : value === "statusCompleted"
-                ? task.status === "Completed"
-                : false
-            )
+            values.some((value) => {
+              switch (value) {
+                case "statusPending":
+                  return task.status === "Pending";
+                case "statusInProgress":
+                  return task.status === "In Progress";
+                case "statusCompleted":
+                  return task.status === "Completed";
+                default:
+                  return false;
+              }
+            })
           );
           break;
+  
         default:
           break;
       }
     });
-
-    if ((searchQuery || "").trim() !== "") {
+  
+    // סינון לפי מחרוזת חיפוש
+    if (searchQuery?.trim()) {
       filteredTasks = filteredTasks.filter((task) =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-
+  
+    // עדכון המשימות המסוננות
     set({ filteredTasks });
   },
+  
 
   getTasks: () => {
     return get().filteredTasks;
@@ -463,6 +474,3 @@ export const useUserStore = create<UserState>((set, get) => ({
     return get().projects;
   },
 }));
-
-
-
