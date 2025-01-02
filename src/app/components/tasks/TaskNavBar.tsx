@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
-import Select, { components, MultiValue, OptionProps, SingleValue } from "react-select";
+import Select, { ClassNamesState, components, MultiValue, OptionProps, SingleValue,StylesConfig,GroupBase  } from "react-select";
 import {
   ListBulletIcon,
   CalendarDaysIcon,
@@ -18,6 +18,8 @@ interface FilterOption {
   value: string;
   label: string;
 }
+
+
 
 // ממשק לאפשרויות תצוגה
 interface ViewOption {
@@ -57,13 +59,13 @@ const TaskNavBar: React.FC = () => {
     setOpenModal(true);
   };
 
-  // useEffect(() => {
-  //   if (openModal) {
-  //     document.body.style.overflow = "hidden";
-  //   } else {
-  //     document.body.style.overflow = "auto";
-  //   }
-  // }, [openModal]);
+  useEffect(() => {
+    if (openModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [openModal]);
 
 
   const searchTasks = (query: string) => {
@@ -134,8 +136,8 @@ const TaskNavBar: React.FC = () => {
     },
   ];
 
-  const customViewStyles = {
-    control: (provided: Record<string, unknown>) => ({
+  const customViewStyles: StylesConfig<ViewOption, false, GroupBase<ViewOption>> = {
+    control: (provided) => ({
       ...provided,
       display: "flex",
       alignItems: "center",
@@ -147,28 +149,26 @@ const TaskNavBar: React.FC = () => {
       minHeight: "44px",
       boxShadow: "none",
     }),
-    menu: (provided: Record<string, unknown>) => ({
+    menu: (provided) => ({
       ...provided,
       zIndex: 9999,
     }),
-    option: (provided: Record<string, unknown>, state: any) => ({
+    option: (provided, state) => ({
+      ...provided,
+      display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      ...provided,
-      display: "flex",
       backgroundColor: state.isSelected
         ? "#9694FF"
         : state.isFocused
-          ? "#EBEAFF"
-          : "#fff",
+        ? "#EBEAFF"
+        : "#fff",
       color: state.isSelected ? "#fff" : "#000",
       padding: "5px 10px", // צמצום ריווח אנכי ואופקי
-    })
-
-
+    }),
   };
-  const customFilterStyles = {
-    control: (provided: Record<string, unknown>) => ({
+  const customFilterStyles: StylesConfig<FilterOption, true, GroupBase<FilterOption>> = {
+    control: (provided) => ({
       ...provided,
       display: "flex",
       alignItems: "center",
@@ -180,36 +180,35 @@ const TaskNavBar: React.FC = () => {
       minHeight: "44px",
       boxShadow: "none",
     }),
-    menu: (provided: Record<string, unknown>) => ({
+    menu: (provided) => ({
       ...provided,
       zIndex: 9999,
     }),
-    option: (provided: Record<string, unknown>, state: any) => ({
-
+    option: (provided, state) => ({
       ...provided,
       display: "flex",
       backgroundColor: state.isSelected
         ? "#9694FF"
         : state.isFocused
-          ? "#EBEAFF"
-          : "#fff",
+        ? "#EBEAFF"
+        : "#fff",
       color: state.isSelected ? "#fff" : "#000",
       padding: "5px 10px", // צמצום ריווח אנכי ואופקי
     }),
-    multiValue: (provided: Record<string, unknown>) => ({
+    multiValue: (provided) => ({
       ...provided,
       backgroundColor: "#E6E6FA",
       borderRadius: "4px",
       padding: "1px 4px", // צמצום ריווח פנימי
       margin: "2px", // מרווח קטן בין האלמנטים
     }),
-    multiValueLabel: (provided: Record<string, unknown>) => ({
+    multiValueLabel: (provided) => ({
       ...provided,
       fontSize: "12px", // גודל פונט קטן יותר
       color: "#000",
       padding: "0 2px", // צמצום ריווח פנימי בין הכיתוב לתיבה
     }),
-    multiValueRemove: (provided: Record<string, unknown>) => ({
+    multiValueRemove: (provided) => ({
       ...provided,
       color: "#FF2929",
       cursor: "pointer",
@@ -219,6 +218,7 @@ const TaskNavBar: React.FC = () => {
       },
     }),
   };
+  
 
   const CustomOption: React.FC<OptionProps<FilterOption, boolean>> = (props) => {
     const { data, isSelected } = props;
