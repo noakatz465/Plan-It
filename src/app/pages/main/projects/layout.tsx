@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 
                 {/* תוכן ראשי */}
-                <main className="flex-1 bg-[#EBEAFF] ">
+                <main className="flex-1 bg-[#EBEAFF] pt-12 ">
                     {children}
                 </main>
             

@@ -14,20 +14,49 @@ const ProjectListItem: React.FC<ProjectItemListProps> = ({ project }) => {
     setSelectedProject(project);
     setIsViewProjectModalOpen(true);
   };
+
   const handleCloseModal = () => {
     setSelectedProject(null);
     setIsViewProjectModalOpen(false);
   };
 
   return (
-    <div >
-      <div onClick={() => handleOpenViewProjectModal(project)} className="flex items-center justify-between p-4 border-b hover:bg-gray-50 transition">
-        <span className="text-gray-800">{project.name}</span>
-        <span className="text-gray-800">{project.description}</span>
+    <>
+      {/* תצוגת הפרויקט */}
+      <div
+        onClick={() => handleOpenViewProjectModal(project)}
+        className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 transition cursor-pointer mb-4"
+      >
+        {/* שם הפרויקט */}
+        <div className="flex-1 text-right pr-4">
+          <span className="text-gray-800 font-medium">{project.name}</span>
+        </div>
+
+        {/* תיאור הפרויקט */}
+        <div className="flex-1 text-right pr-4">
+          <span className="text-sm text-gray-700">
+            {project.description || "ללא תיאור"}
+          </span>
+        </div>
+
+        {/* מנהל הפרויקט */}
+        <div className="flex-1 text-center pr-4">
+          <span className="text-gray-800">מנהל: {project.managerID}</span>
+        </div>
+
+        {/* חברים בפרויקט */}
+        <div className="flex-1 text-left pr-4">
+          <span className="text-gray-500 text-sm">
+            חברים: {project.members.length}
+          </span>
+        </div>
       </div>
+
+      {/* חלון מודאלי להצגת פרטי הפרויקט */}
       {isViewProjectModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-5 rounded shadow-lg w-1/3"
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div
+            className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -35,12 +64,19 @@ const ProjectListItem: React.FC<ProjectItemListProps> = ({ project }) => {
                 e.stopPropagation();
                 handleCloseModal();
               }}
-              className="text-red-500 float-right font-bold">X</button>
-            {selectedProject ? <ViewProject project={selectedProject} /> : ""}
+              className="text-red-500 float-right font-bold"
+            >
+              ✖
+            </button>
+            {selectedProject ? (
+              <ViewProject project={selectedProject} />
+            ) : (
+              <p>אין נתונים להצגה</p>
+            )}
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

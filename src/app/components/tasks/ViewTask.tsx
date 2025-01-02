@@ -27,6 +27,8 @@ function ViewTask({ task }: ViewTaskProps) {
     const user = useUserStore((state) => state.user);
     const projects = useUserStore((state) => state.projects);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
+    const removeTaskForUsers = useUserStore((state) => state.removeTaskForUsers);
+
     const { createNotificationsPerUsers } = useNotificationsStore();
     const translateFrequency = (frequency: string) => {
         switch (frequency) {

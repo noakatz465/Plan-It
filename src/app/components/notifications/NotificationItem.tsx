@@ -14,13 +14,25 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
   onViewTask,
 }) => {
+  const getBorderColor = () => {
+    if (notification.notificationType === "TaskDueSoon") return "border-[#FFA500]"; // כתום
+    return notification.isRead ? "border-[#9694FF]" : "border-[#FF2929]";
+  };
+
+  const getBackgroundColor = () => {
+    if (notification.notificationType === "TaskDueSoon") return "bg-[#FFF5E6] hover:bg-[#FFE4B2]"; // כתום בהיר
+    return notification.isRead ? "bg-[#E0E0E0] hover:bg-gray-300" : "bg-white hover:bg-red-50";
+  };
+
+  const renderTitle = () => {
+    if (notification.notificationType === "TaskAssigned") return "שותפת במשימה";
+    if (notification.notificationType === "TaskDueSoon") return "משימה מתקרבת לתאריך יעד";
+    return `Notification Type: ${notification.notificationType}`;
+  };
+
   return (
     <div
-      className={`relative p-4 shadow-md transition-all duration-300 rounded-xl h-auto max-w-sm mx-auto ${
-        notification.isRead
-          ? "bg-[#E0E0E0] border-l-4 border-[#9694FF] hover:bg-gray-300"
-          : "bg-white border-l-4 border-[#FF2929] hover:bg-red-50"
-      }`}
+      className={`relative p-4 shadow-md transition-all duration-300 rounded-xl h-auto max-w-sm mx-auto ${getBackgroundColor()} border-l-4 ${getBorderColor()}`}
     >
       <div className="flex items-center justify-between mb-2">
         <h3
@@ -28,9 +40,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             notification.isRead ? "text-gray-600" : "text-black"
           }`}
         >
-          {notification.notificationType === "TaskAssigned"
-            ? "שותפת במשימה"
-            : `Notification Type: ${notification.notificationType}`}
+          {renderTitle()}
         </h3>
         {!notification.isRead && (
           <button
@@ -43,12 +53,29 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       </div>
       <p className="mb-2">{notification.notificationText}</p>
       <p className="text-sm text-gray-500 mb-2">
-        <strong>שותף בתאריך:</strong>{" "}
-        {new Date(notification.notificationDate).toLocaleDateString()}{" "}
-        <strong>בשעה:</strong>{" "}
+        <strong>שותף בתאריך:</strong> {" "}
+        {new Date(notification.notificationDate).toLocaleDateString()} {" "}
+        <strong>בשעה:</strong> {" "}
         {new Date(notification.notificationDate).toLocaleTimeString()}
       </p>
+
+      {/* {notification.notificationType === "TaskDueSoon" && (
+        <p className="text-sm text-gray-500 mb-2">
+          <strong>תאריך יעד:</strong> {" "}
+          {new Date(notification.dueDate).toLocaleDateString()}
+        </p>
+      )} */}
+
       {notification.notificationType === "TaskAssigned" && onViewTask && (
+        <button
+          className="mt-2 text-blue-600 underline hover:text-blue-800"
+          onClick={() => onViewTask(notification.taskId)}
+        >
+          לצפייה במשימה
+        </button>
+      )}
+
+      {notification.notificationType === "TaskDueSoon" && onViewTask && (
         <button
           className="mt-2 text-blue-600 underline hover:text-blue-800"
           onClick={() => onViewTask(notification.taskId)}
