@@ -173,15 +173,16 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       addTaskToStore({ ...updatedTask, _id: userFromStore?._id });
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
-      if (props.onClose) {
-        props.onClose();
-      }
+
 
     } catch (error) {
       setError('Failed to add task. Please try again.');
       console.error(error);
     } finally {
       setLoading(false);
+      if (props.onClose) {
+        props.onClose();
+      }
     }
   };
 
