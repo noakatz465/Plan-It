@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ProjectModel } from '@/app/models/projectModel';
 import { createProject } from '@/app/services/projectService';
 import { useUserStore } from '@/app/stores/userStore';
 import CreatableSelect from 'react-select/creatable';
 import Image from "next/image";
 import { getUserByEmail } from '@/app/services/userService';
+import { MultiValue } from 'react-select';
+import { UserModel } from '@/app/models/userModel';
 
 function AddProject() {
     const [newProject, setNewProject] = useState<ProjectModel>({
@@ -63,22 +65,25 @@ function AddProject() {
                 members: [],
                 lastModified: new Date(),
             });
-        } catch (err) {
-            setError('Failed to create project. Please try again.');
+        } catch {
+            setError('Failed to create project. Please try again.' );
         } finally {
             setLoading(false);
         }
     };
 
-    const handleUserSelect = (selectedOptions: any) => {
-        const newUsers = selectedOptions.map((option: any) => option.value);
+    const handleUserSelect = (
+        selectedOptions: MultiValue<{ value: string; label: React.ReactNode }>
+      ) => {
+        const selectedEmails = selectedOptions.map((option) => option.value);
+      
         setNewProject((prev) => ({
-            ...prev,
-            members: newUsers,
+          ...prev,
+          members: selectedEmails,
         }));
-    };
+      };
 
-    const userOptions = userFromStore?.sharedWith?.map((user) => ({
+    const userOptions = userFromStore?.sharedWith?.map((user: UserModel) => ({
         value: user.email,
         label: (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -10,6 +10,7 @@ import { TaskModel } from '@/app/models/taskModel';
 import { deleteProject, updateProject } from '@/app/services/projectService';
 import { useUserStore } from '@/app/stores/userStore';
 import TaskListItem from '../tasks/TaskListItem';
+import { UserModel } from '@/app/models/userModel';
 
 interface ViewProjectProps {
     project: ProjectModel;
@@ -60,7 +61,7 @@ function ViewProject({ project }: ViewProjectProps) {
     };
 
     const userOptions = React.useMemo(() =>
-        user?.sharedWith.map((user) => ({
+        user?.sharedWith.map((user: UserModel) => ({
             value: user.email,
             label: (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -227,11 +227,6 @@
 
 
 
-
-
-
-
-
 import { create } from "zustand";
 import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "@/app/services/authService";
 import { UserModel } from "@/app/models/userModel";
@@ -479,6 +474,3 @@ export const useUserStore = create<UserState>((set, get) => ({
     return get().projects;
   },
 }));
-
-
-
