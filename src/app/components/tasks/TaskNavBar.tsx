@@ -11,12 +11,16 @@ import {
   PlusIcon,
   MagnifyingGlassIcon
 } from "@heroicons/react/24/outline";
+import { useUserStore } from "@/app/stores/userStore";
 
 const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // הגדרת מצב לחיפוש
+
   const router = useRouter();
+  const filterTasks = useUserStore((state) => state.filterTasks);
 
   const handleViewChange = (selectedOption: any) => {
     setSelectedView(selectedOption.value);
@@ -26,20 +30,29 @@ const TaskNavBar: React.FC = () => {
   const handleFilterChange = (selectedOptions: any) => {
     setSelectedFilters(selectedOptions);
     console.log("Selected filters:", selectedOptions);
+    filterTasks(selectedOptions);
+
   };
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
 
-  useEffect(() => {
-    if (openModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [openModal]);
+  // useEffect(() => {
+  //   if (openModal) {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "auto";
+  //   }
+  // }, [openModal]);
 
+
+  const searchTasks = (query: string) => {
+    setSearchQuery(query); 
+    const filters = useUserStore.getState().currentFilters; 
+    filterTasks(filters, query); 
+  };
+  
   const viewOptions = [
     {
       value: "list",
@@ -225,8 +238,9 @@ const TaskNavBar: React.FC = () => {
       <div className="flex-1 mx-4 flex justify-center">
         <div className="relative flex items-center w-full max-w-xs">
           <input
+            onChange={(e) => searchTasks(e.target.value)}
             type="text"
-            placeholder="חיפוש"
+            placeholder="חפש משימה"
             className="w-full px-3 py-1 pl-8 rounded-full bg-[#EBEAFF] text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#9694FF]"
           />
           <div className="absolute left-2 text-gray-500">
@@ -276,11 +290,17 @@ const TaskNavBar: React.FC = () => {
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+          <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenModal(false)}}
+              className="text-red-500 float-right font-bold">
+              ✖
+            </button>
             <AddTask />
             <button
               onClick={() => setOpenModal(false)}
-              className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-            >
+              className="mt-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
               סגור
             </button>
           </div>

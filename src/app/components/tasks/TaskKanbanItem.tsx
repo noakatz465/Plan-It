@@ -62,21 +62,22 @@ const TaskKanbanItem: React.FC<KanbanItemProps> = ({ task }) => {
 
       {/* חלון מודאלי להצגת פרטי המשימה */}
       {isViewTaskModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className="bg-white p-5 rounded shadow-lg w-1/3"
-            onClick={(e) => e.stopPropagation()}
-          >
+            className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleCloseModal();
               }}
-              className="text-red-500 float-right font-bold"
-            >
-              X
+              className="text-red-500 float-right font-bold">
+              ✖
             </button>
-            {selectedTask ? <ViewTask task={selectedTask} /> : ""}
+            {selectedTask ?
+
+              <ViewTask task={selectedTask} />
+              : ""}
           </div>
         </div>
       )}

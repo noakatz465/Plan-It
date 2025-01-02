@@ -7,7 +7,7 @@ import { TaskModel } from '@/app/models/taskModel';
 import Image from "next/image";
 import CreatableSelect from 'react-select/creatable';
 import { getUserByEmail, shareTask } from '@/app/services/userService';
-import { createNotificationsPerUsers } from '@/app/services/notificationService';
+import { useNotificationsStore } from "@/app/stores/notificationsStore";
 
 interface TaskDetails {
   dueDate?: Date;
@@ -24,6 +24,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   const userFromStore = useUserStore((state) => state.user);
   const addTaskToStore = useUserStore((state) => state.addTaskToStore);
   const projects = useUserStore((state) => state.projects);
+  const { createNotificationsPerUsers } = useNotificationsStore();
 
   useEffect(() => {
     if (props.dueDate) {
@@ -105,8 +106,11 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
 
-      if (updatedTask.assignedUsers) {
-        // ביצוע שיתוף משימה עבור כל המשתמשים
+      if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
+        // קוד לביצוע במקרה שיש משתמשים משוייכים
+      console.log(updatedTask.assignedUsers);
+      
+              // ביצוע שיתוף משימה עבור כל המשתמשים
         const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
             try {

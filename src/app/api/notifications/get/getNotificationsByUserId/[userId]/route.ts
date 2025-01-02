@@ -23,13 +23,7 @@ export async function GET(req: Request, { params }: { params: { userId: string }
         // שליפת כל ההתראות לפי userId
         const notifications = await AlertNotification.find({ recipientUserId: userId });
 
-        if (!notifications || notifications.length === 0) {
-            console.log(`No notifications found for userId: ${userId}`);
-            return NextResponse.json(
-                { message: "No notifications found for the given userId" },
-                { status: 404 }
-            );
-        }
+      
 
         console.log(`Notifications found for userId: ${userId}`, notifications);
 
