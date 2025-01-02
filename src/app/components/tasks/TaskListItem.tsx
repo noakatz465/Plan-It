@@ -137,9 +137,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
             className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
             onClick={(e) => e.stopPropagation()}>
             <button
-              onClick={(e) => {
-                handleCloseModal();
-              }}
+              onClick={handleCloseModal}
               className="text-red-500 float-right font-bold">
               ✖
             </button>
