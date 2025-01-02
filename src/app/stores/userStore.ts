@@ -3,7 +3,6 @@ import { fetchUserDetailsByCookie, fetchUserDetailsBySession } from "@/app/servi
 import { UserModel } from "@/app/models/userModel";
 import { ProjectModel } from "@/app/models/projectModel"; // ייבוא מודל הפרויקט
 import { getSession } from "next-auth/react"; // נקסט אאוט
-
 import { TaskModel } from "@/app/models/taskModel"; // ייבוא מודל המשימה
 import { deleteTask, updateTask } from "../services/taskService";
 
@@ -18,13 +17,12 @@ interface UserState {
   deleteTaskAndRefreshUser: (taskId: string) => Promise<void>;
   updateTaskInStore: (taskId: string, updatedData: Partial<TaskModel>) => Promise<void>;
   updateTaskStatus: (taskId: string, status: "Pending" | "In Progress" | "Completed")=> void;
-  filterTasks: (filters: any[], searchQuery?: string) => void;
+  filterTasks: (filters: unknown[], searchQuery?: string) => void;
   filteredTasks: TaskModel[];
   getTasks: () => TaskModel[];
-  currentFilters: any[];
+  currentFilters: unknown[];
   searchQuery: string;
 }
-
 
 export const useUserStore = create<UserState>((set, get) => {
 
