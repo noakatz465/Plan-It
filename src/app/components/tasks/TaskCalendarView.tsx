@@ -6,7 +6,7 @@ import { TaskModel } from "../../models/taskModel";
 import { useUserStore } from '../../stores/userStore';
 import AddTask from './AddTask';
 import ViewTask from './ViewTask';
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/solid";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/solid";
 
 
 function TaskCalendarView() {
@@ -16,7 +16,6 @@ function TaskCalendarView() {
     const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
     const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
     const tasks = useUserStore((state) => state.tasks);
-    // const [tasks, setTasks]=useState<TaskModel[]>(tasksFromStore)
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
         "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"

@@ -1,7 +1,6 @@
 import connect from "@/app/lib/db/mongoDB";
 import { NextResponse } from "next/server";
 import AlertNotification from "@/app/lib/models/alertNotificationSchema";
-import mongoose from "mongoose";
 import User from "@/app/lib/models/userSchema"; // הוספת מודל המשתמש
 
 export async function POST(req: Request) {

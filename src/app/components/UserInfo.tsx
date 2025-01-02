@@ -25,8 +25,6 @@ const UserInfo: React.FC = () => {
           src={user.profileImage ?? ''}
           alt={`${user.firstName} ${user.lastName}'s Profile`}
           className="w-16 h-16 rounded-full border shadow mr-4"
-          width={32}
-          height={32}
         />
         <h1 className="text-xl font-bold">
           Welcome, {user.firstName} {user.lastName}!

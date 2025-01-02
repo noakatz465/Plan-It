@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useUserStore } from "../../stores/userStore";
 import { TaskModel } from "../../models/taskModel";
 import TaskKanbanItem from "./TaskKanbanItem";

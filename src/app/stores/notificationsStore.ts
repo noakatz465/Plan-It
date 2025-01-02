@@ -8,7 +8,7 @@ interface NotificationsState {
   markAsRead: (notificationId: string) => Promise<void>; // סימון התראה כ"נקראה"
 }
 
-export const useNotificationsStore = create<NotificationsState>((set, get) => ({
+export const useNotificationsStore = create<NotificationsState>((set) => ({
   notifications: [],
 
   // שליפת התראות מהשרת לפי userId

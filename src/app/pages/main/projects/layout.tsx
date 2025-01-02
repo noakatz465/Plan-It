@@ -1,5 +1,4 @@
 import ProjectNavBar from "@/app/components/projects/ProjectNavBar";
-import TaskNavBar from "@/app/components/tasks/TaskNavBar";
 import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
