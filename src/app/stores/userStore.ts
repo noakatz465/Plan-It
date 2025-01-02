@@ -17,6 +17,7 @@ interface UserState {
   addProjectToStore: (project: ProjectModel) => void;
   deleteTaskAndRefreshUser: (taskId: string) => Promise<void>;
   updateTaskInStore: (taskId: string, updatedData: Partial<TaskModel>) => Promise<void>;
+  updateTaskStatus: (taskId: string, status: "Pending" | "In Progress" | "Completed")=> void;
   filterTasks: (filters: any[], searchQuery?: string) => void;
   filteredTasks: TaskModel[];
   getTasks: () => TaskModel[];
@@ -116,6 +117,35 @@ export const useUserStore = create<UserState>((set, get) => {
     }
   };
 
+  const updateTaskStatus = async (taskId: string, status: "Pending" | "In Progress" | "Completed") => {
+    try {
+      // עדכון בשרת
+      await updateTask(taskId, { status });
+  
+      // עדכון בסטור
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task._id === taskId ? { ...task, status } : task
+        ),
+        user: state.user
+          ? {
+              ...state.user,
+              tasks: state.user.tasks.map((task) =>
+                task._id === taskId ? { ...task, status } : task
+              ),
+            }
+          : null,
+      }));
+  
+      console.log(`Task ${taskId} status updated successfully to ${status}`);
+      filterTasks(get().currentFilters); // עדכון המשימות המסוננות
+    } catch (error) {
+      console.error(`Error updating status for task ${taskId}:`, error);
+      throw error; // ניתן להוסיף טיפול בשגיאה ב-UI אם נדרש
+    }
+  };
+  
+
   const filterTasks = (filters: any[] = [], searchQuery = get().searchQuery) => {
     set({ currentFilters: filters, searchQuery });
 
@@ -182,9 +212,10 @@ export const useUserStore = create<UserState>((set, get) => {
     addProjectToStore,
     deleteTaskAndRefreshUser,
     updateTaskInStore, // Add the updateTaskInStore function to the store
+    updateTaskStatus,
     filterTasks, // פונקציה לסינון משימות
     getTasks
-
+    
   };
 
 });
