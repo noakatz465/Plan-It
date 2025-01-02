@@ -156,6 +156,23 @@ function ViewTask({ task }: ViewTaskProps) {
                 alert(`Failed to share with users: ${failedUsers.join(", ")}`);
             } else {
                 alert("Task shared successfully!");
+                if (user?.notificationsEnabled) {
+                    // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+                    const newUserIds = updatedTask.assignedUsers.filter(
+                        (userId) => !task.assignedUsers.includes(userId)
+                    );
+                    try {
+                        await createNotificationsPerUsers(
+                            "TaskAssigned",
+                            task,
+                            newUserIds
+                        );
+
+                        console.log('Notifications sent successfully.');
+                    } catch (error) {
+                        console.error('Failed to send notifications:', error);
+                    }
+                }
                 
                 setShareMode(false);
             }
