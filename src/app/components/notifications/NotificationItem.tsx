@@ -52,12 +52,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         )}
       </div>
       <p className="mb-2">{notification.notificationText}</p>
-      <p className="text-sm text-gray-500 mb-2">
+      {notification.notificationType === "TaskAssigned" &&  <p className="text-sm text-gray-500 mb-2">
         <strong>שותף בתאריך:</strong> {" "}
         {new Date(notification.notificationDate).toLocaleDateString()} {" "}
         <strong>בשעה:</strong> {" "}
         {new Date(notification.notificationDate).toLocaleTimeString()}
-      </p>
+      </p>}
+      
 
       {/* {notification.notificationType === "TaskDueSoon" && (
         <p className="text-sm text-gray-500 mb-2">
