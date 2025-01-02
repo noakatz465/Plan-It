@@ -1,3 +1,4 @@
+'use client'
 import { TemplateModel } from '@/app/models/templateModel';
 import React from 'react';
 
