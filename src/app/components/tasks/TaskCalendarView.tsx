@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { addDays, addMonths, addYears, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
+import { addDays, addMonths, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays, subMonths, subYears } from 'date-fns';
 import { HDate } from '@hebcal/core';
 import { TaskModel } from "../../models/taskModel";
 import { useUserStore } from '../../stores/userStore';
@@ -13,8 +13,7 @@ function TaskCalendarView() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarDates, setCalendarDates] = useState<Date[]>([]);
     const [taskMap, setTaskMap] = useState<{ [key: string]: TaskModel[] }>({});
-    const [view, setView] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
-    const [yearlyDates, setYearlyDates] = useState<{ [key: string]: Date[] }>({});
+    const [view, setView] = useState<'weekly' | 'monthly'>('monthly');
     const tasks = useUserStore((state) => state.tasks);
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
@@ -27,6 +26,27 @@ function TaskCalendarView() {
 
     const [isDayModalOpen, setIsDayModalOpen] = useState(false);
     const [selectedDayTasks, setSelectedDayTasks] = useState<TaskModel[]>([]);
+
+    useEffect(() => {
+        setCalendarDates(createCalendarDates());
+    }, [currentDate, view]);
+
+    useEffect(() => {
+        if (tasks.length > 0) {
+            mapTasksByDate();
+        }
+    }, [tasks]);
+
+    useEffect(() => {
+        if (isDayModalOpen || isViewTaskModalOpen || isModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+        return () => {
+            document.body.style.overflow = "auto"; // מנקה תמיד
+        };
+    }, [isDayModalOpen, isViewTaskModalOpen, isModalOpen]);
 
     const handleOpenModal = (date: Date) => {
         setSelectedDate(date);
@@ -54,34 +74,6 @@ function TaskCalendarView() {
         setIsDayModalOpen(false);
         setSelectedDayTasks([]);
     };
-
-    useEffect(() => {
-        console.log("Updating calendar dates...");
-        if (view === 'yearly') {
-            setYearlyDates(createYearlyDates());
-        } else {
-            setCalendarDates(createCalendarDates());
-        }
-    }, [currentDate, view]);
-
-    useEffect(() => {
-        console.log("Mapping tasks...");
-        if (tasks.length > 0) {
-            mapTasksByDate();
-        }
-    }, [tasks]);
-
-
-    useEffect(() => {
-        if (isDayModalOpen || isViewTaskModalOpen || isModalOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "auto";
-        }
-        return () => {
-            document.body.style.overflow = "auto"; // מנקה תמיד
-        };
-    }, [isDayModalOpen, isViewTaskModalOpen, isModalOpen]);
 
     const mapTasksByDate = () => {
         const newTaskMap: { [key: string]: TaskModel[] } = {};
@@ -120,24 +112,8 @@ function TaskCalendarView() {
         return dates;
     };
 
-    const createYearlyDates = () => {
-        const datesByMonth: { [key: string]: Date[] } = {};
-        for (let month = 0; month < 12; month++) {
-            const startOfMonthDate = startOfWeek(new Date(currentDate.getFullYear(), month, 1));
-            const endOfMonthDate = endOfWeek(endOfMonth(new Date(currentDate.getFullYear(), month)));
 
-            let current = startOfMonthDate;
-            datesByMonth[month] = [];
-
-            while (current <= endOfMonthDate) {
-                datesByMonth[month].push(current);
-                current = addDays(current, 1);
-            }
-        }
-        return datesByMonth;
-    };
-
-    const handleChangeView = (newView: 'weekly' | 'monthly' | 'yearly') => {
+    const handleChangeView = (newView: 'weekly' | 'monthly') => {
         setView(newView);
     };
 
@@ -150,17 +126,8 @@ function TaskCalendarView() {
             setCurrentDate((prevDate) =>
                 direction === 'next' ? addDays(prevDate, 7) : subDays(prevDate, 7)
             );
-        } else if (view === 'yearly') {
-            setCurrentDate((prevDate) =>
-                direction === 'next' ? addYears(prevDate, 1) : subYears(prevDate, 1)
-            );
         }
     };
-
-    const handleChangeDay = (day: Date) => {
-        setCurrentDate(day);
-    }
-
     const isToday = (date: Date) => {
         const today = new Date();
         return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
@@ -190,14 +157,6 @@ function TaskCalendarView() {
                         }`}>
                     תצוגה חודשית
                 </button>
-                <button
-                    onClick={() => handleChangeView('yearly')}
-                    className={`flex-1 py-1 text-center transition duration-300 ${view === 'yearly'
-                        ? 'bg-[#9694FF] text-white'
-                        : 'text-[#9694FF] hover:bg-[#D6D4FF] hover:text-white'
-                        }`}>
-                    תצוגה שנתית
-                </button>
             </div>
             <div className="flex items-center justify-center mb-5">
                 {/* כפתור הקודם */}
@@ -207,11 +166,9 @@ function TaskCalendarView() {
                 >
                     <ChevronRightIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
                 </button>
-
                 <h1 className="text-xl font-bold text-[#3D3BF3] mx-4">
                     {hebrewMonths[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h1>
-
                 {/* כפתור הבא */}
                 <button
                     onClick={() => handleDateChange("next")}
@@ -220,35 +177,6 @@ function TaskCalendarView() {
                     <ChevronLeftIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
                 </button>
             </div>
-
-            {/* תצוגת שנתית */}
-            {view === 'yearly' && (
-                <div className="grid grid-cols-3 gap-4">
-                    {Object.keys(yearlyDates).map((monthKey) => {
-                        const monthDates = yearlyDates[monthKey];
-                        const isCurrentMonth = parseInt(monthKey) === new Date().getMonth();  // בודק אם זה החודש הנוכחי
-                        return (
-                            <div key={monthKey} className="p-2 border rounded">
-                                <h2 className="font-bold">{hebrewMonths[parseInt(monthKey)]}</h2>
-                                <div className="grid grid-cols-7 gap-1">
-                                    {monthDates.map((date) => {
-                                        const isNextMonth = date.getMonth() === currentDate.getMonth() + 1 || (currentDate.getMonth() === 11 && date.getMonth() === 0);
-                                        return (
-                                            <div key={date.toISOString()} onClick={() => handleChangeDay(date)}
-                                                className={`p-2 text-center cursor-pointer ${isCurrentMonth ? 'bg-gray-200 text-gray-900 ' : 'bg-gray-200 text-gray-500'} ${isNextMonth ? 'text-gray-400' : ''} ${isToday(date) ? 'bg-green-500 text-white' : ''}`}>
-                                                {format(date, 'd')}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-
-            {/* תצוגת חודש ושבוע */}
-            {view !== 'yearly' && (
                 <div>
                     <div className="grid grid-cols-7 gap-2 border-b border-[#3D3BF3] font-bold text-[#3D3BF3] pb-2 mb-3">
                         <span className="text-[#3D3BF3] text-center">ראשון</span>
@@ -310,8 +238,6 @@ function TaskCalendarView() {
                                             <></>
                                         )}
                                     </div>
-
-
                                     {/* כפתור הוספת משימה */}
                                     <button
                                         className="absolute bottom-2 left-2 text-[#FF2929] hover:text-red-700 transition duration-200 flex items-center justify-center "
@@ -331,10 +257,10 @@ function TaskCalendarView() {
                                                 handleCloseModal();
                                             }}>
                                             <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                            }}>
-                                            
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}>
+
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -378,7 +304,7 @@ function TaskCalendarView() {
                                                     onClick={handleCloseDayModal}
                                                     className="text-red-500 float-right font-bold"
                                                 >
-                                                     ✖
+                                                    ✖
                                                 </button>
                                                 <h2 className="text-lg font-medium mb-3 text-black-900">
                                                     משימות ליום:{" "}
@@ -417,9 +343,6 @@ function TaskCalendarView() {
                                                 ) : (
                                                     <p className="text-gray-500 text-center">אין משימות ליום זה.</p>
                                                 )}
-
-
-
                                             </div>
                                         </div>
                                     )}
@@ -430,8 +353,6 @@ function TaskCalendarView() {
                         })}
                     </div>
                 </div>
-            )}
-
         </div>
     )
 }
