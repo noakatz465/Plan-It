@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
-import Select, { ClassNamesState, components, MultiValue, OptionProps, SingleValue, StylesConfig, GroupBase } from "react-select";
+import Select, { components, MultiValue, OptionProps, SingleValue,StylesConfig,GroupBase  } from "react-select";
 import {
   ListBulletIcon,
   CalendarDaysIcon,

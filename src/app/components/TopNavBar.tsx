@@ -15,11 +15,10 @@ import { signOut, useSession } from "next-auth/react";
 
 function TopNavBar() {
   const userFromStore = useUserStore((state) => state.user);
-  const clearUser = useUserStore((state) => state.clearUser); // פונקציה לניקוי פרטי המשתמש
   const router = useRouter();
   const [user, setUser] = useState<UserModel | null>(userFromStore);
   const [activeLink, setActiveLink] = useState<string>("");
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const handleLinkClick = (link: string) => {
     setActiveLink(link); // סימון קישור כפעיל

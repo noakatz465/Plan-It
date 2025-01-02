@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { TaskModel } from "@/app/models/taskModel";
-import { updateTask } from "@/app/services/taskService";
 import { useUserStore } from "@/app/stores/userStore";
 
 interface EditTaskProps {

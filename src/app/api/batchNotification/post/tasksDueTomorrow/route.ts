@@ -2,7 +2,7 @@ import connect from "@/app/lib/db/mongoDB";
 import { NextResponse } from "next/server";
 import Task from "@/app/lib/models/taskSchema";
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     console.log("Connecting to the database...");
     await connect();

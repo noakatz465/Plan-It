@@ -72,21 +72,21 @@
 
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import AddProject from "./AddProject";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 const ProjectNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
 
-  const handleNavigation = (route: string) => {
-    router.push(route); // מנתב לדף המתאים
-  };
+  // const handleNavigation = (route: string) => {
+  //   router.push(route); // מנתב לדף המתאים
+  // };
 
   return (
     <div className="bg-white px-2 py-2 flex items-center justify-between shadow-md h-12 fixed left-0 right-[50px] w-[calc(100%-50px)] z-50">

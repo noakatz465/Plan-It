@@ -4,7 +4,6 @@ import {
   ClipboardDocumentListIcon,
   FolderIcon,
   ChartBarIcon,
-  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 function SideNavBar() {
