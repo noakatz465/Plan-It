@@ -138,7 +138,6 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
             onClick={(e) => e.stopPropagation()}>
             <button
               onClick={(e) => {
-                e.stopPropagation();
                 handleCloseModal();
               }}
               className="text-red-500 float-right font-bold">

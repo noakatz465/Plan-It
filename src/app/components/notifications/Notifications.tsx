@@ -81,7 +81,8 @@ const NotificationsList = () => {
           onClick={closeModal}>
           <div
             className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
-            onClick={(e) => e.stopPropagation()}>
+            // onClick={(e) => e.stopPropagation()}
+            >
             <button
               className="absolute top-4 right-4 text-red-600 hover:text-red-800"
               onClick={closeModal}>

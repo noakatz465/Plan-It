@@ -15,6 +15,8 @@ interface TaskDetails {
   dueDate?: Date;
   projectId?: string;
   assignedUsers?: string[];
+  onClose: () => void; // Prop לסגירת המודל
+
 }
 
 // interface UserOption {
@@ -172,11 +174,15 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setSuccessMessage(`Task "${updatedTask.title}" added successfully!`);
       setTask(initialTask);
 
+
     } catch (error) {
       setError('Failed to add task. Please try again.');
       console.error(error);
     } finally {
       setLoading(false);
+      if (props.onClose) {
+        props.onClose();
+      }
     }
   };
 
