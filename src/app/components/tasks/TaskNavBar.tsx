@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AddTask from "./AddTask";
-import Select, { components } from "react-select";
+import Select, { components, MultiValue, OptionProps, SingleValue } from "react-select";
 import {
   ListBulletIcon,
   CalendarDaysIcon,
@@ -13,26 +13,48 @@ import {
 } from "@heroicons/react/24/outline";
 import { useUserStore } from "@/app/stores/userStore";
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
+interface FilterGroup {
+  label: string;
+  options: FilterOption[];
+}
+
+// ממשק לאפשרויות תצוגה
+interface ViewOption {
+  value: string;
+  label: JSX.Element;
+}
 const TaskNavBar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<MultiValue<FilterOption>>([]);
   const [selectedView, setSelectedView] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(""); // הגדרת מצב לחיפוש
-
   const router = useRouter();
   const filterTasks = useUserStore((state) => state.filterTasks);
 
-  const handleViewChange = (selectedOption: any) => {
-    setSelectedView(selectedOption.value);
-    router.push(`/pages/main/tasks/${selectedOption.value}`);
+  
+  const handleViewChange = (selectedOption: SingleValue<ViewOption>) => {
+    if (selectedOption) {
+      setSelectedView(selectedOption.value);
+      router.push(`/pages/main/tasks/${selectedOption.value}`);
+    }
   };
-
-  const handleFilterChange = (selectedOptions: any) => {
-    setSelectedFilters(selectedOptions);
-    console.log("Selected filters:", selectedOptions);
-    filterTasks(selectedOptions);
-
+  const handleFilterChange = (selectedOptions: MultiValue<FilterOption>) => {
+    // המרת selectedOptions למערך רגיל
+    const filters = [...selectedOptions]; // יוצר עותק חדש, לא משנה את המקור
+  
+    // שמירת המידע המלא של הפילטרים שנבחרו
+    setSelectedFilters(filters);
+    console.log("Selected filters:", filters);
+  
+    // העברת כל המידע לפונקציה filterTasks
+    filterTasks(filters);
   };
+  
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -117,7 +139,7 @@ const TaskNavBar: React.FC = () => {
   ];
 
   const customViewStyles = {
-    control: (provided: any) => ({
+    control: (provided: Record<string, unknown>) => ({
       ...provided,
       display: "flex",
       alignItems: "center",
@@ -129,11 +151,11 @@ const TaskNavBar: React.FC = () => {
       minHeight: "44px",
       boxShadow: "none",
     }),
-    menu: (provided: any) => ({
+    menu: (provided: Record<string, unknown>) => ({
       ...provided,
       zIndex: 9999,
     }),
-    option: (provided: any, state: any) => ({
+    option: (provided: Record<string, unknown>, state: any) => ({
       alignItems: "center",
       justifyContent: "center",
       ...provided,
@@ -150,7 +172,7 @@ const TaskNavBar: React.FC = () => {
 
   };
   const customFilterStyles = {
-    control: (provided: any) => ({
+    control: (provided: Record<string, unknown>) => ({
       ...provided,
       display: "flex",
       alignItems: "center",
@@ -162,11 +184,11 @@ const TaskNavBar: React.FC = () => {
       minHeight: "44px",
       boxShadow: "none",
     }),
-    menu: (provided: any) => ({
+    menu: (provided: Record<string, unknown>) => ({
       ...provided,
       zIndex: 9999,
     }),
-    option: (provided: any, state: any) => ({
+    option: (provided: Record<string, unknown>, state: any) => ({
 
       ...provided,
       display: "flex",
@@ -178,20 +200,20 @@ const TaskNavBar: React.FC = () => {
       color: state.isSelected ? "#fff" : "#000",
       padding: "5px 10px", // צמצום ריווח אנכי ואופקי
     }),
-    multiValue: (provided: any) => ({
+    multiValue: (provided: Record<string, unknown>) => ({
       ...provided,
       backgroundColor: "#E6E6FA",
       borderRadius: "4px",
       padding: "1px 4px", // צמצום ריווח פנימי
       margin: "2px", // מרווח קטן בין האלמנטים
     }),
-    multiValueLabel: (provided: any) => ({
+    multiValueLabel: (provided: Record<string, unknown>) => ({
       ...provided,
       fontSize: "12px", // גודל פונט קטן יותר
       color: "#000",
       padding: "0 2px", // צמצום ריווח פנימי בין הכיתוב לתיבה
     }),
-    multiValueRemove: (provided: any) => ({
+    multiValueRemove: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "#FF2929",
       cursor: "pointer",
@@ -202,7 +224,7 @@ const TaskNavBar: React.FC = () => {
     }),
   };
 
-  const CustomOption = (props: any) => {
+  const CustomOption: React.FC<OptionProps<FilterOption, boolean>> = (props) => {
     const { data, isSelected } = props;
     return (
       <components.Option {...props}>
@@ -258,7 +280,7 @@ const TaskNavBar: React.FC = () => {
           closeMenuOnSelect={false} // שומר על התפריט פתוח לאחר בחירה
           styles={{
             ...customFilterStyles,
-            menu: (provided: any) => ({
+            menu: (provided: Record<string, unknown>) => ({
               ...provided,
               width: "auto", // מאפשר לתפריט לגדול לפי תוכנו
               minWidth: "200px", // רוחב מינימלי לתפריט
