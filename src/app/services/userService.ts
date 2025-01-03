@@ -131,3 +131,36 @@ export const shareTask = async (data: {taskId: string;
       );
     }
   };
+  export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
+    try {
+      const response = await axios.get(`${API_USERS_URL}/get/getAllUsers`);
+      if (response.status === 200) {
+        const usersData = response.data.users;
+        const users = usersData.map((data: UserModel) => new UserModel(
+          data.firstName,
+          data.lastName,
+          data.email,
+          "", // סיסמה ריקה
+          new Date(data.joinDate),
+          data.notificationsEnabled,
+          [], // מערך ריק לפרויקטים
+          [], // מערך ריק למשימות
+          [], // מערך ריק של משתמשים משותפים
+          data._id,
+          data.birthDate ? new Date(data.birthDate) : undefined,
+          data.gender || null,
+          data.profileImage?.trim() ? data.profileImage : "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png", // בדיקה אם תמונת הפרופיל ריקה
+
+        ));
+        console.log("Users fetched successfully:", users);
+        return users;
+      } else {
+        console.warn("Unexpected response status:", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return null;
+    }
+  };
+  
