@@ -310,7 +310,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                                     </span>
                                 </div>
                             ) : (
-                                <span > אני</span>
+                                <p > אני</p>
                             )}
                         </div>
 
@@ -319,7 +319,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                         <p className="text-lg text-black-500">
                             <strong>משתמשים משותפים:</strong>
                         </p>
-                        {task.assignedUsers.filter((userId) => userId !== user?._id).length > 0 ? (
+                        {task.assignedUsers.length > 0 ? (
                             <ul className="flex flex-wrap gap-4 mt-2">
                                 {task.assignedUsers
                                     .map((userId, index) => {
