@@ -105,6 +105,7 @@ export async function middleware(req: NextRequest) {
     "/api/notifications",
     "/api/share",
     "/api/templates",
+    "/api/auth/callback/google",
   ];
 
   const rateLimitedPaths = [

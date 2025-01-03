@@ -9,7 +9,7 @@ interface TemplateProps {
 function Template({ template }: TemplateProps) {
   return (
     <div>
-      <h2>Template Details</h2>
+      <h2>{template.name}</h2>
       <p>Description: {template.description}</p>
     </div>
   );

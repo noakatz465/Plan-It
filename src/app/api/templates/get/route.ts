@@ -11,6 +11,7 @@ export async function GET() {
         return NextResponse.json(
             templates.map((template) => ({
                 _id: template._id.toString(),
+                name: template.name,
                 description: template.description,
             })),
             { status: 200 }

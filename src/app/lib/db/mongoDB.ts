@@ -12,7 +12,7 @@ const connect = async () => {
     mongoose.model("User", User.schema);
     mongoose.model("Task", Task.schema);
     mongoose.model("Project", Project.schema);
-    mongoose.model("Template", Template.schema);
+    mongoose.model("TaskTemplate", Template.schema);
     console.log("Connected to MongoDB successfully!");
   } catch (error) {
     console.error("Error connecting to MongoDB:" + error);
