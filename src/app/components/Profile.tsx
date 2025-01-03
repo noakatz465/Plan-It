@@ -106,6 +106,8 @@ function Profile() {
         </div>
 
         {/* תאריך לידה */}
+        <label className="block text-gray-700 mb-2">תאריך לידה </label>
+
         <input
           type="date"
           name="birthDate"
@@ -117,7 +119,6 @@ function Profile() {
           onChange={handleInputChange}
           className="w-full px-4 py-2 border rounded"
         />
-
 
         {/* מין */}
         <div className="mb-4">

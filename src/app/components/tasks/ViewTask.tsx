@@ -16,9 +16,7 @@ import { UserModel } from '@/app/models/userModel';
 interface ViewTaskProps {
     task: TaskModel;
     onClose: () => void; // פונקציה לסגירת מודל תצוגת המשימה
-
 }
-
 function ViewTask({ task ,onClose }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);

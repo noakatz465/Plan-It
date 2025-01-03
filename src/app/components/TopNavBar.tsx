@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { logoutUser } from "../services/authService";
 import { signOut, useSession } from "next-auth/react";
+import { useNotificationsStore } from "../stores/notificationsStore";
 
 function TopNavBar() {
   const userFromStore = useUserStore((state) => state.user);
@@ -19,6 +20,8 @@ function TopNavBar() {
   const [user, setUser] = useState<UserModel | null>(userFromStore);
   const [activeLink, setActiveLink] = useState<string>("");
   const { data: session } = useSession();
+  const { notifications } = useNotificationsStore();
+  const unreadCount = notifications.filter((notification) => !notification.isRead).length; // ספירת ההתראות שלא נקראו
 
   const handleLinkClick = (link: string) => {
     setActiveLink(link); // סימון קישור כפעיל
@@ -30,9 +33,6 @@ function TopNavBar() {
 
   const handleSignOut = async () => {
     try {
-      // console.log("Attempting to sign out...");
-      // await signOut(); // התנתקות עם NextAuth
-      // console.log("Sign-out successful");
       if (session) {
         console.log("User has a valid session. Using NextAuth sign out...");
         await signOut();
@@ -47,18 +47,9 @@ function TopNavBar() {
       console.error("Error during logout:", error);
     }
   };
-  // const handleLogout = async () => {
-    
-  //   try {
-  //     await logoutUser(router); // ניתוב מבוצע דרך הפונקציה
-  //   } catch (error) {
-  //     console.error("Logout failed:", error);
-  //   }
-  // };
 
   const getButtonClass = (link: string) =>
-    `flex items-center justify-center w-10 h-10 rounded transition duration-200 ${
-      activeLink === link ? "bg-[#9694FF]" : "hover:bg-[#3D3BF3]"
+    `flex items-center justify-center w-10 h-10 rounded transition duration-200 ${activeLink === link ? "bg-[#9694FF]" : "hover:bg-[#3D3BF3]"
     }`;
 
   useEffect(() => {
@@ -75,9 +66,7 @@ function TopNavBar() {
         width: "100%",
         height: "50px",
         zIndex: 10, // גובה הניווט העליון
-      }}
-    >
-      {/* לוגו */}
+      }}>
       <div className="text-lg font-bold">PlanIt</div>
 
       {/* תפריט אייקונים */}
@@ -86,8 +75,7 @@ function TopNavBar() {
         <button
           title="יציאה"
           className={getButtonClass("logout")}
-          onClick={() => handleLinkClick("logout")}
-        >
+          onClick={() => handleLinkClick("logout")}>
           <ArrowRightOnRectangleIcon className="h-6 w-6 text-white ml-1" />
         </button>
 
@@ -96,8 +84,7 @@ function TopNavBar() {
           <button
             className={getButtonClass("settings")}
             onClick={() => handleLinkClick("settings")}
-            title="הגדרות"
-          >
+            title="הגדרות">
             <Cog6ToothIcon className="h-6 w-6 text-white ml-1" />
           </button>
         </Link>
@@ -107,19 +94,25 @@ function TopNavBar() {
           <button
             className={getButtonClass("notifications")}
             onClick={() => handleLinkClick("notifications")}
-            title="התראות"
-          >
-            <BellAlertIcon className="h-6 w-6 text-white ml-1" />
+            title="התראות">
+            <div className="relative">
+              <BellAlertIcon className="h-6 w-6 text-white ml-1" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#FF2929] text-white text-xs  rounded-full h-5 w-5 flex items-center justify-center shadow-md">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
           </button>
         </Link>
+
 
         {/* פרופיל */}
         <Link href="/pages/main/profile">
           <button
             className={getButtonClass("profile")}
             onClick={() => handleLinkClick("profile")}
-            title="פרופיל"
-          >
+            title="פרופיל">
             {user?.profileImage ? (
               <Image
                 src={user.profileImage}

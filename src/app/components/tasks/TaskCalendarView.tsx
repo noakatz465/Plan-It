@@ -17,26 +17,22 @@ function TaskCalendarView() {
     const tasks = useUserStore((state) => state.tasks);
     const hebrewMonths = [
         "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
-        "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
-    ];
+        "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTask, setSelectedTask] = useState<TaskModel | null>(null);
-
     const [isDayModalOpen, setIsDayModalOpen] = useState(false);
     const [selectedDayTasks, setSelectedDayTasks] = useState<TaskModel[]>([]);
 
     useEffect(() => {
         setCalendarDates(createCalendarDates());
     }, [currentDate, view]);
-
     useEffect(() => {
         if (tasks.length > 0) {
             mapTasksByDate();
         }
     }, [tasks]);
-
     useEffect(() => {
         if (isDayModalOpen || isViewTaskModalOpen || isModalOpen) {
             document.body.style.overflow = "hidden";
@@ -52,12 +48,10 @@ function TaskCalendarView() {
         setSelectedDate(date);
         setIsModalOpen(true);
     };
-
     const handleOpenViewTaskModal = (task: TaskModel) => {
         setSelectedTask(task);
         setIsViewTaskModalOpen(true);
     };
-
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedDate(null);
@@ -69,12 +63,10 @@ function TaskCalendarView() {
         setSelectedDayTasks(tasks);
         setIsDayModalOpen(true);
     };
-
     const handleCloseDayModal = () => {
         setIsDayModalOpen(false);
         setSelectedDayTasks([]);
     };
-
     const mapTasksByDate = () => {
         const newTaskMap: { [key: string]: TaskModel[] } = {};
         tasks.forEach((task) => {
@@ -90,7 +82,6 @@ function TaskCalendarView() {
 
         setTaskMap(newTaskMap);
     };
-
     const createCalendarDates = () => {
         let startDate, endDate;
         if (view === 'monthly') {
@@ -111,12 +102,9 @@ function TaskCalendarView() {
         }
         return dates;
     };
-
-
     const handleChangeView = (newView: 'weekly' | 'monthly') => {
         setView(newView);
     };
-
     const handleDateChange = (direction: 'next' | 'prev') => {
         if (view === 'monthly') {
             setCurrentDate((prevDate) =>
@@ -137,7 +125,6 @@ function TaskCalendarView() {
         const hdate = new HDate(date);
         return `${hdate.renderGematriya().substring(0, 3)} `;
     };
-
     return (
         <div className="p-5 " dir="rtl">
             <div className="flex justify-center items-center bg-[#fff] rounded-md shadow-md w-72 mx-auto text-xs font-semibold overflow-hidden  mb-5">
@@ -162,8 +149,7 @@ function TaskCalendarView() {
                 {/* כפתור הקודם */}
                 <button
                     onClick={() => handleDateChange("prev")}
-                    className="p-2 text-gray-700 rounded-full hover:bg-white group"
-                >
+                    className="p-2 text-gray-700 rounded-full hover:bg-white group">
                     <ChevronRightIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
                 </button>
                 <h1 className="text-xl font-bold text-[#3D3BF3] mx-4">
@@ -172,8 +158,7 @@ function TaskCalendarView() {
                 {/* כפתור הבא */}
                 <button
                     onClick={() => handleDateChange("next")}
-                    className="p-2 text-gray-700 rounded-full hover:bg-white group"
-                >
+                    className="p-2 text-gray-700 rounded-full hover:bg-white group">
                     <ChevronLeftIcon className="h-6 w-6 text-[#3D3BF3] group-hover:text-[#FF2929]" />
                 </button>
             </div>
@@ -191,7 +176,6 @@ function TaskCalendarView() {
                     {calendarDates.map((date) => {
                         const dateString = format(date, 'yyyy-MM-dd');
                         const dayTasks = taskMap[dateString] || [];
-
                         return (
                             <div
                                 onClick={() => handleOpenDayModal(date, dayTasks)}
@@ -202,8 +186,7 @@ function TaskCalendarView() {
                                         ? 'bg-white text-gray-900'
                                         : 'bg-[#E3E1F2] text-gray-500'
                                     } ${view === 'weekly' ? 'h-60' : 'h-24' // גובה מותאם לתצוגה שבועית
-                                    }`}
-                            >
+                                    }`}>
                                 <div className="flex justify-between items-start mt-0">
                                     <span className="text-sm font-medium">{format(date, 'd')}</span>
                                     <span className="text-sm ">{getHebrewDate(date)}</span>
@@ -221,8 +204,7 @@ function TaskCalendarView() {
                                                     }}
                                                     key={index}
                                                     draggable
-                                                    className="flex justify-center items-center p-1 bg-[#EBEAFF] rounded-md shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer h-5"
-                                                >
+                                                    className="flex justify-center items-center p-1 bg-[#EBEAFF] rounded-md shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer h-5">
                                                     <span className="text-xs text-[#3D3BF3] font-medium truncate text-center">{task.title}</span>
                                                 </div>
                                             ))}
@@ -245,8 +227,7 @@ function TaskCalendarView() {
                                         e.stopPropagation(); // למנוע פתיחת הכרטיס בעת לחיצה על הכפתור
                                         handleOpenModal(date);
                                     }}
-                                    title="הוספת משימה"
-                                >
+                                    title="הוספת משימה">
                                     <PlusIcon className="h-5 w-5 strokeWidth={6} " />
                                 </button>
                                 {/* הוספת משימה     */}
@@ -260,7 +241,6 @@ function TaskCalendarView() {
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                             }}>
-
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -272,7 +252,6 @@ function TaskCalendarView() {
                                                     onClose={() => setIsModalOpen(false)}
                                                     dueDate={selectedDate} // העברת שאר ה-props במידת הצורך
                                                 />
-
                                                 : ""}
                                         </div>
                                     </div>
@@ -283,8 +262,7 @@ function TaskCalendarView() {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleCloseModal();
-                                        }}
-                                    >
+                                        }}>
                                         <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
                                             onClick={(e) => e.stopPropagation()}>
                                             <button
@@ -294,7 +272,6 @@ function TaskCalendarView() {
                                                 }}
                                                 className="text-red-500 float-right font-bold">✖</button>
                                             {selectedTask ?
-
                                                 <ViewTask task={selectedTask} onClose={handleCloseModal} />
                                                 : ""
                                             }
@@ -312,9 +289,7 @@ function TaskCalendarView() {
                                             onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 onClick={handleCloseDayModal}
-                                                className="text-red-500 float-right font-bold"
-                                            >
-                                                ✖
+                                                className="text-red-500 float-right font-bold">✖
                                             </button>
                                             <h2 className="text-lg font-medium mb-3 text-black-900">
                                                 משימות ליום:{" "}
@@ -336,8 +311,7 @@ function TaskCalendarView() {
                                                                 handleOpenViewTaskModal(task);
                                                             }}
                                                             key={index}
-                                                            className="flex items-center justify-between p-4 bg-white border-l-4 border-[#9694FF] rounded-md shadow hover:shadow-lg cursor-pointer transition duration-300 hover:border-[#FF2929] hover:bg-[#F9F9FF]"
-                                                        >
+                                                            className="flex items-center justify-between p-4 bg-white border-l-4 border-[#9694FF] rounded-md shadow hover:shadow-lg cursor-pointer transition duration-300 hover:border-[#FF2929] hover:bg-[#F9F9FF]">
                                                             <div className="flex items-center space-x-4 rtl:space-x-reverse">
                                                                 <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#EBEAFF] text-[#3D3BF3] font-bold">
                                                                     {index + 1}
@@ -356,9 +330,7 @@ function TaskCalendarView() {
                                         </div>
                                     </div>
                                 )}
-
                             </div>
-
                         );
                     })}
                 </div>

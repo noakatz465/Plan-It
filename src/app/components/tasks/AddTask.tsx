@@ -16,15 +16,7 @@ interface TaskDetails {
   projectId?: string;
   assignedUsers?: string[];
   onClose: () => void; // Prop לסגירת המודל
-
 }
-
-// interface UserOption {
-//   value: string;
-//   label: string | JSX.Element;
-//   isNew?: boolean;
-// }
-
 interface PriorityOption {
   value: string;
   label: string;
@@ -59,7 +51,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
       setTask((prev) => ({ ...prev, assignedUsers: props.assignedUsers ?? [] }));
     }
   }, [props.assignedUsers]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -101,7 +92,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
     try {
       const updatedTask = { ...task, creator: userFromStore?._id || '' };
-
       // יצירת רשימת IDs לפי אימיילים
       const userIds = await Promise.all(
         task.assignedUsers.map(async (email) => {
@@ -360,9 +350,8 @@ const AddTask: React.FC<TaskDetails> = (props) => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? 'Adding...' : 'Add Task'}
+            disabled={loading}>
+            {loading ? 'מוסיף...' : 'הוספת משימה '}
           </button>
         </div>
       </form>

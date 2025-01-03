@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { NotificationModel } from "@/app/models/notificationModel";
+import { useUserStore } from "@/app/stores/userStore"; // חנות Zustand
 import { CheckIcon } from "@heroicons/react/24/outline";
 
 interface NotificationItemProps {
@@ -14,6 +15,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
   onViewTask,
 }) => {
+  const tasks = useUserStore((state) => state.tasks); // משיכת רשימת המשימות מהחנות
+
+  const isTaskAvailable = tasks.some((task) => task._id === notification.taskId); // בדיקה אם המשימה קיימת
+
   const getBorderColor = () => {
     if (notification.notificationType === "TaskDueSoon") return "border-[#FFA500]"; // כתום
     return notification.isRead ? "border-[#9694FF]" : "border-[#FF2929]";
@@ -52,37 +57,39 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         )}
       </div>
       <p className="mb-2">{notification.notificationText}</p>
-      {notification.notificationType === "TaskAssigned" &&  <p className="text-sm text-gray-500 mb-2">
-        <strong>שותף בתאריך:</strong> {" "}
-        {new Date(notification.notificationDate).toLocaleDateString()} {" "}
-        <strong>בשעה:</strong> {" "}
-        {new Date(notification.notificationDate).toLocaleTimeString()}
-      </p>}
-      
-
-      {/* {notification.notificationType === "TaskDueSoon" && (
+      {notification.notificationType === "TaskAssigned" && (
         <p className="text-sm text-gray-500 mb-2">
-          <strong>תאריך יעד:</strong> {" "}
-          {new Date(notification.dueDate).toLocaleDateString()}
+          <strong>שותף בתאריך:</strong> {" "}
+          {new Date(notification.notificationDate).toLocaleDateString()} {" "}
+          <strong>בשעה:</strong> {" "}
+          {new Date(notification.notificationDate).toLocaleTimeString()}
         </p>
-      )} */}
-
-      {notification.notificationType === "TaskAssigned" && onViewTask && (
-        <button
-          className="mt-2 text-blue-600 underline hover:text-blue-800"
-          onClick={() => onViewTask(notification.taskId)}
-        >
-          לצפייה במשימה
-        </button>
       )}
 
-      {notification.notificationType === "TaskDueSoon" && onViewTask && (
-        <button
-          className="mt-2 text-blue-600 underline hover:text-blue-800"
-          onClick={() => onViewTask(notification.taskId)}
-        >
-          לצפייה במשימה
-        </button>
+      {notification.notificationType === "TaskAssigned" && (
+        isTaskAvailable ? (
+          <button
+            className="mt-2 text-blue-600 underline hover:text-blue-800"
+            onClick={() => onViewTask && onViewTask(notification.taskId)}
+          >
+            לצפייה במשימה
+          </button>
+        ) : (
+          <p className="text-sm text-red-500 mt-2">המשימה נמחקה ולא ניתן לצפות בה</p>
+        )
+      )}
+
+      {notification.notificationType === "TaskDueSoon" && (
+        isTaskAvailable ? (
+          <button
+            className="mt-2 text-blue-600 underline hover:text-blue-800"
+            onClick={() => onViewTask && onViewTask(notification.taskId)}
+          >
+            לצפייה במשימה
+          </button>
+        ) : (
+          <p className="text-sm text-red-500 mt-2">המשימה נמחקה ולא ניתן לצפות בה</p>
+        )
       )}
     </div>
   );
