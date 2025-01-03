@@ -76,7 +76,7 @@ const TaskKanbanItem: React.FC<KanbanItemProps> = ({ task }) => {
             </button>
             {selectedTask ?
 
-              <ViewTask task={selectedTask} />
+              <ViewTask task={selectedTask} onClose={handleCloseModal} />
               : ""}
           </div>
         </div>

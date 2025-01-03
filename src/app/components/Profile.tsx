@@ -4,11 +4,13 @@ import { UserModel } from "@/app/models/userModel";
 import { useUserStore } from "../stores/userStore";
 import Image from "next/image";
 import { updateUser, uploadToCloudinary } from "../services/userService";
+import { useRouter } from "next/navigation";
 
 function Profile() {
   const user = useUserStore((state) => state.user);
   const [formData, setFormData] = useState<UserModel | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -37,6 +39,8 @@ function Profile() {
       if (updatedUser) {
         useUserStore.setState({ user: updatedUser });
         console.log("User updated successfully:", updatedUser);
+        router.push(`/pages/main/dashboard`);
+
       } else {
         console.error("Failed to update user details");
       }
@@ -60,6 +64,8 @@ function Profile() {
   };
 
   return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+
     <div className="p-6 bg-white shadow-md rounded">
       <h1 className="text-2xl  mb-4">הגדרות משתמש</h1>
       <form onSubmit={handleSubmit}>
@@ -199,6 +205,7 @@ function Profile() {
           שמור שינויים
         </button>
       </form>
+    </div>
     </div>
   );
 }

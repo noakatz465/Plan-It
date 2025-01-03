@@ -132,7 +132,8 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
 
       {/* חלון מודאלי להצגת פרטי המשימה */}
       {isViewTaskModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          
           <div
             className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
             onClick={(e) => e.stopPropagation()}>
@@ -144,9 +145,7 @@ const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
               ✖
             </button>
             {selectedTask ? (
-
-                  <ViewTask task={selectedTask} />
-              // 
+              <ViewTask  task={selectedTask} onClose={handleCloseModal} />
             ) : (
               <p>אין נתונים להצגה</p>
             )}

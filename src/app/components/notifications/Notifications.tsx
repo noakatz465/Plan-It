@@ -25,6 +25,10 @@ const NotificationsList = () => {
     loadNotifications();
   }, [fetchNotifications, userFromStore?._id]);
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+};
   // סינון ומיון ההתראות הפעילות
   const activeNotifications = notifications
     .filter((notification: NotificationModel) => notification.status === "Active")
@@ -81,7 +85,7 @@ const NotificationsList = () => {
           onClick={closeModal}>
           <div
             className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
-            // onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             >
             <button
               className="absolute top-4 right-4 text-red-600 hover:text-red-800"
@@ -89,8 +93,8 @@ const NotificationsList = () => {
               ✖
             </button>
 
-            <ViewTask task={selectedTask} />
-          </div>
+            <ViewTask task={selectedTask} onClose={handleCloseModal} />
+            </div>
         </div>
       )}
     </div>

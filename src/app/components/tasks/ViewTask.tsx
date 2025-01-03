@@ -15,9 +15,11 @@ import { UserModel } from '@/app/models/userModel';
 
 interface ViewTaskProps {
     task: TaskModel;
+    onClose: () => void; // פונקציה לסגירת מודל תצוגת המשימה
+
 }
 
-function ViewTask({ task }: ViewTaskProps) {
+function ViewTask({ task ,onClose }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);
     const [editedTask, setEditedTask] = useState<TaskModel>({
@@ -74,15 +76,19 @@ function ViewTask({ task }: ViewTaskProps) {
     };
     const handleEditClick = () => {
         setEditMode(true);
+        // onClose(); // סגירת מודל תצוגת המשימה
+
     };
 
     const handleEditCancel = () => {
         setEditMode(false);
+        // onClose(); // סגירת מודל תצוגת המשימה
+
     };
 
     const handleEditSave = () => {
         setEditMode(false);
-        // alert("Task updated successfully.");
+        onClose(); // סגירת מודל תצוגת המשימה
     };
 
     const handleDeleteTask = async () => {
@@ -91,9 +97,13 @@ function ViewTask({ task }: ViewTaskProps) {
         try {
             if (user?._id === task.creator) {
                 if (task._id) await deleteTaskAndRefreshUser(task._id);
+                onClose(); // סגירת מודל תצוגת המשימה
+
             } else {
                 const newAssignedUsersArr = [...task.assignedUsers, task.creator];
                 if (task._id) await removeTaskForUsers(newAssignedUsersArr, task._id);
+                onClose(); // סגירת מודל תצוגת המשימה
+
             }
         } catch (error) {
             console.error('Error deleting task:', error);
@@ -105,6 +115,7 @@ function ViewTask({ task }: ViewTaskProps) {
 
     const handleShareClick = () => {
         setShareMode(true);
+
     };
 
     const handleUserSelect = (selectedOptions: MultiValue<UserOption>) => {
@@ -178,6 +189,7 @@ function ViewTask({ task }: ViewTaskProps) {
                 }
                 
                 setShareMode(false);
+                onClose()
             }
         } catch (error) {
             console.error("Error sharing task:", error);

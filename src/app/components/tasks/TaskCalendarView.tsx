@@ -295,7 +295,7 @@ function TaskCalendarView() {
                                                 className="text-red-500 float-right font-bold">✖</button>
                                             {selectedTask ?
 
-                                                <ViewTask task={selectedTask} />
+                                                <ViewTask task={selectedTask} onClose={handleCloseModal} />
                                                 : ""
                                             }
                                         </div>
