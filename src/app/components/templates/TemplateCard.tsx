@@ -1,5 +1,7 @@
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
 import { TemplateModel } from '@/app/models/templateModel';
+import UseTemplate from './UseTemplate';
 
 interface TemplateCardProps {
   template: TemplateModel;
@@ -19,7 +21,16 @@ const colors = [
 ];
 
 const TemplateCard: React.FC<TemplateCardProps> = ({ template, colorIndex }) => {
-  const cardBackground = colors[colorIndex % colors.length]; // מחזור צבעים
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const cardBackground = colors[colorIndex % colors.length];
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div
@@ -30,14 +41,33 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, colorIndex }) => 
       </h3>
       <div className="mb-6">
         <p className="text-white leading-relaxed">
-          {/* {template.description ? formatDescription(template.description) : "ללא תיאור זמין"} */}
         </p>
       </div>
       <button
         className="mx-auto max-w-xs bg-white text-blue-600 py-2 px-6 rounded-full shadow-md transition-all duration-300 ease-in-out hover:bg-gradient-to-r from-blue-400 to-purple-400 hover:text-white hover:shadow-lg"
+        onClick={handleOpenModal}
       >
         שימוש בתבנית
       </button>
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleCloseModal}
+              className="text-red-500 float-right font-bold"
+            >
+              ✖
+            </button>
+            <UseTemplate template={template} onClose={handleCloseModal} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

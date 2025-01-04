@@ -304,11 +304,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                         </p>
                         <div className="w-2/3 flex items-center">{renderPriorityStars(task.priority)}</div>
                     </div>
-
-
-
-
-
                     {/* <div className="mb-4">
                         <p className="text-lg text-gray-500">
                             <strong>משתמשים משותפים:</strong>
