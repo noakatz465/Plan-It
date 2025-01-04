@@ -99,7 +99,7 @@ const ProjectListItem: React.FC<ProjectItemListProps> = ({ project }) => {
               ✖
             </button>
             {selectedProject ? (
-              <ViewProject project={selectedProject} />
+              <ViewProject project={selectedProject} onClose={handleCloseModal} />
             ) : (
               <p>אין נתונים להצגה</p>
             )}
