@@ -44,19 +44,19 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
 
     const handleEditSave = async () => {
         try {
-          if (project._id) {
-            await updateProject(project._id, editedProject); // עדכון הפרויקט בשרת או ב-store
-            setEditMode(false); // יציאה ממצב עריכה
-            setMessage(`הפרויקט "${editedProject.name}" עודכן בהצלחה!`, "success"); // הודעת הצלחה
-          } else {
-            throw new Error("Project ID is missing.");
-          }
+            if (project._id) {
+                await updateProject(project._id, editedProject); // עדכון הפרויקט בשרת או ב-store
+                setEditMode(false); // יציאה ממצב עריכה
+                setMessage(`הפרויקט "${editedProject.name}" עודכן בהצלחה!`, "success"); // הודעת הצלחה
+            } else {
+                throw new Error("Project ID is missing.");
+            }
         } catch (error) {
-          console.error("Error updating project:", error);
-          setMessage("אירעה שגיאה בעת עדכון הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+            console.error("Error updating project:", error);
+            setMessage("אירעה שגיאה בעת עדכון הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
         }
-      };
-      
+    };
+
 
     const handleDeleteProject = async () => {
         if (!project) return;
@@ -121,35 +121,35 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                     })
                 );
 
-            // if (failedUsers.length) {
-            //     alert(`Failed to share with users: ${failedUsers.join(", ")}`);
-            // } else {
-            //     alert("Task shared successfully!");
-            //     if (user?.notificationsEnabled) {
-            //         // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
-            //         const newUserIds = updatedProject.members.filter(
-            //             (userId) => !project.members.includes(userId)
-            //         );
-            //         try {
-            //             await createNotificationsPerUsers(
-            //                 "TaskAssigned",
-            //                 project,
-            //                 newUserIds
-            //             );
+            if (failedUsers.length) {
+                alert(`Failed to share with users: ${failedUsers.join(", ")}`);
+            } else {
+                alert("Task shared successfully!");
+                // if (user?.notificationsEnabled) {
+                //     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+                //     const newUserIds = updatedProject.members.filter(
+                //         (userId) => !project.members.includes(userId)
+                //     );
+                //     try {
+                //         await createNotificationsPerUsers(
+                //             "TaskAssigned",
+                //             project,
+                //             newUserIds
+                //         );
 
-            //             console.log('Notifications sent successfully.');
-            // setMessage(`הפרויקט "${project.name}" שותף בהצלחה עם ${shareRecipient}!`, "success"); // הודעת הצלחה
+                //         console.log('Notifications sent successfully.');
+                //         setMessage(`הפרויקט "${project.name}" שותף בהצלחה עם ${shareRecipient}!`, "success"); // הודעת הצלחה
 
-            //         } catch (error) {
-            //             console.error('Failed to send notifications:', error);
-            // setMessage("אירעה שגיאה בעת שיתוף הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+                //     } catch (error) {
+                //         console.error('Failed to send notifications:', error);
+                //         setMessage("אירעה שגיאה בעת שיתוף הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
 
-            //         }
-            //     }
+                //     }
+                // }
 
-            //     setShareMode(false);
-            //     onClose()
-            // }
+                setShareMode(false);
+                onClose()
+            }
         } catch (error) {
             console.error("Error sharing task:", error);
             alert("Failed to share task.");
