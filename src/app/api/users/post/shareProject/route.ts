@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     try {
         await connect();
         const data = await req.json();
+        console.log("Received data:", data);
         const { projectId, targetUserId, sharedByUserId } = data;
 
         // שליפת המשתמש המשתף והמשתמש היעד
@@ -22,14 +23,36 @@ export async function POST(req: Request) {
                 { status: 404 }
             );
         }
+
+
+        // בדיקה אם המשתמש כבר נמצא במערך assignedUsers של הפרויקט
+        const isUserAlreadyAssigned = project.members.includes(targetUserId);
+
+        if (isUserAlreadyAssigned) {
+            return NextResponse.json({
+                message: "The user is already member in this project.",
+            });
+        }
         // בדיקה אם המשתמש היעד כבר מופיע במערך sharedWith
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
-        console.log(isAlreadyShared+" isAlreadyShared");
-        
+
         if (isAlreadyShared) {
-            // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
-            project.assignedUsers.push(targetUserId);
-            targetUser.tasks.push(projectId);
+            if (!Array.isArray(project.members)) {
+                project.members = [];
+            }
+
+            project.members.push(targetUserId);
+
+            if (!Array.isArray(targetUser.projects)) {
+                targetUser.projects = [];
+            }
+            console.log("targetUser.projects"+targetUser.projects);
+            
+
+            targetUser.projects.push(projectId);
+            console.log("targetUser.projects"+targetUser.projects);
+
+
             await project.save();
             await targetUser.save();
 

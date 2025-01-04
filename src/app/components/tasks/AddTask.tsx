@@ -48,7 +48,12 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   useEffect(() => {
     console.log(props.assignedUsers);
     if (props.assignedUsers) {
-      setTask((prev) => ({ ...prev, assignedUsers: props.assignedUsers ?? [] }));
+      setTask((prev) => ({
+        ...prev,
+        assignedUsers: Array.from(
+          new Set([...(prev.assignedUsers || []), ...(props.assignedUsers || [])])
+        ),
+      }));
     }
   }, [props.assignedUsers]);
 
