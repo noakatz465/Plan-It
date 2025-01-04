@@ -403,7 +403,7 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                             className="text-red-500 float-right font-bold">
                             ✖
                         </button>
-                        <AddTask projectId={project._id}
+                        <AddTask projectId={project._id} assignedUsers={project.members}
                             onClose={() => SetAddTaskModal(false)} />
                     </div>
                 </div>

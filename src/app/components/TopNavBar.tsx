@@ -80,7 +80,7 @@ function TopNavBar() {
         </button>
 
         {/* הגדרות */}
-        <Link href="/pages/main/settings">
+        <Link href="/pages/main/setting">
           <button
             className={getButtonClass("settings")}
             onClick={() => handleLinkClick("settings")}
