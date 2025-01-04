@@ -97,7 +97,6 @@ function UseTemplate(props: UseTemplateProps) {
             addTaskToStore({ ...updatedTask, _id: user?._id });
             setTask(initialTask);
 
-
         } catch (error) {
             console.log('Failed to add task. Please try again.');
             console.error(error);

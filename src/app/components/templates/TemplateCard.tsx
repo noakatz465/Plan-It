@@ -33,6 +33,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, colorIndex }) => 
   };
 
   return (
+    <>
     <div
       className={`${cardBackground} shadow-lg rounded-lg p-6 hover:scale-[1.03] hover:shadow-xl transition-transform duration-300 ease-in-out flex flex-col justify-center items-center text-center`}
     >
@@ -49,7 +50,9 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, colorIndex }) => 
       >
         שימוש בתבנית
       </button>
-      {isModalOpen && (
+
+    </div>
+    {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={handleCloseModal}
@@ -67,8 +70,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, colorIndex }) => 
             <UseTemplate template={template} onClose={handleCloseModal} />
           </div>
         </div>
-      )}
-    </div>
+      )}</>
   );
 };
 
