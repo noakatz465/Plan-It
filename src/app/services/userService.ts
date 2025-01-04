@@ -133,6 +133,7 @@ export const shareTask = async (data: {taskId: string;
       );
     }
   };
+  
   export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
     try {
       const response = await axios.get(`${API_USERS_URL}/get/getAllUsers`);

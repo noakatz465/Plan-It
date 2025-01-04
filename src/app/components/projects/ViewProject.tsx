@@ -12,12 +12,14 @@ import { useUserStore } from '@/app/stores/userStore';
 import TaskListItem from '../tasks/TaskListItem';
 import { UserModel } from '@/app/models/userModel';
 import AddTask from '../tasks/AddTask';
+import { getUserByEmail, shareProject } from '@/app/services/userService';
 
 interface ViewProjectProps {
     project: ProjectModel;
+    onClose: () => void;
 }
 
-function ViewProject({ project }: ViewProjectProps) {
+function ViewProject({ project, onClose }: ViewProjectProps) {
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -59,9 +61,82 @@ function ViewProject({ project }: ViewProjectProps) {
         }
     };
 
+    const handleShareClick = () => {
+        setShareMode(true);
+    };
+
     const handleUserSelect = (selectedOptions: MultiValue<{ value: string }>) => {
         const newUsers = selectedOptions.map((option) => option.value);
         setEditedProject((prev) => ({ ...prev, members: newUsers }));
+    };
+
+    const handleShareSubmit = async () => {
+        setLoading(true);
+        const failedUsers: string[] = [];
+        try {
+            const updatedProject = { ...project, manager: user?._id || '' };
+
+            // יצירת רשימת IDs לפי אימיילים
+            const userIds = await Promise.all(
+                editedProject.members.map(async (email) => {
+                    try {
+                        const user = await getUserByEmail(email);
+                        return user?.toString();
+                    } catch {
+                        throw new Error(`Failed to find user with email ${email}`);
+                    }
+                })
+            );
+
+            updatedProject.members = userIds.filter((id) => id !== undefined);
+            if (updatedProject.members)
+                await Promise.all(
+                    updatedProject.members.map(async (userId) => {
+                        if (editedProject._id)
+                            try {
+                                await shareProject({
+                                    projectId: editedProject._id,
+                                    targetUserId: userId,
+                                    sharedByUserId: user?._id || '',
+                                });
+                                console.log(`Project successfully shared with user ${userId}`);
+                            } catch (error) {
+                                console.error(`Failed to share project with user ${userId}:`, error);
+                            }
+                    })
+                );
+
+            // if (failedUsers.length) {
+            //     alert(`Failed to share with users: ${failedUsers.join(", ")}`);
+            // } else {
+            //     alert("Task shared successfully!");
+            //     if (user?.notificationsEnabled) {
+            //         // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+            //         const newUserIds = updatedProject.members.filter(
+            //             (userId) => !project.members.includes(userId)
+            //         );
+            //         try {
+            //             await createNotificationsPerUsers(
+            //                 "TaskAssigned",
+            //                 project,
+            //                 newUserIds
+            //             );
+
+            //             console.log('Notifications sent successfully.');
+            //         } catch (error) {
+            //             console.error('Failed to send notifications:', error);
+            //         }
+            //     }
+
+            //     setShareMode(false);
+            //     onClose()
+            // }
+        } catch (error) {
+            console.error("Error sharing task:", error);
+            alert("Failed to share task.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const userOptions = React.useMemo(() =>
@@ -101,13 +176,13 @@ function ViewProject({ project }: ViewProjectProps) {
         <div className="max-w-3xl mx-auto bg-white rounded p-4">
             {loading && <p>Loading...</p>}
             {!loading && !editMode && !shareMode && (
-                <>     
-                               <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{project.name}</h2>
-                <div className="mb-4 flex items-center justify-between">
-                    <p className="text-lg text-black ">
-                        <p >{project.description || 'ללא תיאור'}</p>
-                    </p>
-                </div>
+                <>
+                    <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{project.name}</h2>
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black ">
+                            <p >{project.description || 'ללא תיאור'}</p>
+                        </p>
+                    </div>
                     <div className="mb-4 flex items-center justify-between">
                         <p className="text-lg text-black font-medium w-1/3 text-right">
                             <strong>מנהל הפרויקט :</strong>
@@ -203,10 +278,10 @@ function ViewProject({ project }: ViewProjectProps) {
                         <strong>תאריך עדכון אחרון:</strong>{' '}
                         {project.lastModified ? new Date(project.lastModified).toLocaleDateString('he-IL') : 'לא עודכן'}
                     </p>
-                    
-   
+
+
                     <div className="flex justify-between items-center mr-8 ml-8 mt-8">
-                    <button
+                        <button
                             className="group p-2 bg-white rounded-full hover:bg-purple-500 focus:outline-none focus:ring focus:ring-purple-300"
                             title="הוספת משימה"
                             onClick={() => SetAddTaskModal(true)}
@@ -227,13 +302,13 @@ function ViewProject({ project }: ViewProjectProps) {
                         >
                             <PencilSquareIcon className="w-7 h-7 text-blue-500 group-hover:text-white" />
                         </button>
-                        <button
+                        {project.managerID == user?._id && <button
                             className="group p-2 bg-white rounded-full hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
                             title="שיתוף"
-                            onClick={() => setShareMode(true)}
+                            onClick={handleShareClick}
                         >
                             <ShareIcon className="w-7 h-7 text-green-500 group-hover:text-white" />
-                        </button>
+                        </button>}
                     </div>
                 </>
             )}
@@ -288,6 +363,12 @@ function ViewProject({ project }: ViewProjectProps) {
                         }}
                     />
                     <button
+                        onClick={handleShareSubmit}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                    >
+                        שתף
+                    </button>
+                    <button
                         onClick={() => setShareMode(false)}
                         className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300 mt-2"
                     >
@@ -295,19 +376,19 @@ function ViewProject({ project }: ViewProjectProps) {
                     </button>
                 </div>
             )}
-                {addTaskModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
-            <button
-              onClick={(e) => {e.stopPropagation();SetAddTaskModal(false)}}
-              className="text-red-500 float-right font-bold">
-              ✖
-            </button>
-            <AddTask projectId={project._id}
-              onClose={() => SetAddTaskModal(false)}/>
-          </div>
-        </div>
-      )}
+            {addTaskModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+                        <button
+                            onClick={(e) => { e.stopPropagation(); SetAddTaskModal(false) }}
+                            className="text-red-500 float-right font-bold">
+                            ✖
+                        </button>
+                        <AddTask projectId={project._id}
+                            onClose={() => SetAddTaskModal(false)} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
