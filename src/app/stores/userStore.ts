@@ -69,6 +69,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         filteredTasks: userDetails?.tasks || [],
       });
       await get().fetchUsers();
+      
       console.log("User, tasks, and projects updated in store:", userDetails);
     } catch (error) {
       console.error("Error fetching user details:", error);
