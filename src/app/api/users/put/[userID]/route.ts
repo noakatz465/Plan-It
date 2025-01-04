@@ -7,7 +7,8 @@ export async function PUT(req: Request) {
         await connect();
         const data = await req.json();
         const  userId  = req.url.split('/').pop();
-
+        console.log(data.notificationsEnabled);
+        
         const user = await User.findById(userId);
         if (!user) {
             return NextResponse.json(
@@ -20,9 +21,11 @@ export async function PUT(req: Request) {
         if (data.email) user.email = data.email;
         if (data.gender) user.gender = data.gender;
         if (data.birthDate) user.birthDate = data.birthDate;
-        if (data.profileImage) user.profileImage = data.profileImage;
+        if (data.profileImage) user.profileImage = data.profileImage;           
+        user.notificationsEnabled = data.notificationsEnabled;
 
         await user.save();
+
         return NextResponse.json({
             message: "User updated successfully",
             user,
