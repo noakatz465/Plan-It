@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Image from 'next/image';
-import { TrashIcon, PencilSquareIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PencilSquareIcon, ShareIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { MultiValue } from 'react-select';
 import { ProjectModel } from '@/app/models/projectModel';
 import { TaskModel } from '@/app/models/taskModel';
@@ -11,6 +11,7 @@ import { deleteProject, updateProject } from '@/app/services/projectService';
 import { useUserStore } from '@/app/stores/userStore';
 import TaskListItem from '../tasks/TaskListItem';
 import { UserModel } from '@/app/models/userModel';
+import AddTask from '../tasks/AddTask';
 
 interface ViewProjectProps {
     project: ProjectModel;
@@ -22,6 +23,9 @@ function ViewProject({ project }: ViewProjectProps) {
     const [loading, setLoading] = useState(false);
     const [editedProject, setEditedProject] = useState<ProjectModel>({ ...project });
     const user = useUserStore((state) => state.user);
+    const users = useUserStore((state) => state.users);
+    const manager = users.find((user) => user._id === project.managerID); // מציאת היוצר לפי ID
+    const [addTaskModal, SetAddTaskModal] = useState(false);
 
     // משימות הקשורות לפרויקט הנוכחי
     const tasks = project.LinkedTasks || [];
@@ -94,20 +98,93 @@ function ViewProject({ project }: ViewProjectProps) {
         })), [user?.sharedWith]);
 
     return (
-        <div className="max-w-2xl mx-auto bg-white rounded p-4">
+        <div className="max-w-3xl mx-auto bg-white rounded p-4">
             {loading && <p>Loading...</p>}
             {!loading && !editMode && !shareMode && (
-                <>
-                    <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{project.name}</h2>
-                    <p className="text-lg text-black mb-4">{project.description || 'ללא תיאור'}</p>
-                    <p className="text-sm text-gray-500 mb-4">
-                        <strong>תאריך עדכון אחרון:</strong>{' '}
-                        {project.lastModified ? new Date(project.lastModified).toLocaleDateString('he-IL') : 'לא עודכן'}
+                <>     
+                               <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{project.name}</h2>
+                <div className="mb-4 flex items-center justify-between">
+                    <p className="text-lg text-black ">
+                        <p >{project.description || 'ללא תיאור'}</p>
                     </p>
+                </div>
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
+                            <strong>מנהל הפרויקט :</strong>
+                        </p>
+                        <div className="w-2/3 flex items-center">
+                            {manager && manager._id !== user?._id ? (
+                                <div className="flex items-center gap-2">
+                                    <Image
+                                        src={manager.profileImage || "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"}
+                                        alt="Profile"
+                                        width={30}
+                                        height={30}
+                                        className="rounded-full"
+                                        style={{
+                                            objectFit: "cover",
+                                            width: "30px",
+                                            height: "30px",
+                                            borderRadius: "50%",
+                                        }}
+                                        unoptimized
+                                    />
+                                    <span>
+                                        {`${manager.firstName} ${manager.lastName}`}
+                                    </span>
+                                </div>
+                            ) : (
+                                <p > אני</p>
+                            )}
+                        </div>
+
+                    </div>
+                    <div className="mb-4">
+                        <p className="text-lg text-black-500">
+                            <strong>משתמשים משותפים:</strong>
+                        </p>
+                        {project.members.length > 0 ? (
+                            <ul className="flex flex-wrap gap-4 mt-2">
+                                {project.members
+                                    .map((userId, index) => {
+                                        const sharedUser = users.find((u) => u._id === userId); // חיפוש המשתמש במערך users
+                                        return (
+                                            <li key={index} className="flex items-center gap-2">
+                                                {sharedUser?.profileImage ? (
+                                                    <Image
+                                                        src={sharedUser.profileImage}
+                                                        alt={`${sharedUser.firstName} ${sharedUser.lastName}`}
+                                                        width={32}
+                                                        height={32}
+                                                        className="rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <Image
+                                                        src="/default-profile.png"
+                                                        alt="Anonymous Profile"
+                                                        width={32}
+                                                        height={32}
+                                                        className="rounded-full object-cover"
+                                                    />
+                                                )}
+                                                <span className="text-gray-500 text-sm">
+                                                    {sharedUser
+                                                        ? `${sharedUser.firstName} ${sharedUser.lastName}`
+                                                        : `משתמש לא מזוהה (${userId})`}
+                                                </span>
+                                            </li>
+                                        );
+                                    })}
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-gray-500 mt-2">אין משתמשים משותפים.</p>
+                        )}
+                    </div>
+
 
                     {/* משימות הקשורות לפרויקט */}
                     <div className="mt-8">
-                        <h3 className="text-lg font-bold text-[#3D3BF3] mb-4">משימות בפרויקט</h3>
+                        <h3 className="text-lg font-bold  mb-4">משימות בפרויקט:</h3>
                         {tasks.length > 0 ? (
                             <ul>
                                 {tasks.map((task: TaskModel) => (
@@ -122,8 +199,20 @@ function ViewProject({ project }: ViewProjectProps) {
                             </p>
                         )}
                     </div>
-
+                    <p className="text-sm  mb-4">
+                        <strong>תאריך עדכון אחרון:</strong>{' '}
+                        {project.lastModified ? new Date(project.lastModified).toLocaleDateString('he-IL') : 'לא עודכן'}
+                    </p>
+                    
+   
                     <div className="flex justify-between items-center mr-8 ml-8 mt-8">
+                    <button
+                            className="group p-2 bg-white rounded-full hover:bg-purple-500 focus:outline-none focus:ring focus:ring-purple-300"
+                            title="הוספת משימה"
+                            onClick={() => SetAddTaskModal(true)}
+                        >
+                            <PlusIcon className="w-7 h-7 text-purple-500 group-hover:text-white" />
+                        </button>
                         <button
                             className="group p-2 bg-white rounded-full hover:bg-red-500 focus:outline-none focus:ring focus:ring-red-300"
                             title="מחיקה"
@@ -206,6 +295,19 @@ function ViewProject({ project }: ViewProjectProps) {
                     </button>
                 </div>
             )}
+                {addTaskModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">
+            <button
+              onClick={(e) => {e.stopPropagation();SetAddTaskModal(false)}}
+              className="text-red-500 float-right font-bold">
+              ✖
+            </button>
+            <AddTask projectId={project._id}
+              onClose={() => SetAddTaskModal(false)}/>
+          </div>
+        </div>
+      )}
         </div>
     );
 }

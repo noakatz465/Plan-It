@@ -5,7 +5,7 @@ import ViewTask from "./ViewTask";
 interface TaskItemListProps {
   task: TaskModel;
 }
-
+ 
 const TaskListItem: React.FC<TaskItemListProps> = ({ task }) => {
   const [selectedTask, setSelectedTask] = useState<TaskModel | null>(null);
   const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false);

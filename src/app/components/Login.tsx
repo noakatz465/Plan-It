@@ -44,14 +44,14 @@ function Login() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
-            placeholder="Email"
+            placeholder="אימייל"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="סיסמא"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

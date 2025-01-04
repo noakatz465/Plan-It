@@ -319,7 +319,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                         <p className="text-lg text-black-500">
                             <strong>משתמשים משותפים:</strong>
                         </p>
-                        {task.assignedUsers.length > 0 ? (
+                        {task.assignedUsers?.length> 0 ? (
                             <ul className="flex flex-wrap gap-4 mt-2">
                                 {task.assignedUsers
                                     .map((userId, index) => {
@@ -356,7 +356,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                             <p className="text-sm text-gray-500 mt-2">אין משתמשים משותפים.</p>
                         )}
                     </div>
-
                     <div className="mb-4">
                         <p className="text-lg text-black-500">
                             <strong>פרויקט:</strong>{' '}
@@ -401,10 +400,8 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                             <ShareIcon className="w-7 h-7 text-green-500 group-hover:text-white" />
                         </button>}
                     </div>
-
                 </>
             )}
-
             {editMode && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded shadow-lg max-h-[90vh] overflow-y-auto modal-content w-full max-w-md">

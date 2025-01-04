@@ -7,7 +7,16 @@ export async function GET(req: Request) {
         await connect();
 
         const  userId  = req.url.split('/').pop();
-        const user = await User.findById(userId).populate('tasks').populate('projects').populate({
+        const user = await User.findById(userId)
+        .populate('tasks')
+        .populate({
+          path: 'projects',
+          populate: {
+            path: 'LinkedTasks', // שם השדה שבו מוגדרות המשימות בפרויקט
+            model: 'Task', // שם המודל של המשימות
+          },
+        })
+        .populate({
           path: 'sharedWith',
           select: 'firstName lastName email profileImage',
       });;

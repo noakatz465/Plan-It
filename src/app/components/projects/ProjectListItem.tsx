@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ViewProject from "./ViewProject";
 import { ProjectModel } from "@/app/models/projectModel";
+import { useUserStore } from "@/app/stores/userStore";
 
 interface ProjectItemListProps {
   project: ProjectModel;
@@ -9,7 +10,8 @@ interface ProjectItemListProps {
 const ProjectListItem: React.FC<ProjectItemListProps> = ({ project }) => {
   const [selectedProject, setSelectedProject] = useState<ProjectModel | null>(null);
   const [isViewProjectModalOpen, setIsViewProjectModalOpen] = useState(false);
-
+  const users = useUserStore((state) => state.users);
+  const manager = users.find((user) => user._id === project.managerID); // מציאת היוצר לפי ID
   const handleOpenViewProjectModal = (project: ProjectModel) => {
     setSelectedProject(project);
     setIsViewProjectModalOpen(true);
@@ -41,7 +43,9 @@ const ProjectListItem: React.FC<ProjectItemListProps> = ({ project }) => {
 
         {/* מנהל הפרויקט */}
         <div className="flex-1 text-center pr-4">
-          <span className="text-gray-800">מנהל: {project.managerID}</span>
+          <span className="text-gray-800">
+            מנהל: {manager ? `${manager.firstName} ${manager.lastName}` : "לא הוגדר מנהל"}
+          </span>
         </div>
 
         {/* חברים בפרויקט */}

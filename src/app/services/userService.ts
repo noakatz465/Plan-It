@@ -7,6 +7,8 @@ const API_USERS_URL = '/api/users';
 export const getUserByID = async (userId: string) => {
     try {
         const response = await axios.get(`${API_USERS_URL}/get/getUserByID/${userId}`);
+        console.log(response.data.projects);
+        
         if (response.status === 200) {
             const data = response.data.user;
             const fetchedUser = new UserModel(data.firstName, data.lastName, data.email, data.password, new Date(data.joinDate),
