@@ -5,6 +5,7 @@ import TopNavBar from "@/app/components/TopNavBar";
 import SideNavBar from "@/app/components/SideNavBar";
 import UserLoader from "@/app/components/UserLoader";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import GlobalMessage from "@/app/components/GlobalMessage";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true); // סטייט לטעינה
@@ -24,10 +25,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <>
                     {/* נבבר עליון */}
                     <TopNavBar />
+                    <GlobalMessage /> {/* הודעה גלובלית בראש האתר */}
 
                     <div className="flex flex-1">
                         {/* נבבר צדדי */}
                         <SideNavBar />
+
 
                         {/* תוכן ראשי */}
                         <main

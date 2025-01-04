@@ -8,6 +8,7 @@ import Image from "next/image";
 import { getUserByEmail } from '@/app/services/userService';
 import { MultiValue } from 'react-select';
 import { UserModel } from '@/app/models/userModel';
+import { useMessageStore } from '@/app/stores/messageStore';
 
 function AddProject() {
     const [newProject, setNewProject] = useState<ProjectModel>({
@@ -23,6 +24,7 @@ function AddProject() {
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState('');
     const userFromStore = useUserStore((state) => state.user);
+    const setMessage = useMessageStore((state) => state.setMessage);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,6 +59,8 @@ function AddProject() {
                 members: newProject.members,
             });
             setSuccessMessage(`הפרויקט "${newProject.name}" נוסף בהצלחה!`);
+            setMessage("הפרויקט נוסף בהצלחה!", "success"); // הודעת הצלחה
+
             setNewProject({
                 name: '',
                 managerID: '',
@@ -67,6 +71,8 @@ function AddProject() {
             });
         } catch {
             setError('Failed to create project. Please try again.' );
+            setMessage("אירעה שגיאה בעת הוספת הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+
         } finally {
             setLoading(false);
         }

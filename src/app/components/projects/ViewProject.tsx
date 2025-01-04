@@ -13,6 +13,7 @@ import TaskListItem from '../tasks/TaskListItem';
 import { UserModel } from '@/app/models/userModel';
 import AddTask from '../tasks/AddTask';
 import { getUserByEmail, shareProject } from '@/app/services/userService';
+import { useMessageStore } from '@/app/stores/messageStore';
 
 interface ViewProjectProps {
     project: ProjectModel;
@@ -28,6 +29,7 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
     const users = useUserStore((state) => state.users);
     const manager = users.find((user) => user._id === project.managerID); // מציאת היוצר לפי ID
     const [addTaskModal, SetAddTaskModal] = useState(false);
+    const setMessage = useMessageStore((state) => state.setMessage);
 
     // משימות הקשורות לפרויקט הנוכחי
     const tasks = project.LinkedTasks || [];
@@ -41,11 +43,20 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
     };
 
     const handleEditSave = async () => {
-        if (project._id) {
-            await updateProject(project._id, editedProject);
-            setEditMode(false);
+        try {
+          if (project._id) {
+            await updateProject(project._id, editedProject); // עדכון הפרויקט בשרת או ב-store
+            setEditMode(false); // יציאה ממצב עריכה
+            setMessage(`הפרויקט "${editedProject.name}" עודכן בהצלחה!`, "success"); // הודעת הצלחה
+          } else {
+            throw new Error("Project ID is missing.");
+          }
+        } catch (error) {
+          console.error("Error updating project:", error);
+          setMessage("אירעה שגיאה בעת עדכון הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
         }
-    };
+      };
+      
 
     const handleDeleteProject = async () => {
         if (!project) return;
@@ -53,8 +64,12 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
         try {
             if (project._id) await deleteProject(project._id);
             alert('Project deleted successfully.');
+            setMessage(`הפרויקט "${project.name}" נמחק בהצלחה!`, "success"); // הודעת הצלחה
+
         } catch (error) {
             console.error('Error deleting project:', error);
+            setMessage("אירעה שגיאה בעת מחיקת הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+
             alert('Failed to delete project.');
         } finally {
             setLoading(false);
@@ -123,8 +138,12 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
             //             );
 
             //             console.log('Notifications sent successfully.');
+            // setMessage(`הפרויקט "${project.name}" שותף בהצלחה עם ${shareRecipient}!`, "success"); // הודעת הצלחה
+
             //         } catch (error) {
             //             console.error('Failed to send notifications:', error);
+            // setMessage("אירעה שגיאה בעת שיתוף הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+
             //         }
             //     }
 

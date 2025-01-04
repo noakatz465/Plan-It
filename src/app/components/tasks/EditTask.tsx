@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { TaskModel } from "@/app/models/taskModel";
 import { useUserStore } from "@/app/stores/userStore";
+import { useMessageStore } from "@/app/stores/messageStore";
 
 interface EditTaskProps {
   task: TaskModel;
@@ -14,6 +15,7 @@ const EditTask: React.FC<EditTaskProps> = ({ task, onSave, onCancel }) => {
   const [editedTask, setEditedTask] = useState<TaskModel>({ ...task });
   const [loading, setLoading] = useState(false);
   const updateTaskInStore = useUserStore((state) => state.updateTaskInStore); // שימוש בפונקציה מהחנות
+  const setMessage = useMessageStore((state) => state.setMessage);
 
   const frequencyOptions = [
     { value: "Once", label: "חד פעמי" },
@@ -61,10 +63,12 @@ const EditTask: React.FC<EditTaskProps> = ({ task, onSave, onCancel }) => {
       if (task._id) {
         await updateTaskInStore(task._id, editedTask); // קריאה לפונקציה מהחנות
         onSave(editedTask); // קריאה לפונקציית onSave כדי לסגור את חלון העריכה או לעדכן את הקומפוננטה
+        setMessage("המשימה נשמרה בהצלחה!", "success");
+
       }
     } catch (error) {
       console.error("Error updating task:", error);
-      alert("Failed to update task.");
+      setMessage("אירעה שגיאה בעדכון המשימה. נסו שוב מאוחר יותר.", "error");
     } finally {
       setLoading(false);
     }

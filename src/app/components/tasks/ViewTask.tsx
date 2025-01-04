@@ -12,6 +12,7 @@ import { TrashIcon, PencilSquareIcon, ShareIcon } from '@heroicons/react/24/outl
 import EditTask from './EditTask';
 import { useNotificationsStore } from '@/app/stores/notificationsStore';
 import { UserModel } from '@/app/models/userModel';
+import { useMessageStore } from '@/app/stores/messageStore';
 
 interface ViewTaskProps {
     task: TaskModel;
@@ -20,6 +21,8 @@ interface ViewTaskProps {
 function ViewTask({ task, onClose }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);
+    const setMessage = useMessageStore((state) => state.setMessage);
+
     const [editedTask, setEditedTask] = useState<TaskModel>({
         ...task,
         assignedUsers: task.assignedUsers,
@@ -88,6 +91,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
         try {
             if (user?._id === task.creator) {
                 if (task._id) await deleteTaskAndRefreshUser(task._id);
+                setMessage("המשימה נמחקה בהצלחה!", "success"); // הודעת הצלחה
                 onClose(); // סגירת מודל תצוגת המשימה
 
             } else {
@@ -98,6 +102,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
             }
         } catch (error) {
             console.error('Error deleting task:', error);
+            setMessage("אירעה שגיאה בעת מחיקת המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
             alert('Failed to delete task.');
         } finally {
             setLoading(false);
@@ -155,8 +160,11 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
 
             if (failedUsers.length) {
                 alert(`Failed to share with users: ${failedUsers.join(", ")}`);
+                setMessage("אירעה שגיאה בעת שיתוף המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+
             } else {
                 alert("Task shared successfully!");
+                setMessage("המשימה שותפה בהצלחה!", "success"); // הודעת הצלחה
                 if (user?.notificationsEnabled) {
                     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
                     const newUserIds = updatedTask.assignedUsers.filter(

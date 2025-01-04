@@ -10,6 +10,7 @@ import { getUserByEmail, shareTask } from '@/app/services/userService';
 import { useNotificationsStore } from "@/app/stores/notificationsStore";
 import { UserModel } from '@/app/models/userModel';
 import { ProjectModel } from '@/app/models/projectModel';
+import { useMessageStore } from '@/app/stores/messageStore';
 
 interface TaskDetails {
   dueDate?: Date;
@@ -32,6 +33,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   const addTaskToStore = useUserStore((state) => state.addTaskToStore);
   const projects = useUserStore((state) => state.projects);
   const { createNotificationsPerUsers } = useNotificationsStore();
+  const setMessage = useMessageStore((state) => state.setMessage);
 
   useEffect(() => {
     if (props.dueDate) {
@@ -113,6 +115,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
       // שלב הוספת המשימה
       const newTaskResponse = await addTask(updatedTask);
+      setMessage("המשימה נוספה בהצלחה!", "success"); // הודעת הצלחה
 
       if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
         // קוד לביצוע במקרה שיש משתמשים משוייכים
@@ -127,10 +130,13 @@ const AddTask: React.FC<TaskDetails> = (props) => {
                 targetUserId: userId,
                 sharedByUserId: userFromStore?._id || '',
               });
+
               console.log(`Task successfully shared with user ${userId}`);
               return true;
             } catch (error) {
               console.error(`Failed to share task with user ${userId}:`, error);
+              setMessage("אירעה שגיאה בהוספת המשימה. נסו שוב מאוחר יותר.", "error");
+
               return false;
             }
           })
