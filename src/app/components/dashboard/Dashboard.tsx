@@ -4,21 +4,10 @@ import ClosestTasks from "./ClosestTasks";
 import TasksStatusBarChart from "./TasksStatusBarChart";
 import TasksStatusPieChart from "./TasksStatusPieChart";
 import { useUserStore } from "@/app/stores/userStore";
+import StatisticsSummary from "./StatisticsSummary";
 
 function Dashboard() {
-  const tasks = useUserStore((state) => state.getTasks());
   const user = useUserStore((state) => state.user); // שליפת המשתמש מהחנות
-
-  // חישוב נתונים מספריים
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((task) => task.status === "Completed").length;
-  const pendingTasks = tasks.filter((task) => task.status === "Pending").length;
-  const inProgressTasks = tasks.filter((task) => task.status === "In Progress").length;
-
-  // חישוב אחוזי השלמה
-  const completionRate = totalTasks
-    ? ((completedTasks / totalTasks) * 100).toFixed(1)
-    : 0;
 
   // בדיקה אם היום הוא יום חמישי
   const today = new Date();
@@ -27,7 +16,7 @@ function Dashboard() {
   // בדיקה אם היום יום ההולדת של המשתמש
   const isBirthday = user?.birthDate
     ? new Date(user.birthDate).getDate() === today.getDate() &&
-      new Date(user.birthDate).getMonth() === today.getMonth()
+    new Date(user.birthDate).getMonth() === today.getMonth()
     : false;
 
   // מצבים להצגת מודאלים
@@ -60,14 +49,7 @@ function Dashboard() {
 
       {/* חלק תחתון ימני */}
       <div className="bg-white rounded-lg shadow-md p-4">
-        <h2 className="text-center font-bold text-gray-700">נתוני משימות ופרויקטים</h2>
-        <ul className="mt-4 text-gray-600 text-lg">
-          <li>סך הכל משימות: <span className="font-bold">{totalTasks}</span></li>
-          <li>משימות שהושלמו: <span className="font-bold">{completedTasks}</span></li>
-          <li>משימות בתהליך: <span className="font-bold">{inProgressTasks}</span></li>
-          <li>משימות ממתינות: <span className="font-bold">{pendingTasks}</span></li>
-          <li>אחוזי השלמה: <span className="font-bold">{completionRate}%</span></li>
-        </ul>
+        <StatisticsSummary />
       </div>
 
       {/* מודאל ליום חמישי */}

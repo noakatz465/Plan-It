@@ -17,7 +17,7 @@ interface ViewTaskProps {
     task: TaskModel;
     onClose: () => void; // פונקציה לסגירת מודל תצוגת המשימה
 }
-function ViewTask({ task ,onClose }: ViewTaskProps) {
+function ViewTask({ task, onClose }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
     const [shareMode, setShareMode] = useState(false);
     const [editedTask, setEditedTask] = useState<TaskModel>({
@@ -29,7 +29,8 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
     const projects = useUserStore((state) => state.projects);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
     const removeTaskForUsers = useUserStore((state) => state.removeTaskForUsers);
-
+    const users = useUserStore((state) => state.users);
+    const creator = users.find((user) => user._id === task.creator); // מציאת היוצר לפי ID
     const { createNotificationsPerUsers } = useNotificationsStore();
     const translateFrequency = (frequency: string) => {
         switch (frequency) {
@@ -59,7 +60,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                 return 0;
         }
     };
-
     const getProgressColor = (status: string) => {
         switch (status) {
             case "Completed":
@@ -74,21 +74,14 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
     };
     const handleEditClick = () => {
         setEditMode(true);
-        // onClose(); // סגירת מודל תצוגת המשימה
-
     };
-
     const handleEditCancel = () => {
         setEditMode(false);
-        // onClose(); // סגירת מודל תצוגת המשימה
-
     };
-
     const handleEditSave = () => {
         setEditMode(false);
         onClose(); // סגירת מודל תצוגת המשימה
     };
-
     const handleDeleteTask = async () => {
         if (!task) return;
         setLoading(true);
@@ -110,12 +103,9 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
             setLoading(false);
         }
     };
-
     const handleShareClick = () => {
         setShareMode(true);
-
     };
-
     const handleUserSelect = (selectedOptions: MultiValue<UserOption>) => {
         const newUsers = selectedOptions.map((option) => ({
             value: option.value,
@@ -127,7 +117,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
             assignedUsers: newUsers.map((user: { value: string; }) => user.value),
         }));
     };
-
     const handleShareSubmit = async () => {
         setLoading(true);
         const failedUsers: string[] = [];
@@ -185,7 +174,7 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                         console.error('Failed to send notifications:', error);
                     }
                 }
-                
+
                 setShareMode(false);
                 onClose()
             }
@@ -196,7 +185,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
             setLoading(false);
         }
     };
-
     const userOptions = React.useMemo(() =>
         user?.sharedWith.map((user: UserModel) => ({
             value: user.email,
@@ -229,8 +217,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                 </div>
             ),
         })), [user?.sharedWith]);
-
-
     const renderPriorityStars = (priority: string) => {
         const stars =
             priority === 'High' ? 3 : priority === 'Medium' ? 2 : priority === 'Low' ? 1 : 0;
@@ -251,7 +237,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
             </div>
         );
     };
-
     return (
         <div className="max-w-2xl mx-auto bg-white rounded">
             {loading && <p>Loading...</p>}
@@ -259,14 +244,11 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                 <>
                     <h2 className="text-xl font-bold text-[#3D3BF3] mb-4">{task.title}</h2>
                     <div className="mb-4 flex items-center justify-between">
-
                         <p className="text-lg text-black ">
                             <p >{task.description || 'ללא תיאור'}</p>
                         </p>
                     </div>
                     <div className="mb-4 flex items-center justify-between">
-
-
                     </div>
                     <div className="mb-4 flex items-center justify-between">
                         <p className="text-lg text-black font-medium w-1/3 text-right">
@@ -288,7 +270,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                             ></div>
                         </div>
                     </div>
-
                     <div className="mb-4 flex items-center justify-between">
                         <p className="text-lg text-black font-medium w-1/3 text-right">
                             <strong>תדירות:</strong>
@@ -297,23 +278,52 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                             {translateFrequency(task.frequency)}
                         </p>
                     </div>
-
                     <div className="mb-4 flex items-center justify-between">
                         <p className="text-lg text-black font-medium w-1/3 text-right">
                             <strong>עדיפות:</strong>
                         </p>
                         <div className="w-2/3 flex items-center">{renderPriorityStars(task.priority)}</div>
                     </div>
-                    {/* <div className="mb-4">
-                        <p className="text-lg text-gray-500">
+                    <div className="mb-4 flex items-center justify-between">
+                        <p className="text-lg text-black font-medium w-1/3 text-right">
+                            <strong>יוצר המשימה:</strong>
+                        </p>
+                        <div className="w-2/3 flex items-center">
+                            {creator && creator._id !== user?._id ? (
+                                <div className="flex items-center gap-2">
+                                    <Image
+                                        src={creator.profileImage || "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png"}
+                                        alt="Profile"
+                                        width={30}
+                                        height={30}
+                                        className="rounded-full"
+                                        style={{
+                                            objectFit: "cover",
+                                            width: "30px",
+                                            height: "30px",
+                                            borderRadius: "50%",
+                                        }}
+                                        unoptimized
+                                    />
+                                    <span>
+                                        {`${creator.firstName} ${creator.lastName}`}
+                                    </span>
+                                </div>
+                            ) : (
+                                <p > אני</p>
+                            )}
+                        </div>
+
+                    </div>
+                    <div className="mb-4">
+                        <p className="text-lg text-black-500">
                             <strong>משתמשים משותפים:</strong>
                         </p>
-                        {task.assignedUsers.filter((userId) => userId !== user?._id).length > 0 ? (
+                        {task.assignedUsers.length > 0 ? (
                             <ul className="flex flex-wrap gap-4 mt-2">
                                 {task.assignedUsers
-                                    .filter((userId) => userId !== user?._id)
                                     .map((userId, index) => {
-                                        const sharedUser = user?.sharedWith.find((u) => u._id === userId);
+                                        const sharedUser = users.find((u) => u._id === userId); // חיפוש המשתמש במערך users
                                         return (
                                             <li key={index} className="flex items-center gap-2">
                                                 {sharedUser?.profileImage ? (
@@ -322,7 +332,7 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                                                         alt={`${sharedUser.firstName} ${sharedUser.lastName}`}
                                                         width={32}
                                                         height={32}
-                                                        className="rounded-full"
+                                                        className="rounded-full object-cover"
                                                     />
                                                 ) : (
                                                     <Image
@@ -330,7 +340,7 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                                                         alt="Anonymous Profile"
                                                         width={32}
                                                         height={32}
-                                                        className="rounded-full"
+                                                        className="rounded-full object-cover"
                                                     />
                                                 )}
                                                 <span className="text-gray-500 text-sm">
@@ -345,17 +355,16 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                         ) : (
                             <p className="text-sm text-gray-500 mt-2">אין משתמשים משותפים.</p>
                         )}
-                    </div> */}
+                    </div>
 
                     <div className="mb-4">
-                        <p className="text-lg text-gray-500">
+                        <p className="text-lg text-black-500">
                             <strong>פרויקט:</strong>{' '}
                             {task.projectId ? (
                                 projects?.find((project) => project._id === task.projectId) ? (
                                     <a
                                         href={`/projects/${task.projectId}`}
-                                        className="text-blue-500 underline"
-                                    >
+                                        className="text-blue-500 underline">
                                         {
                                             projects.find((project) => project._id === task.projectId)
                                                 ?.name
@@ -369,8 +378,6 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
                             )}
                         </p>
                     </div>
-
-
                     <div className="flex justify-between items-center mr-8 ml-8 mt-8">
                         <button
                             className="group p-2 bg-white rounded-full hover:bg-red-500 focus:outline-none focus:ring focus:ring-red-300"
@@ -449,5 +456,4 @@ function ViewTask({ task ,onClose }: ViewTaskProps) {
         </div>
     );
 }
-
 export default ViewTask;
