@@ -319,7 +319,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                         <p className="text-lg text-black-500">
                             <strong>משתמשים משותפים:</strong>
                         </p>
-                        {task.assignedUsers?.length> 0 ? (
+                        {task.assignedUsers?.length > 0 ? (
                             <ul className="flex flex-wrap gap-4 mt-2">
                                 {task.assignedUsers
                                     .map((userId, index) => {
@@ -360,23 +360,20 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                         <p className="text-lg text-black-500">
                             <strong>פרויקט:</strong>{' '}
                             {task.projectId ? (
-                                projects?.find((project) => project._id === task.projectId) ? (
-                                    <a
-                                        href={`/projects/${task.projectId}`}
-                                        className="text-blue-500 underline">
-                                        {
-                                            projects.find((project) => project._id === task.projectId)
-                                                ?.name
-                                        }
-                                    </a>
-                                ) : (
-                                    'פרויקט לא נמצא'
-                                )
+                                (() => {
+                                    const project = projects?.find((project) => project._id === task.projectId); // חיפוש הפרויקט פעם אחת בלבד
+                                    return project ? (
+                                        <span>{project.name || 'פרויקט ללא שם'}</span> // הצגת שם הפרויקט אם קיים
+                                    ) : (
+                                        'פרויקט לא נמצא'
+                                    );
+                                })()
                             ) : (
                                 'אין פרויקט משויך'
                             )}
                         </p>
                     </div>
+
                     <div className="flex justify-between items-center mr-8 ml-8 mt-8">
                         <button
                             className="group p-2 bg-white rounded-full hover:bg-red-500 focus:outline-none focus:ring focus:ring-red-300"
