@@ -1,9 +1,9 @@
 "use client";
+import { loginUser } from "@/app/services/authService";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { loginUser } from "../services/authService"; // נניח שזה המסלול שבו מוגדרת הפונקציה
 
 function Login() {
   const [email, setEmail] = useState("");

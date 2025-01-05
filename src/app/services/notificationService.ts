@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TaskModel } from "@/app/models/taskModel";
 import { NotificationModel } from "../models/notificationModel";
+import { ProjectModel } from "../models/projectModel";
 
 export async function createNotificationsPerUsers(
   notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue",
@@ -33,7 +34,38 @@ export async function createNotificationsPerUsers(
   }
 }
 
+export async function createProjectNotificationsPerUsers(
+  notificationType: "ProjectAssigned",
+  project: ProjectModel,
+  userIds: string[]
+) {
+  try {
+    // בדיקה אם כל הנתונים הדרושים נמסרו
+    if (!notificationType || !project || !userIds || !userIds.length) {
+      throw new Error(
+        "Missing required data: notificationType, task, or userIds"
+      );
+    }
 
+    // הכנת הנתונים לבקשה
+    const data = {
+      notificationType,
+      project,
+      userIds,
+    };
+    console.log("Data being sent to API:", { notificationType, project, userIds });
+
+
+    // שליחת בקשת POST לשרת
+    const response = await axios.post("/api/notifications/post/notificationPerUsers", data);
+
+    // החזרת התגובה מהשרת
+    return response.data;
+  } catch (error) {
+    console.error("Error creating notifications:", error);
+    throw new Error("Failed to create notifications");
+  }
+}
 // פונקציה לקבלת התראות לפי מזהה משתמש
 export async function fetchNotificationsByUserId(userId: string): Promise<NotificationModel[]> {
   try {

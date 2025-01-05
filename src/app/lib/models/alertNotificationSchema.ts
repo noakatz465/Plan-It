@@ -13,7 +13,7 @@ const AlertNotificationSchema: Schema = new Schema({
     notificationType: { 
         type: String, 
         required: true, 
-        enum: ['TaskAssigned', 'TaskDueSoon', 'TaskOverdue'] 
+        enum: ['TaskAssigned', 'TaskDueSoon', 'TaskOverdue','ProjectAssigned'] 
     },
     // טקסט ההתראה
     notificationText: { 

@@ -1,7 +1,7 @@
 export class NotificationModel {
     _id: string; // מזהה ייחודי להתראה
     taskId: string; // מזהה המשימה המשויכת
-    notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue"; // סוג ההתראה
+    notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue"|"ProjectAssigned"; // סוג ההתראה
     notificationText: string; // טקסט ההתראה
     recipientUserId: string; // מזהה המשתמש אליו מיועדת ההתראה
     notificationDate: Date; // תאריך ושעה של יצירת ההתראה
@@ -10,7 +10,7 @@ export class NotificationModel {
   
     constructor(
       taskId: string,
-      notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue",
+      notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue"|"ProjectAssigned",
       notificationText: string,
       recipientUserId: string,
       notificationDate: Date ,

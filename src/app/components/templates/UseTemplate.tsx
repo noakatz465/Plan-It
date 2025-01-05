@@ -34,7 +34,6 @@ function UseTemplate(props: UseTemplateProps) {
     const handleSave = async () => {
         try {
             const updatedTask = { ...task, creator: user?._id || '' };
-            // יצירת רשימת IDs לפי אימיילים
             const userIds = await Promise.all(
                 task.assignedUsers.map(async (email) => {
                     try {
@@ -47,14 +46,9 @@ function UseTemplate(props: UseTemplateProps) {
             );
 
             updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
-            // שלב הוספת המשימה
             const newTaskResponse = await addTask(updatedTask);
 
             if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
-                // קוד לביצוע במקרה שיש משתמשים משוייכים
-                console.log(updatedTask.assignedUsers);
-
-                // ביצוע שיתוף משימה עבור כל המשתמשים
                 const shareResults = await Promise.all(
                     updatedTask.assignedUsers.map(async (userId) => {
                         try {
@@ -63,7 +57,6 @@ function UseTemplate(props: UseTemplateProps) {
                                 targetUserId: userId,
                                 sharedByUserId: user?._id || '',
                             });
-                            console.log(`Task successfully shared with user ${userId}`);
                             return true;
                         } catch (error) {
                             console.error(`Failed to share task with user ${userId}:`, error);
@@ -71,26 +64,18 @@ function UseTemplate(props: UseTemplateProps) {
                         }
                     })
                 );
-                // בדיקה אם כל השיתופים הצליחו
-                const allSharesSucceeded = shareResults.every((result) => result);
-                console.log('התראה');
-                console.log(newTaskResponse);
 
+                const allSharesSucceeded = shareResults.every((result) => result);
                 if (allSharesSucceeded && user?.notificationsEnabled) {
-                    // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
                     try {
                         await createNotificationsPerUsers(
                             "TaskAssigned",
                             newTaskResponse,
                             updatedTask.assignedUsers
                         );
-
-                        console.log('Notifications sent successfully.');
                     } catch (error) {
                         console.error('Failed to send notifications:', error);
                     }
-                } else {
-                    console.warn('Not all shares succeeded. Notifications will not be sent.');
                 }
             }
 
@@ -154,40 +139,40 @@ function UseTemplate(props: UseTemplateProps) {
     }));
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-lg relative">
-                <h3 className="text-xl font-semibold mb-4">צור משימה על ידי תבנית</h3>
-                <form>
-                    <div className="mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 ">
+            <div className="bg-gradient-to-r from-pink-50 via-blue-50 to-purple-50 p-8 shadow-lg rounded-2xl w-full max-w-lg relative border border-pastel-purple overflow-y-auto max-h-[90vh]">
+                <h3 className="text-2xl font-bold mb-6 text-purple-600 text-center">צור משימה על ידי תבנית</h3>
+                <form className="space-y-6">
+                    <div>
                         <label className="block text-gray-700 mb-2">כותרת</label>
                         <input
                             type="text"
                             value={task.title}
                             onChange={handleTextChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-200"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div>
                         <label className="block text-gray-700 mb-2">תיאור</label>
                         <textarea
                             value={task.description}
                             onChange={handleTextChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full h-48 p-4 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-purple-200"
                         />
                     </div>
                     <div>
-                        <label htmlFor="dueDate" className="block ">תאריך </label>
+                        <label htmlFor="dueDate" className="block text-gray-700 mb-2">תאריך </label>
                         <input
                             id="dueDate"
                             name="dueDate"
                             type="date"
                             value={task.dueDate?.toISOString().split('T')[0] || ''}
                             onChange={handleDateChange}
-                            className="w-full px-3 py-2 border rounded"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-200"
                         />
                     </div>
                     <div>
-                        <label htmlFor="assignedUsers" className="block font-medium">משתמשים מוצמדים</label>
+                        <label htmlFor="assignedUsers" className="block text-gray-700 mb-2 font-medium">משתמשים מוצמדים</label>
                         <CreatableSelect
                             id="assignedUsers"
                             isMulti
@@ -199,23 +184,23 @@ function UseTemplate(props: UseTemplateProps) {
                                     ...base,
                                     borderColor: '#ccc',
                                     borderRadius: '8px',
-                                    padding: '5px',
+                                    padding: '8px',
                                 }),
                             }}
                         />
                     </div>
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex justify-end space-x-4">
                         <button
                             type="button"
                             onClick={props.onClose}
-                            className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                            className="bg-gray-300 text-gray-800 py-2 px-5 rounded-md hover:bg-gray-400"
                         >
                             ביטול
                         </button>
                         <button
                             type="button"
                             onClick={handleSave}
-                            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                            className="bg-purple-500 text-white py-2 px-5 rounded-md hover:bg-purple-600"
                         >
                             שמור
                         </button>
@@ -226,6 +211,4 @@ function UseTemplate(props: UseTemplateProps) {
     )
 }
 
-export default UseTemplate
-
-
+export default UseTemplate;
