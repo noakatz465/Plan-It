@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { verifyCode } from "../services/passwordService";
+import { verifyCode } from "../../services/passwordService";
 
 function VerifyCode() {
   const [code, setCode] = useState("");

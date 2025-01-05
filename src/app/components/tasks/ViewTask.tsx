@@ -104,7 +104,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
         } catch (error) {
             console.error('Error deleting task:', error);
             setMessage("אירעה שגיאה בעת מחיקת המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
-            alert('Failed to delete task.');
         } finally {
             setLoading(false);
         }
@@ -173,7 +172,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                 );
 
             if (failedUsers.length) {
-                alert(`Failed to share with users: ${failedUsers.join(", ")}`);
                 setMessage("אירעה שגיאה בעת שיתוף המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
 
             } else {
@@ -201,7 +199,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
             }
         } catch (error) {
             console.error("Error sharing task:", error);
-            alert("Failed to share task.");
         } finally {
             setLoading(false);
         }

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { sendVerificationCode } from "../services/passwordService";
+import { sendVerificationCode } from "../../services/passwordService";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");

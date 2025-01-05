@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import Select, { SingleValue } from "react-select";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { UserModel } from "../models/userModel";
-import { addUser } from "../services/authService";
+import { UserModel } from "../../models/userModel";
+import { addUser } from "../../services/authService";
 import { z } from "zod";
 interface GenderOption {
   value: string;

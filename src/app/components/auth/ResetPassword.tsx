@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { resetPassword } from "../services/passwordService";
+import { resetPassword } from "../../services/passwordService";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
