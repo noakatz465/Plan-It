@@ -58,7 +58,15 @@ function SideNavBar() {
         </button>
       </Link>
 
-
+      <Link href="/pages/main/about">
+        <button
+          className={getButtonClass("dashboard")}
+          onClick={() => handleLinkClick("dashboard")}
+          title="דשבורד"
+        >
+          <ChartBarIcon className="h-7 w-7" />
+        </button>
+      </Link>
     </div>
   );
 }
