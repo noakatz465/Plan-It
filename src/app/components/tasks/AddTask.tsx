@@ -265,7 +265,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             className="w-full px-3 py-2 border rounded"
           ></textarea>
         </div>
-        <div>
+        {props.dueDate? '':<div>
           <label htmlFor="dueDate" className="block ">תאריך </label>
           <input
             id="dueDate"
@@ -275,7 +275,7 @@ const AddTask: React.FC<TaskDetails> = (props) => {
             onChange={handleDateChange}
             className="w-full px-3 py-2 border rounded"
           />
-        </div>
+        </div>}
         <div>
           <label htmlFor="frequency" className="block ">תדירות</label>
           <Select

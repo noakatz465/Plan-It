@@ -12,7 +12,7 @@ function ClosestTasks() {
     if (!task.dueDate) return false; // אם אין תאריך יעד, המשימה לא נחשבת
     const taskDate = new Date(task.dueDate).setHours(0, 0, 0, 0); // מחזיר את תחילת היום של תאריך המשימה
     const todayDate = new Date().setHours(0, 0, 0, 0); // תחילת היום הנוכחי
-    return taskDate > todayDate; // רק אם המשימה עתידית
+    return taskDate >= todayDate; // רק אם המשימה עתידית
   })
   .sort(
     (a, b) =>
