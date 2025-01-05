@@ -51,7 +51,6 @@ const NotificationsList = () => {
   };
 
   const handleMarkAsRead = async (notificationId: string) => {
-    console.log(`Marking notification ${notificationId} as read.`);
     await markAsRead(notificationId);
   };
 

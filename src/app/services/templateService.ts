@@ -8,7 +8,6 @@ export const getAllTemplates = async () => {
       const response = await axios.get(`${API_TEMPLATE_URL}/get`);
       if (response.status === 200) {
         const data = response.data;
-        console.log('Templates data:', data); 
         return Array.isArray(data) ? data.map((item) => new TemplateModel(item.name, item.description, item._id)) : [];
       }
     } catch (error) {

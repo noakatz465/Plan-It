@@ -9,10 +9,8 @@ export async function POST(req: Request) {
         await connect();
         const data = await req.json();
         // סינון כפילויות ב-assignedUsers
-        console.log('aaaa ')
         if (data.assignedUsers) {
             data.assignedUsers = Array.from(new Set(data.assignedUsers));
-            console.log('aaaa '+ data.assignedUsers);           
         }
         const newTask = new Task({
             ...data,

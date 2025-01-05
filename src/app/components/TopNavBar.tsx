@@ -34,13 +34,9 @@ function TopNavBar() {
   const handleSignOut = async () => {
     try {
       if (session) {
-        console.log("User has a valid session. Using NextAuth sign out...");
         await signOut();
-        console.log("Sign-out successful via NextAuth.");
       } else {
-        console.log("No session detected. Using manual logout...");
         await logoutUser(router);
-        console.log("Manual logout successful.");
       }
     } catch (error) {
       console.error("Error during sign-out:", error);

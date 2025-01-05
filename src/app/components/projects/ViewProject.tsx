@@ -116,7 +116,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                                     targetUserId: userId,
                                     sharedByUserId: user?._id || '',
                                 });
-                                console.log(`Project successfully shared with user ${userId}`);
                             } catch (error) {
                                 console.error(`Failed to share project with user ${userId}:`, error);
                             }
@@ -136,8 +135,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                             project,
                             newUserIds
                         );
-
-                        console.log('Notifications sent successfully.');
                         setMessage(`הפרויקט "${project.name}" שותף בהצלחה !`, "success"); // הודעת הצלחה
 
                     } catch (error) {

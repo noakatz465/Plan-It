@@ -7,7 +7,6 @@ const API_USERS_URL = '/api/users';
 export const getUserByID = async (userId: string) => {
     try {
         const response = await axios.get(`${API_USERS_URL}/get/getUserByID/${userId}`);
-        console.log(response.data.projects);
 
         if (response.status === 200) {
             const data = response.data.user;
@@ -44,7 +43,6 @@ export const removeTaskForUsers = async (userIds: string[], taskId: string) => {
             taskId: taskId,
         });
         if (response.status === 200) {
-            console.log("Task and user relationship updated successfully:", response.data);
             return response.data;
         } else {
             console.warn("Unexpected response status:", response.status);
@@ -65,7 +63,6 @@ export const updateUser = async (userId: string, updatedData: Partial<UserModel>
         });
 
         if (response.status === 200) {
-            console.log("User updated successfully:", response.data.user);
             const data = response.data.user;
             const updatedUser = new UserModel(data.firstName, data.lastName, data.email, data.password, new Date(data.joinDate),
                 data.notificationsEnabled, data.projects || [], data.tasks || [], data.sharedWith || [],
@@ -96,7 +93,6 @@ export const uploadToCloudinary = async (file: File): Promise<string | null> => 
                 },
             }
         );
-        console.log(response.data);
         return response.data.secure_url; // מחזיר את כתובת ה-URL המאובטחת
     } catch (error) {
         console.error("Error uploading image:", error);
@@ -127,7 +123,6 @@ export const shareProject = async (data: {
     targetUserId: string;
     sharedByUserId: string;
 }) => {
-    console.log("Data sent to server:", data);
     try {
         const response = await axios.post(`${API_USERS_URL}/post/shareProject`, data);
         return response.data;
@@ -160,7 +155,6 @@ export const fetchAllUsers = async (): Promise<UserModel[] | null> => {
                 data.profileImage?.trim() ? data.profileImage : "https://res.cloudinary.com/ddbitajje/image/upload/v1735038509/t7ivdaq3nznunpxv2soc.png", // בדיקה אם תמונת הפרופיל ריקה
 
             ));
-            console.log("Users fetched successfully:", users);
             return users;
         } else {
             console.warn("Unexpected response status:", response.status);

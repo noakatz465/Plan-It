@@ -86,20 +86,6 @@ export async function POST(req: Request) {
                     const savedNotification = await newNotification.save(); // שמירת ההתראה במסד הנתונים
                     console.log(`Notification saved for userId: ${userId}`, savedNotification);
                     return savedNotification;
-                    // console.log(`Creating notification for userId: ${userId}`);
-                    // const newNotification = new AlertNotification({
-                    //     taskId: task._id, // מזהה המשימה
-                    //     notificationType, // סוג ההתראה (לדוגמה: TaskAssigned)
-                    //     notificationText: ` הוזמנת להשתתף במשימה  ${task.title} על ידי: ${creator.firstName} ${creator.lastName} (${creator.email})  `, // טקסט ההתראה
-                    //     recipientUserId: userId, // המשתמש אליו ההתראה מיועדת
-                    //     notificationDate: new Date(), // מועד יצירת ההתראה
-                    //     isRead: false, // ההתראה לא נקראה
-                    //     status: "Active" // סטטוס ההתראה: פעילה
-                    // });
-
-                    // const savedNotification = await newNotification.save(); // שמירת ההתראה במסד הנתונים
-                    // console.log(`Notification saved for userId: ${userId}`, savedNotification);
-                    // return savedNotification;
                 } catch (error) {
                     console.error(`Error saving notification for userId: ${userId}`, error);
                     throw error; // שומר על השגיאה בתוך Promise.all

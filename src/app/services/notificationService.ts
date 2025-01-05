@@ -53,7 +53,6 @@ export async function createProjectNotificationsPerUsers(
       project,
       userIds,
     };
-    console.log("Data being sent to API:", { notificationType, project, userIds });
 
 
     // שליחת בקשת POST לשרת
@@ -78,8 +77,7 @@ export async function fetchNotificationsByUserId(userId: string): Promise<Notifi
     const response = await axios.get(`/api/notifications/get/getNotificationsByUserId/${userId}`);
 
     // החזרת התגובה מהשרת
-    console.log(response.data);
-    console.log(response.data.notifications);
+
 
     return response.data as NotificationModel[];
   } catch (error) {

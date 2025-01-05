@@ -7,11 +7,7 @@ import ProjectListItem from "./ProjectListItem";
 const ProjectListView: React.FC = () => {
   const projects = useUserStore((state) => state.getProjects());
 
-  console.log(projects);
-  console.log("Projects in store:", projects);
-
   if (!projects || projects.length === 0) {
-    console.log("No projects available, showing message.");
 
     return (
       <div className="text-center text-gray-500 mt-9">

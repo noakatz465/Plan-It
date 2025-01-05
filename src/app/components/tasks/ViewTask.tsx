@@ -34,7 +34,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
     const updateTaskInStore = useUserStore((state) => state.updateTaskInStore);
     const removeTaskForUsers = useUserStore((state) => state.removeTaskForUsers);
     const users = useUserStore((state) => state.users);
-    const creator = users.find((user) => user._id === task.creator); // מציאת היוצר לפי ID
+    const creator = users.find((user) => user._id === task.creator);
     const { createNotificationsPerUsers } = useNotificationsStore();
     const translateFrequency = (frequency: string) => {
         switch (frequency) {
@@ -84,7 +84,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
     };
     const handleEditSave = () => {
         setEditMode(false);
-        onClose(); // סגירת מודל תצוגת המשימה
+        onClose();
     };
     const handleDeleteTask = async () => {
         if (!task) return;
@@ -92,9 +92,8 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
         try {
             if (user?._id === task.creator) {
                 if (task._id) await deleteTaskAndRefreshUser(task._id);
-                setMessage("המשימה נמחקה בהצלחה!", "success"); // הודעת הצלחה
-                onClose(); // סגירת מודל תצוגת המשימה
-
+                setMessage("המשימה נמחקה בהצלחה!", "success"); 
+                onClose();
             } else {
                 const newAssignedUsersArr = [...task.assignedUsers, task.creator];
                 if (task._id) await removeTaskForUsers(newAssignedUsersArr, task._id);
@@ -103,7 +102,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
             }
         } catch (error) {
             console.error('Error deleting task:', error);
-            setMessage("אירעה שגיאה בעת מחיקת המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+            setMessage("אירעה שגיאה בעת מחיקת המשימה. נסו שוב מאוחר יותר.", "error");
         } finally {
             setLoading(false);
         }
@@ -164,7 +163,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                                     targetUserId: userId,
                                     sharedByUserId: user?._id || '',
                                 });
-                                console.log(`Task successfully shared with user ${userId}`);
                             } catch (error) {
                                 console.error(`Failed to share task with user ${userId}:`, error);
                             }
@@ -172,10 +170,10 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                 );
 
             if (failedUsers.length) {
-                setMessage("אירעה שגיאה בעת שיתוף המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+                setMessage("אירעה שגיאה בעת שיתוף המשימה. נסו שוב מאוחר יותר.", "error");
 
             } else {
-                setMessage("המשימה שותפה בהצלחה!", "success"); // הודעת הצלחה
+                setMessage("המשימה שותפה בהצלחה!", "success");
                 if (user?.notificationsEnabled) {
                     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
                     const newUserIds = updatedTask.assignedUsers.filter(
@@ -188,7 +186,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                             newUserIds
                         );
 
-                        console.log('Notifications sent successfully.');
                     } catch (error) {
                         console.error('Failed to send notifications:', error);
                     }
@@ -341,7 +338,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                             <ul className="flex flex-wrap gap-4 mt-2">
                                 {task.assignedUsers
                                     .map((userId, index) => {
-                                        const sharedUser = users.find((u) => u._id === userId); // חיפוש המשתמש במערך users
+                                        const sharedUser = users.find((u) => u._id === userId);
                                         return (
                                             <li key={index} className="flex items-center gap-2">
                                                 {sharedUser?.profileImage ? (

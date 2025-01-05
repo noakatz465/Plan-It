@@ -21,7 +21,6 @@ export const createProject = async (projectData: {
     try {
         const response = await axios.post(`${API_PROJECTS_URL}/post`, projectData);
         if (response.status === 200) {
-            console.log("Project added successfully:", response.data);
             return response.data.projectId;
         } else {
             console.warn("Unexpected response status:", response.status);

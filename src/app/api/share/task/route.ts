@@ -23,12 +23,13 @@ export async function POST(req: Request) {
         }
 
         // בדיקה אם המשתמש לא מופיע כבר במערך sharedWith של המשימה
-        const isAlreadyShared = task.assignedUsers.includes(targetUserId);        
+        const isAlreadyShared = task.assignedUsers.includes(targetUserId);
         if (!isAlreadyShared) {
             task.assignedUsers.push(targetUserId);
             targetUser.tasks.push(taskId);
             // עדכון המערך sharedWith של המשתף (sharedByUser)
-            sharedByUser.sharedWith.push(targetUserId);
+            if (!sharedByUser.sharedWith.includes(targetUserId))
+                sharedByUser.sharedWith.push(targetUserId);
 
             await task.save();
             await targetUser.save();

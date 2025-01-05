@@ -16,7 +16,6 @@ const UserLoader = ({ onLoadingChange }: { onLoadingChange: (isLoading: boolean)
 
         if (userFromStore?._id) {
           await fetchNotifications(userFromStore._id); // שליפת התראות למשתמש אם קיים מזהה
-          console.log("User and notifications loaded successfully");
         } else {
           console.warn("User ID not found; skipping notifications fetch");
         }

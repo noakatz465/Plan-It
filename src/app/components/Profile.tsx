@@ -38,7 +38,6 @@ function Profile() {
       const updatedUser = await updateUser(userId, formData);
       if (updatedUser) {
         useUserStore.setState({ user: updatedUser });
-        console.log("User updated successfully:", updatedUser);
         router.push(`/pages/main/dashboard`);
 
       } else {
@@ -181,11 +180,8 @@ function Profile() {
               if (file) {
                 handleImageUpload(file);
                 const uploadedUrl = await uploadToCloudinary(file);
-                console.log("noa");
 
                 if (uploadedUrl) {
-                  console.log("noa1");
-                  console.log("uploadedUrl" + uploadedUrl);
                   setFormData({ ...formData, profileImage: uploadedUrl });
                 }
               }

@@ -35,7 +35,6 @@ const TaskNavBar: React.FC = () => {
     if (selectedOptions) {
       const filters = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
       setSelectedFilters(filters);
-      console.log("Selected filters:", filters);
       // העברת הפילטרים שנבחרו לפונקציה filterTasks
       filterTasks(filters);
     }

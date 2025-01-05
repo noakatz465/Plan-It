@@ -48,7 +48,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
   }, [props.projectId]);
 
   useEffect(() => {
-    console.log(props.assignedUsers);
     if (props.assignedUsers) {
       setTask((prev) => ({
         ...prev,
@@ -124,8 +123,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
       if (updatedTask.assignedUsers && updatedTask.assignedUsers.length > 0) {
         // קוד לביצוע במקרה שיש משתמשים משוייכים
-        console.log(updatedTask.assignedUsers);
-
         // ביצוע שיתוף משימה עבור כל המשתמשים
         const shareResults = await Promise.all(
           updatedTask.assignedUsers.map(async (userId) => {
@@ -135,8 +132,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
                 targetUserId: userId,
                 sharedByUserId: userFromStore?._id || '',
               });
-
-              console.log(`Task successfully shared with user ${userId}`);
               return true;
             } catch (error) {
               console.error(`Failed to share task with user ${userId}:`, error);
@@ -149,9 +144,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
 
         // בדיקה אם כל השיתופים הצליחו
         const allSharesSucceeded = shareResults.every((result) => result);
-        console.log('התראה');
-        console.log(newTaskResponse);
-
         if (allSharesSucceeded && userFromStore?.notificationsEnabled) {
           // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
           try {
@@ -160,8 +152,6 @@ const AddTask: React.FC<TaskDetails> = (props) => {
               newTaskResponse,
               updatedTask.assignedUsers
             );
-
-            console.log('Notifications sent successfully.');
           } catch (error) {
             console.error('Failed to send notifications:', error);
           }
