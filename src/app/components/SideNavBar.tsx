@@ -4,6 +4,7 @@ import {
   ClipboardDocumentListIcon,
   FolderIcon,
   ChartBarIcon,
+   BookOpenIcon
 } from "@heroicons/react/24/outline";
 
 function SideNavBar() {
@@ -60,11 +61,11 @@ function SideNavBar() {
 
       <Link href="/pages/main/about">
         <button
-          className={getButtonClass("dashboard")}
-          onClick={() => handleLinkClick("dashboard")}
-          title="דשבורד"
+          className={getButtonClass("about")}
+          onClick={() => handleLinkClick("about")}
+          title="אודות"
         >
-          <ChartBarIcon className="h-7 w-7" />
+          <BookOpenIcon className="h-7 w-7" />
         </button>
       </Link>
     </div>
