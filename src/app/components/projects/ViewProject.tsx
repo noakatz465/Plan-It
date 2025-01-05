@@ -14,6 +14,7 @@ import { UserModel } from '@/app/models/userModel';
 import AddTask from '../tasks/AddTask';
 import { getUserByEmail, shareProject } from '@/app/services/userService';
 import { useMessageStore } from '@/app/stores/messageStore';
+import { useNotificationsStore } from '@/app/stores/notificationsStore';
 
 interface ViewProjectProps {
     project: ProjectModel;
@@ -30,6 +31,7 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
     const manager = users.find((user) => user._id === project.managerID); // מציאת היוצר לפי ID
     const [addTaskModal, SetAddTaskModal] = useState(false);
     const setMessage = useMessageStore((state) => state.setMessage);
+  const { createProjectNotifications } = useNotificationsStore();
 
     // משימות הקשורות לפרויקט הנוכחי
     const tasks = project.LinkedTasks || [];
@@ -64,7 +66,9 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
         try {
             if (project._id) await deleteProject(project._id);
             alert('Project deleted successfully.');
+            onClose()
             setMessage(`הפרויקט "${project.name}" נמחק בהצלחה!`, "success"); // הודעת הצלחה
+
 
         } catch (error) {
             console.error('Error deleting project:', error);
@@ -125,27 +129,27 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                 alert(`Failed to share with users: ${failedUsers.join(", ")}`);
             } else {
                 alert("Task shared successfully!");
-                // if (user?.notificationsEnabled) {
-                //     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
-                //     const newUserIds = updatedProject.members.filter(
-                //         (userId) => !project.members.includes(userId)
-                //     );
-                //     try {
-                //         await createNotificationsPerUsers(
-                //             "TaskAssigned",
-                //             project,
-                //             newUserIds
-                //         );
+                if (user?.notificationsEnabled) {
+                    // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
+                    const newUserIds = updatedProject.members.filter(
+                        (userId) => !project.members.includes(userId)
+                    );
+                    try {
+                        await createProjectNotifications(
+                            "ProjectAssigned",
+                            project,
+                            newUserIds
+                        );
 
-                //         console.log('Notifications sent successfully.');
-                //         setMessage(`הפרויקט "${project.name}" שותף בהצלחה עם ${shareRecipient}!`, "success"); // הודעת הצלחה
+                        console.log('Notifications sent successfully.');
+                        setMessage(`הפרויקט "${project.name}" שותף בהצלחה !`, "success"); // הודעת הצלחה
 
-                //     } catch (error) {
-                //         console.error('Failed to send notifications:', error);
-                //         setMessage("אירעה שגיאה בעת שיתוף הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
+                    } catch (error) {
+                        console.error('Failed to send notifications:', error);
+                        setMessage("אירעה שגיאה בעת שיתוף הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
 
-                //     }
-                // }
+                    }
+                }
 
                 setShareMode(false);
                 onClose()

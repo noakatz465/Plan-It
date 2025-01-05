@@ -13,16 +13,43 @@ export async function POST(req: Request) {
         console.log("Request data received:", { notificationType, task, userIds });
 
         // בדיקה אם כל הנתונים הנדרשים נמסרו
-        if (!notificationType || !task || !task._id || !userIds || !userIds.length) {
-            console.error("Missing required data:", { notificationType, task, userIds });
+        if (!notificationType) {
+            console.error("Missing notificationType");
             return NextResponse.json(
-                { message: "Missing required data: notificationType, task, or userIds" },
-                { status: 400 }
+              { message: "Missing required data: notificationType" },
+              { status: 400 }
             );
-        }
+          }
+          
+          if (!task) {
+            console.error("Missing task object");
+            return NextResponse.json(
+              { message: "Missing required data: task object" },
+              { status: 400 }
+            );
+          }
+          
+          if (!task._id) {
+            console.error("Missing task ID");
+            return NextResponse.json(
+              { message: "Missing required data: task ID (_id)" },
+              { status: 400 }
+            );
+          }
+          
+          if (!userIds || !userIds.length) {
+            console.error("Missing user IDs");
+            return NextResponse.json(
+              { message: "Missing required data: user IDs (userIds)" },
+              { status: 400 }
+            );
+          }
+          
+        const creatorId = task.managerID ? task.managerID : task.creator;
+
 
         // שליפת פרטי המשתמש מהשדה creator של המשימה
-        const creator = await User.findById(task.creator);
+        const creator = await User.findById(creatorId);
         if (!creator) {
             console.error("Creator not found:", task.creator);
             return NextResponse.json(
@@ -37,11 +64,19 @@ export async function POST(req: Request) {
         const notifications = await Promise.all(
             userIds.map(async (userId: string) => {
                 try {
+
                     console.log(`Creating notification for userId: ${userId}`);
+                    
+                    // התאמת טקסט ההתראה לפי סוג המשימה
+                    const notificationText =
+                        task.type === "project"
+                            ? `הוזמנת להשתתף בפרויקט "${task.name}" על ידי המנהל: ${creator.firstName} ${creator.lastName} (${creator.email})`
+                            : `הוזמנת להשתתף במשימה "${task.title}" על ידי היוצר: ${creator.firstName} ${creator.lastName} (${creator.email})`;
+
                     const newNotification = new AlertNotification({
                         taskId: task._id, // מזהה המשימה
                         notificationType, // סוג ההתראה (לדוגמה: TaskAssigned)
-                        notificationText: ` הוזמנת להשתתף במשימה  ${task.title} על ידי: ${creator.firstName} ${creator.lastName} (${creator.email})  `, // טקסט ההתראה
+                        notificationText, // טקסט ההתראה המותאם לפי סוג המשימה
                         recipientUserId: userId, // המשתמש אליו ההתראה מיועדת
                         notificationDate: new Date(), // מועד יצירת ההתראה
                         isRead: false, // ההתראה לא נקראה
@@ -51,6 +86,20 @@ export async function POST(req: Request) {
                     const savedNotification = await newNotification.save(); // שמירת ההתראה במסד הנתונים
                     console.log(`Notification saved for userId: ${userId}`, savedNotification);
                     return savedNotification;
+                    // console.log(`Creating notification for userId: ${userId}`);
+                    // const newNotification = new AlertNotification({
+                    //     taskId: task._id, // מזהה המשימה
+                    //     notificationType, // סוג ההתראה (לדוגמה: TaskAssigned)
+                    //     notificationText: ` הוזמנת להשתתף במשימה  ${task.title} על ידי: ${creator.firstName} ${creator.lastName} (${creator.email})  `, // טקסט ההתראה
+                    //     recipientUserId: userId, // המשתמש אליו ההתראה מיועדת
+                    //     notificationDate: new Date(), // מועד יצירת ההתראה
+                    //     isRead: false, // ההתראה לא נקראה
+                    //     status: "Active" // סטטוס ההתראה: פעילה
+                    // });
+
+                    // const savedNotification = await newNotification.save(); // שמירת ההתראה במסד הנתונים
+                    // console.log(`Notification saved for userId: ${userId}`, savedNotification);
+                    // return savedNotification;
                 } catch (error) {
                     console.error(`Error saving notification for userId: ${userId}`, error);
                     throw error; // שומר על השגיאה בתוך Promise.all

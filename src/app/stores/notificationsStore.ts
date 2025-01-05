@@ -1,11 +1,17 @@
 import { create } from "zustand";
 import { NotificationModel } from "@/app/models/notificationModel"; // ודא שמודל ההתראות מוגדר
-import { fetchNotificationsByUserId, markNotificationAsRead, createNotificationsPerUsers } from "../services/notificationService"; // שירותים לפעולות נוספות
+import { fetchNotificationsByUserId, markNotificationAsRead, createNotificationsPerUsers, createProjectNotificationsPerUsers } from "../services/notificationService"; // שירותים לפעולות נוספות
 import { TaskModel } from "../models/taskModel";
+import { ProjectModel } from "../models/projectModel";
 
 interface NotificationsState {
   notifications: NotificationModel[]; // רשימת ההתראות
   fetchNotifications: (userId: string) => Promise<void>; // פונקציה לשליפת ההתראות לפי מזהה משתמש
+  createProjectNotifications:(
+    notificationType: "ProjectAssigned",
+    project: ProjectModel,
+    userIds: string[]
+  ) => Promise<void>; // יצירת התראות פר משתמשים
   markAsRead: (notificationId: string) => Promise<void>; // סימון התראה כ"נקראה"
   createNotificationsPerUsers: (
     notificationType: "TaskAssigned" | "TaskDueSoon" | "TaskOverdue",
@@ -57,5 +63,18 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     } catch (error) {
       console.error("Error creating notifications:", error);
     }
+
   },
+  createProjectNotifications: async (
+    notificationType: "ProjectAssigned",
+    project: ProjectModel,
+    userIds: string[]
+  ) => {
+    try {
+      await createProjectNotificationsPerUsers(notificationType, project, userIds);
+      console.log("Notifications created successfully.");
+    } catch (error) {
+      console.error("Error creating notifications:", error);
+    }
+  }
 }));
