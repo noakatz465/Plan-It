@@ -2,6 +2,7 @@ import connect from "@/app/lib/db/mongoDB";
 import Task from "@/app/lib/models/taskSchema";
 import User from "@/app/lib/models/userSchema";
 import { sendEmail } from "@/app/lib/utils/sentEmail";
+import axios from "axios";
 import { NextResponse } from "next/server";
 
 
@@ -24,17 +25,19 @@ export async function POST(req: Request) {
         }
         // בדיקה אם המשתמש היעד כבר מופיע במערך sharedWith
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
-        console.log(isAlreadyShared + " isAlreadyShared");
-
         if (isAlreadyShared) {
             // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
-            task.assignedUsers.push(targetUserId);
-            targetUser.tasks.push(taskId);
-            await task.save();
-            await targetUser.save();
+            const response = await axios.post(`http://localhost:3000/api/share/task/?taskId=${taskId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}`);
+
+            if (response.status !== 200) {
+                return NextResponse.json(
+                    { message: "Failed to notify authorized share" },
+                    { status: response.status }
+                );
+            }
 
             return NextResponse.json({
-                message: "Task shared successfully with the user.",
+                message: "Task shared successfully with the user, and API notified.",
             });
         } else {
             // המשתמש לא מורשה - שליחת בקשה לאישור במייל

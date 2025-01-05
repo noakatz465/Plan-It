@@ -7,15 +7,15 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     await connect();
-
-    // שליפת הפרמטרים מהבקשה
-    const data = await req.json();
-    const { projectId, sharedByUserId, targetUserId } = data;
+    const url = new URL(req.url);
+    const projectId = url.searchParams.get("projectId");
+    const sharedByUserId = url.searchParams.get("sharedByUserId");
+    const targetUserId = url.searchParams.get("targetUserId");
 
     // שליפת המשתמש המשתף, המשתמש היעד והפרויקט
     const sharedByUser = await User.findById(sharedByUserId);
     const targetUser = await User.findById(targetUserId);
-    const project = await Project.findById(projectId).populate("tasks"); // שליפת המשימות המקושרות
+    const project = await Project.findById(projectId).populate("LinkedTasks"); // שליפת המשימות המקושרות
 
     if (!sharedByUser || !targetUser || !project) {
       return NextResponse.json(
@@ -31,14 +31,14 @@ export async function POST(req: Request) {
     }
 
     // הוספת כל המשימות המקושרות לפרויקט למערך `tasks` של המשתמש היעד
-    const taskIds = Array.from(new Set([...targetUser.tasks, ...project.tasks.map((task: mongoose.Types.ObjectId) => task._id)])); // Convert Set to array
+    const taskIds = Array.from(new Set([...targetUser.tasks, ...project.LinkedTasks.map((task: mongoose.Types.ObjectId) => task._id)])); // Convert Set to array
     targetUser.tasks = taskIds; // עדכון משימות המשתמש המשותף
 
     await targetUser.save();
 
-    // הוספת משתמש היעד למערך `assignedUsers` של הפרויקט
-    if (!project.assignedUsers.includes(targetUserId)) {
-      project.assignedUsers.push(targetUserId);
+    // הוספת משתמש היעד למערך `members` של הפרויקט
+    if (!project.members.includes(targetUserId)) {
+      project.members.push(targetUserId);
       await project.save();
     }
 

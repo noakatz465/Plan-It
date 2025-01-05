@@ -3,7 +3,7 @@ import Task from "@/app/lib/models/taskSchema";
 import User from "@/app/lib/models/userSchema";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
     try {
         await connect();
         const url = new URL(req.url);
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
         }
 
         // בדיקה אם המשתמש לא מופיע כבר במערך sharedWith של המשימה
-        const isAlreadyShared = task.assignedUsers.includes(targetUserId);
+        const isAlreadyShared = task.assignedUsers.includes(targetUserId);        
         if (!isAlreadyShared) {
             task.assignedUsers.push(targetUserId);
             targetUser.tasks.push(taskId);

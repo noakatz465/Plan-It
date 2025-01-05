@@ -65,7 +65,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
         setLoading(true);
         try {
             if (project._id) await deleteProject(project._id);
-            alert('Project deleted successfully.');
             onClose()
             setMessage(`הפרויקט "${project.name}" נמחק בהצלחה!`, "success"); // הודעת הצלחה
 
@@ -74,7 +73,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
             console.error('Error deleting project:', error);
             setMessage("אירעה שגיאה בעת מחיקת הפרויקט. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
 
-            alert('Failed to delete project.');
         } finally {
             setLoading(false);
         }
@@ -126,9 +124,7 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
                 );
 
             if (failedUsers.length) {
-                alert(`Failed to share with users: ${failedUsers.join(", ")}`);
             } else {
-                alert("Task shared successfully!");
                 if (user?.notificationsEnabled) {
                     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
                     const newUserIds = updatedProject.members.filter(
@@ -156,7 +152,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
             }
         } catch (error) {
             console.error("Error sharing task:", error);
-            alert("Failed to share task.");
         } finally {
             setLoading(false);
         }
