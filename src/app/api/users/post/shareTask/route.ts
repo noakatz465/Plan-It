@@ -25,8 +25,6 @@ export async function POST(req: Request) {
         }
         // בדיקה אם המשתמש היעד כבר מופיע במערך sharedWith
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
-        console.log(isAlreadyShared + " isAlreadyShared");
-
         if (isAlreadyShared) {
             // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
             const response = await axios.post(`http://localhost:3000/api/share/task/?taskId=${taskId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}`);

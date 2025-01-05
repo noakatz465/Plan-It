@@ -24,7 +24,6 @@ export async function POST(req: Request) {
             );
         }
 
-
         // בדיקה אם המשתמש כבר נמצא במערך assignedUsers של הפרויקט
         const isUserAlreadyAssigned = project.members.includes(targetUserId);
 
@@ -36,9 +35,7 @@ export async function POST(req: Request) {
         // בדיקה אם המשתמש היעד כבר מופיע במערך sharedWith
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
 
-        if (isAlreadyShared) {
-            console.log("סיוטטטטטטטטטט");
-            
+        if (isAlreadyShared) {            
            // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
            const response = await axios.post(`http://localhost:3000/api/share/project/?projectId=${projectId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}`);
 
