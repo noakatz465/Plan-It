@@ -16,7 +16,7 @@ import { useMessageStore } from '@/app/stores/messageStore';
 
 interface ViewTaskProps {
     task: TaskModel;
-    onClose: () => void; // פונקציה לסגירת מודל תצוגת המשימה
+    onClose: () => void;
 }
 function ViewTask({ task, onClose }: ViewTaskProps) {
     const [editMode, setEditMode] = useState(false);
@@ -163,7 +163,6 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
                 setMessage("אירעה שגיאה בעת שיתוף המשימה. נסו שוב מאוחר יותר.", "error"); // הודעת שגיאה
 
             } else {
-                alert("Task shared successfully!");
                 setMessage("המשימה שותפה בהצלחה!", "success"); // הודעת הצלחה
                 if (user?.notificationsEnabled) {
                     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו

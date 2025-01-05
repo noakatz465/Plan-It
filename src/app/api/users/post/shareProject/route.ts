@@ -2,6 +2,7 @@ import connect from "@/app/lib/db/mongoDB";
 import Project from "@/app/lib/models/projectSchema";
 import User from "@/app/lib/models/userSchema";
 import { sendEmail } from "@/app/lib/utils/sentEmail";
+import axios from "axios";
 import { NextResponse } from "next/server";
 
 
@@ -9,7 +10,6 @@ export async function POST(req: Request) {
     try {
         await connect();
         const data = await req.json();
-        console.log("Received data:", data);
         const { projectId, targetUserId, sharedByUserId } = data;
 
         // שליפת המשתמש המשתף והמשתמש היעד
@@ -37,28 +37,21 @@ export async function POST(req: Request) {
         const isAlreadyShared = sharedByUser.sharedWith.includes(targetUserId);
 
         if (isAlreadyShared) {
-            if (!Array.isArray(project.members)) {
-                project.members = [];
-            }
-
-            project.members.push(targetUserId);
-
-            if (!Array.isArray(targetUser.projects)) {
-                targetUser.projects = [];
-            }
-            console.log("targetUser.projects"+targetUser.projects);
+            console.log("סיוטטטטטטטטטט");
             
+           // המשתמש כבר מורשה לשיתוף - מבצעים שיתוף 
+           const response = await axios.post(`http://localhost:3000/api/share/project/?projectId=${projectId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}`);
 
-            targetUser.projects.push(projectId);
-            console.log("targetUser.projects"+targetUser.projects);
+           if (response.status !== 200) {
+               return NextResponse.json(
+                   { message: "Failed to notify authorized share" },
+                   { status: response.status }
+               );
+           }
 
-
-            await project.save();
-            await targetUser.save();
-
-            return NextResponse.json({
-                message: "Project shared successfully with the user.",
-            });
+           return NextResponse.json({
+               message: "Project shared successfully with the user, and API notified.",
+           });
         } else {
             // המשתמש לא מורשה - שליחת בקשה לאישור במייל
             await sendEmail({
@@ -67,7 +60,7 @@ export async function POST(req: Request) {
                 text: `You have been invited to collaborate on the project: "${project.name}". Click the link below to accept the invitation.`,
                 html: `<p>You have been invited to collaborate on the project: "<strong>${project.name}</strong>".</p>
                        <p>Click the link below to accept the invitation:</p>
-                       <a href="http://localhost:3000/share/project/${projectId}/${sharedByUserId}">Accept Invitation</a>`,
+                       <a href="http://localhost:3000/api/share/project/?projectId=${projectId}&sharedByUserId=${sharedByUserId}&targetUserId=${targetUserId}">Accept Invitation</a>`,
             });
 
             return NextResponse.json({

@@ -124,7 +124,6 @@ function ViewProject({ project, onClose }: ViewProjectProps) {
             if (failedUsers.length) {
                 alert(`Failed to share with users: ${failedUsers.join(", ")}`);
             } else {
-                alert("Task shared successfully!");
                 // if (user?.notificationsEnabled) {
                 //     // קריאה לפונקציה לשליחת התראות אם כל השיתופים הצליחו
                 //     const newUserIds = updatedProject.members.filter(
