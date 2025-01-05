@@ -31,6 +31,7 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
     const user = useUserStore((state) => state.user);
     const projects = useUserStore((state) => state.projects);
     const deleteTaskAndRefreshUser = useUserStore((state) => state.deleteTaskAndRefreshUser);
+    const updateTaskInStore = useUserStore((state) => state.updateTaskInStore);
     const removeTaskForUsers = useUserStore((state) => state.removeTaskForUsers);
     const users = useUserStore((state) => state.users);
     const creator = users.find((user) => user._id === task.creator); // מציאת היוצר לפי ID
@@ -141,6 +142,19 @@ function ViewTask({ task, onClose }: ViewTaskProps) {
             );
 
             updatedTask.assignedUsers = userIds.filter((id) => id !== undefined);
+            if (task._id) {
+                const mergedAssignedUsers = [
+                    ...task.assignedUsers,
+                    ...updatedTask.assignedUsers.filter(user => !task.assignedUsers.includes(user)),
+                ];
+        
+                const taskToUpdate = {
+                    ...updatedTask,
+                    assignedUsers: mergedAssignedUsers,
+                };
+        
+                updateTaskInStore(task._id, taskToUpdate);
+            }
             if (updatedTask.assignedUsers)
                 await Promise.all(
                     updatedTask.assignedUsers.map(async (userId) => {
